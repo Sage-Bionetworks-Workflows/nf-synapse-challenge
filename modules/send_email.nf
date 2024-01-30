@@ -11,7 +11,9 @@ process SEND_EMAIL {
     container "sagebionetworks/challengeutils:v4.2.0"
 
     input:
-    user_id, view_id, submission_id
+    val user_id
+    val view_id
+    val submission_id
 
     script:
     """
