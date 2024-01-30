@@ -15,8 +15,9 @@ process SEND_EMAIL {
     val view_id
     val submission_id
 
+    //challengeutils send-email --userids ${user_id} --subject status of ${submission_id} --message your submission for ${submission_id} passed! submission view ID: ${view_id}
     script:
     """
-    challengeutils send-email --userids ${user_id} --subject status of ${submission_id} --message your submission for ${submission_id} passed! submission view ID: ${view_id}
+    challengeutils send-email --userids ${user_id} --subject status update --message this is a status update
     """
 }
