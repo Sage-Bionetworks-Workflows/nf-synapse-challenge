@@ -8,7 +8,7 @@
 // 5. do we want to send an e-mail per submission found (per row in Table view, per channel) or per execution of MODEL_TO_DATA
 process SEND_EMAIL {
     secret "SYNAPSE_AUTH_TOKEN"
-    container
+    container "sagebionetworks/challengeutils:v4.2.0"
 
     input:
     user_id, view_id, submission_id
