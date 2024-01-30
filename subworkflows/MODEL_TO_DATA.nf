@@ -3,9 +3,11 @@
 nextflow.enable.dsl = 2
 
 // Synapse ID for Submission View
-params.view_id = "syn51356905"
+params.view_id = "syn53239158"
 // Synapse ID for Input Data folder
-params.input_id = "syn51390589"
+params.input_id = "syn53239289"
+// Synapse User ID
+params.user_id = "3489628"
 // Default CPUs to dedicate to RUN_DOCKER
 params.cpus = "4"
 // Default Memory to dedicate to RUN_DOCKER
@@ -27,6 +29,7 @@ include { VALIDATE } from '../modules/validate.nf'
 include { SCORE } from '../modules/score.nf'
 include { ANNOTATE_SUBMISSION as ANNOTATE_SUBMISSION_AFTER_VALIDATE } from '../modules/annotate_submission.nf'
 include { ANNOTATE_SUBMISSION as ANNOTATE_SUBMISSION_AFTER_SCORE } from '../modules/annotate_submission.nf'
+include { SEND_EMAIL } from '../modules/send_email.nf'
 
 workflow MODEL_TO_DATA {
     SYNAPSE_STAGE(params.input_id)
@@ -43,4 +46,5 @@ workflow MODEL_TO_DATA {
     SCORE(VALIDATE.output, UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE.output, ANNOTATE_SUBMISSION_AFTER_VALIDATE.output, params.scoring_script)
     UPDATE_SUBMISSION_STATUS_AFTER_SCORE(SCORE.output.map { tuple(it[0], it[2]) })
     ANNOTATE_SUBMISSION_AFTER_SCORE(SCORE.output)
+    SEND_EMAIL(params.user_id, params.view_id, image_ch.map { it[0] })
 }
