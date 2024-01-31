@@ -16,7 +16,7 @@ def get_engineer_ids(syn):
     return engineer_ids
 
 
-def get_participant_ids(syn, submission_id):
+def get_participant_id(syn, submission_id):
     """
     Retrieves the teamId of the participating team that made
     the submission. If the submitter is an individual rather than
@@ -30,7 +30,7 @@ def get_participant_ids(syn, submission_id):
 
     # Ensure that the participant_ids returned is a list
     # so we can extend it onto the engineer_ids list later
-    return list(participant_ids)
+    return [participant_ids]
 
 
 def send_email(view_id, submission_id):
@@ -46,7 +46,7 @@ def send_email(view_id, submission_id):
     status = syn.getSubmissionStatus(submission_id)["status"]
 
     # Get the synapse users to send an e-mail to
-    ids_to_notify = get_participant_ids(syn, submission_id)
+    ids_to_notify = get_participant_id(syn, submission_id)
     ids_to_notify.extend(get_engineer_ids(syn))
 
     # Sends an e-mail notifying participant(s) that the evaluation succeeded
