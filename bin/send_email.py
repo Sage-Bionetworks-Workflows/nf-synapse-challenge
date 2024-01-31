@@ -1,5 +1,8 @@
+#!/usr/bin/env python3
+
 import sys
 import synapseclient
+
 
 def get_engineer_ids(syn):
     """Retrieves the userIds of the current engineering team"""
@@ -11,6 +14,7 @@ def get_engineer_ids(syn):
         engineer_ids.append(id)
 
     return engineer_ids
+
 
 def get_participant_ids(syn, submission_id):
     """
@@ -27,6 +31,7 @@ def get_participant_ids(syn, submission_id):
     # Ensure that the participant_ids returned is a list
     # so we can extend it onto the engineer_ids list later
     return list(participant_ids)
+
 
 def send_email(view_id, submission_id):
     """
