@@ -26,11 +26,11 @@ def get_participant_id(syn, submission_id):
     submission = syn.getSubmission(submission_id, downloadFile=False)
 
     # Get the teamId or userId of submitter
-    participant_ids = submission.get("teamId") or submission.get("userId")
+    participant_id = submission.get("teamId") or submission.get("userId")
 
-    # Ensure that the participant_ids returned is a list
-    # so we can extend it onto the engineer_ids list later
-    return [participant_ids]
+    # Ensure that the participant_id returned is a list
+    # so it can be fed into syn.sendMessage(...) later.
+    return [participant_id]
 
 
 def send_email(view_id, submission_id):
@@ -47,7 +47,6 @@ def send_email(view_id, submission_id):
 
     # Get the synapse users to send an e-mail to
     ids_to_notify = get_participant_id(syn, submission_id)
-    ids_to_notify.extend(get_engineer_ids(syn))
 
     # Sends an e-mail notifying participant(s) that the evaluation succeeded
     #if status == "SCORED":
@@ -55,6 +54,11 @@ def send_email(view_id, submission_id):
                     messageSubject=f"Evaluation Success: {submission_id}",
                     messageBody=f"Submission {submission_id} has been evaluated. View your scores here: https://www.synapse.org/#!Synapse:{view_id}/tables/"
     )
+    # Otherwise, send an error messag to participant(s) and engineers of the
+    # infrastructure
+    # else:
+    #   ids_to_notify.extend(get_engineer_ids(syn))
+    #   syn.sendMessage(userIds=ids_to_notify)
 
 if __name__ == "__main__":
     view_id = sys.argv[1]
