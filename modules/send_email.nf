@@ -18,6 +18,6 @@ process SEND_EMAIL {
 
     script:
     """
-    challengeutils send-email --userids ${user_id} --subject 'Evaluation Status: ${submission_id}' --message 'Your submission ${submission_id} has been evaluated. View your scores here: https://www.synapse.org/#!Synapse:${view_id}/tables/'
+    challengeutils send-email --userids ${user_id} --subject 'Evaluation Success: ${submission_id}' --message 'Submission ${submission_id} has been evaluated. View your scores here: https://www.synapse.org/#!Synapse:${view_id}/tables/'
     """
 }
