@@ -46,8 +46,8 @@ def send_email(view_id, submission_id):
     status = syn.getSubmissionStatus(submission_id)["status"]
 
     # Get the synapse users to send an e-mail to
-    ids_to_notify = get_engineer_ids(syn, submission_id)
-    ids_to_notify.extend(get_participant_ids(syn))
+    ids_to_notify = get_participant_ids(syn, submission_id)
+    ids_to_notify.extend(get_engineer_ids(syn))
 
     # Sends an e-mail notifying participant(s) that the evaluation succeeded
     #if status == "SCORED":
