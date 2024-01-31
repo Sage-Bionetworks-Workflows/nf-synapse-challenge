@@ -14,9 +14,14 @@ process SEND_EMAIL {
     input:
     val view_id
     val submission_id
+    path annotate_after_score from ANNOTATE_SUBMISSION_AFTER_SCORE.output
 
     script:
     """
-    send_email.py '${view_id}' '${submission_id}'
+    if [ -e "$annotate_after_score" ]; then
+        send_email.py '${view_id}' '${submission_id}' 'pass'
+    else
+        send_email.py '${view_id}' '${submission_id}' 'fail'
+    fi
     """
 }

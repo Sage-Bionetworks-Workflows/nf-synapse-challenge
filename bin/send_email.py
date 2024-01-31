@@ -33,7 +33,7 @@ def get_participant_id(syn, submission_id):
     return [participant_id]
 
 
-def send_email(view_id, submission_id):
+def send_email(view_id, submission_id, run_status):
     """
     Sends an e-mail on the status of the individual submission
     to the appropriate recipients:
@@ -49,18 +49,27 @@ def send_email(view_id, submission_id):
     ids_to_notify = get_participant_id(syn, submission_id)
 
     # Sends an e-mail notifying participant(s) that the evaluation succeeded
-    #if status == "SCORED":
-    syn.sendMessage(userIds=ids_to_notify,
-                    messageSubject=f"Evaluation Success: {submission_id}",
-                    messageBody=f"Submission {submission_id} has been evaluated. View your scores here: https://www.synapse.org/#!Synapse:{view_id}/tables/"
-    )
-    # Otherwise, send an error messag to participant(s) and engineers of the
-    # infrastructure
-    # else:
-    #   ids_to_notify.extend(get_engineer_ids(syn))
-    #   syn.sendMessage(userIds=ids_to_notify)
+    if run_status.lower() == "pass":
+      subject = f"Evaluation Success: {submission_id}"
+      body = f"Submission {submission_id} has been evaluated. View your scores here: https://www.synapse.org/#!Synapse:{view_id}/tables/"
+
+      syn.sendMessage(userIds=ids_to_notify,
+                      messageSubject=subject,
+                      messageBody=body
+      )
+
+    # Otherwise, send an error message to participant(s) and engineers of the infrastructure
+    else:
+      #ids_to_notify.extend(get_engineer_ids(syn))
+      subject = f"Evaluation Failed: {submission_id}"
+      body = f"Evaluation failed for Submission {submission_id}. Submission was left with a status of {status}. The infrastructure team has been notified. View your submissions here: https://www.synapse.org/#!Synapse:{view_id}/tables/"
+
+      syn.sendMessage(userIds=ids_to_notify,
+                      messageSubject=subject,
+                      messageBody=body)
 
 if __name__ == "__main__":
     view_id = sys.argv[1]
     submission_id = sys.argv[2]
-    send_email(view_id, submission_id)
+    run_status = sys.argv[3]
+    send_email(view_id, submission_id, run_status)
