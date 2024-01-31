@@ -9,15 +9,14 @@
 // 5. do we want to send an e-mail per submission found (per row in Table view, per channel) or per execution of MODEL_TO_DATA
 process SEND_EMAIL {
     secret "SYNAPSE_AUTH_TOKEN"
-    container "sagebionetworks/challengeutils:v4.2.0"
+    container "sagebionetworks/synapsepythonclient:v2.7.0"
 
     input:
-    val user_id
     val view_id
     val submission_id
 
     script:
     """
-    challengeutils send-email --userids ${user_id} --subject 'Evaluation Success: ${submission_id}' --message 'Submission ${submission_id} has been evaluated. View your scores here: https://www.synapse.org/#!Synapse:${view_id}/tables/'
+    send_email.py '${view_id}' '${submission_id}'
     """
 }
