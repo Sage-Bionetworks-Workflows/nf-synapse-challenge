@@ -1,6 +1,7 @@
 // sends an e-mail to the submitter 
 // questions:
 // 1. do we want to send the e-mail to the whole team or just the individual submitter?
+// A: preference is sending e-mail to team first, then send to individual user_id if team id is not available. send failure e-mails to organizers + participants.
 // 2. if people want to opt-out, how would they be able to?
 // A: they can opt out through the Synapse service since challengutils is calling the py client which is calling the API
 // 3. do we want the e-mail sent at the end of the workflow?
@@ -17,6 +18,6 @@ process SEND_EMAIL {
 
     script:
     """
-    challengeutils send-email --userids ${user_id} --subject 'status of ${submission_id}' --message 'your submission for ${submission_id} passed! submission view ID: ${view_id}'
+    challengeutils send-email --userids ${user_id} --subject 'status of ${submission_id}' --message 'your submission for ${submission_id} passed! view your scores here: https://www.synapse.org/#!Synapse:${view_id}/tables/'
     """
 }
