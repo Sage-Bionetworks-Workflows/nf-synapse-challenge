@@ -60,7 +60,6 @@ def send_email(view_id, submission_id):
 
     # Otherwise, send an error message to participant(s) and engineers of the infrastructure
     else:
-      #ids_to_notify.extend(get_engineer_ids(syn))
       subject = f"Evaluation Failed: {submission_id}"
       body = f"Evaluation failed for Submission {submission_id}. Submission was left with a validation status of {status}. View your submissions here: https://www.synapse.org/#!Synapse:{view_id}/tables/"
 
@@ -71,5 +70,4 @@ def send_email(view_id, submission_id):
 if __name__ == "__main__":
     view_id = sys.argv[1]
     submission_id = sys.argv[2]
-    run_status = sys.argv[3]
-    send_email(view_id, submission_id, run_status)
+    send_email(view_id, submission_id)
