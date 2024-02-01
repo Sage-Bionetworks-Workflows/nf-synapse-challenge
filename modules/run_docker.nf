@@ -11,7 +11,7 @@ process RUN_DOCKER {
     path staged_path
     val cpus
     val memory
-    val ready
+    val NOT ready
 
     output:
     tuple val(submission_id), path('predictions.csv')
