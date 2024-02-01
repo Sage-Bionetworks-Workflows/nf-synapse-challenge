@@ -14,7 +14,7 @@ process SEND_EMAIL {
     input:
     val view_id
     val submission_id
-    val annotate_after_score
+    val annotate_after_score from ANNOTATE_SUBMISSION_AFTER_SCORE.output.optional()
 
     script:
     """
