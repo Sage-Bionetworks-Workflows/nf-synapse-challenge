@@ -4,18 +4,6 @@ import sys
 import synapseclient
 
 
-def get_engineer_ids(syn):
-    """Retrieves the userIds of the current engineering team"""
-    engineer_names = ["Jenny Medina", "Brad MacDonald", "Thomas Yu"]
-    engineer_ids = []
-
-    for engineer in engineer_names:
-        id = syn.getUserProfile(engineer)["ownerId"]
-        engineer_ids.append(id)
-
-    return engineer_ids
-
-
 def get_participant_id(syn, submission_id):
     """
     Retrieves the teamId of the participating team that made
