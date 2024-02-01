@@ -12,7 +12,7 @@ if __name__ == "__main__":
     else:
         with open(predictions_path, "r") as sub_file:
             message = sub_file.read()
-        prediction_status = "INVALID"
+        prediction_status = "VALIDATED"
         if message is None:
             prediction_status = "INVALID"
             invalid_reasons.append("Predicitons file is empty")
