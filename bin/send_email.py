@@ -24,11 +24,7 @@ def get_participant_id(syn, submission_id):
 def send_email(view_id, submission_id):
     """
     Sends an e-mail on the status of the individual submission
-    to the appropriate recipients:
-    * If the evaluation was successful, sends an e-mail to the participant
-      who made the submission.
-    * If the evaluation was unsuccessful, sends an e-mail to the participant
-      and the engineering team responsible for the Challenge submission infrastructure.
+    to the participant team or participant individual.
     """
     syn = synapseclient.login()
     status = syn.getSubmissionStatus(submission_id)["submissionAnnotations"]["validation_status"]
