@@ -43,13 +43,13 @@ def send_email(view_id, submission_id):
       and the engineering team responsible for the Challenge submission infrastructure.
     """
     syn = synapseclient.login()
-    status = syn.getSubmissionStatus(submission_id)["validation_status"]
+    status = syn.getSubmissionStatus(submission_id)["submissionAnnotations"]["validation_status"]
 
     # Get the synapse users to send an e-mail to
     ids_to_notify = get_participant_id(syn, submission_id)
 
     # Sends an e-mail notifying participant(s) that the evaluation succeeded
-    if status == "VALIDATED":
+    if status == ["VALIDATED"]:
       subject = f"Evaluation Success: {submission_id}"
       body = f"Submission {submission_id} has been evaluated. View your scores here: https://www.synapse.org/#!Synapse:{view_id}/tables/"
 
