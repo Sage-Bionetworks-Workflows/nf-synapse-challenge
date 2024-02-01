@@ -53,19 +53,14 @@ def send_email(view_id, submission_id):
       subject = f"Evaluation Success: {submission_id}"
       body = f"Submission {submission_id} has been evaluated. View your scores here: https://www.synapse.org/#!Synapse:{view_id}/tables/"
 
-      syn.sendMessage(userIds=ids_to_notify,
-                      messageSubject=subject,
-                      messageBody=body
-      )
-
     # Otherwise, send an error message to participant(s) and engineers of the infrastructure
     else:
       subject = f"Evaluation Failed: {submission_id}"
       body = f"Evaluation failed for Submission {submission_id}. Submission was left with a validation status of {status}. View your submissions here: https://www.synapse.org/#!Synapse:{view_id}/tables/"
 
-      syn.sendMessage(userIds=ids_to_notify,
-                      messageSubject=subject,
-                      messageBody=body)
+    syn.sendMessage(userIds=ids_to_notify,
+                    messageSubject=subject,
+                    messageBody=body)
 
 if __name__ == "__main__":
     view_id = sys.argv[1]
