@@ -37,14 +37,14 @@ workflow MODEL_TO_DATA {
     flag processFailed
 
     // Begin workflow
-    SYNAPSE_STAGE(params.input_id).onError { processFailed = true }
-    GET_SUBMISSIONS(params.view_id).onError { processFailed = true }
+    SYNAPSE_STAGE(params.input_id).exitStatus { processFailed = it != 0 }
+    GET_SUBMISSIONS(params.view_id).exitStatus { processFailed = it != 0 }
     image_ch = GET_SUBMISSIONS.output 
         .splitCsv(header:true) 
         .map { row -> tuple(row.submission_id, row.image_id) }
-    UPDATE_SUBMISSION_STATUS_BEFORE_RUN(image_ch.map { tuple(it[0], "EVALUATION_IN_PROGRESS") }).onError { processFailed = true }
-    RUN_DOCKER(image_ch, SYNAPSE_STAGE.output, params.cpus, params.memory, UPDATE_SUBMISSION_STATUS_BEFORE_RUN.output).onError { processFailed = true }
-    UPDATE_SUBMISSION_STATUS_AFTER_RUN(RUN_DOCKER.output.map { tuple(it[1], "ACCEPTED") }).onError { processFailed = true }
+    UPDATE_SUBMISSION_STATUS_BEFORE_RUN(image_ch.map { tuple(it[0], "EVALUATION_IN_PROGRESS") }).exitStatus { processFailed = it != 0 }
+    RUN_DOCKER(image_ch, SYNAPSE_STAGE.output, params.cpus, params.memory, UPDATE_SUBMISSION_STATUS_BEFORE_RUN.output).exitStatus { processFailed = it != 0 }
+    UPDATE_SUBMISSION_STATUS_AFTER_RUN(RUN_DOCKER.output.map { tuple(it[1], "ACCEPTED") }).exitStatus { processFailed = it != 0 }
     // VALIDATE(RUN_DOCKER.output, UPDATE_SUBMISSION_STATUS_AFTER_RUN.output, params.validation_script)
     // UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE(VALIDATE.output.map { tuple(it[0], it[2]) })
     // ANNOTATE_SUBMISSION_AFTER_VALIDATE(VALIDATE.output)
