@@ -14,7 +14,8 @@ process RUN_DOCKER {
     val notready
 
     output:
-    tuple val(submission_id), path('predictions.csv')
+    //tuple val(submission_id), path('predictions.csv')
+    tuple val(submission_id)
 
     script:
     """
