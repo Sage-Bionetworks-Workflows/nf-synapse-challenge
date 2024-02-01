@@ -14,14 +14,10 @@ process SEND_EMAIL {
     input:
     val view_id
     val submission_id
-    val annotate_after_score
+    val ready
 
     script:
     """
-    if [ "$annotate_after_score" == "ready" ]; then
-        send_email.py '${view_id}' '${submission_id}' 'pass'
-    else
-        send_email.py '${view_id}' '${submission_id}' 'fail'
-    fi
+    send_email.py '${view_id}' '${submission_id}'
     """
 }

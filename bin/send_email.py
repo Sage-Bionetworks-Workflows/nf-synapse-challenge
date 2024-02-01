@@ -33,7 +33,7 @@ def get_participant_id(syn, submission_id):
     return [participant_id]
 
 
-def send_email(view_id, submission_id, run_status):
+def send_email(view_id, submission_id):
     """
     Sends an e-mail on the status of the individual submission
     to the appropriate recipients:
@@ -43,13 +43,13 @@ def send_email(view_id, submission_id, run_status):
       and the engineering team responsible for the Challenge submission infrastructure.
     """
     syn = synapseclient.login()
-    status = syn.getSubmissionStatus(submission_id)["status"]
+    status = syn.getSubmissionStatus(submission_id)["validation_status"]
 
     # Get the synapse users to send an e-mail to
     ids_to_notify = get_participant_id(syn, submission_id)
 
     # Sends an e-mail notifying participant(s) that the evaluation succeeded
-    if run_status.lower() == "pass":
+    if status == "VALIDATED":
       subject = f"Evaluation Success: {submission_id}"
       body = f"Submission {submission_id} has been evaluated. View your scores here: https://www.synapse.org/#!Synapse:{view_id}/tables/"
 
@@ -62,7 +62,7 @@ def send_email(view_id, submission_id, run_status):
     else:
       #ids_to_notify.extend(get_engineer_ids(syn))
       subject = f"Evaluation Failed: {submission_id}"
-      body = f"Evaluation failed for Submission {submission_id}. Submission was left with a status of {status}. The infrastructure team has been notified. View your submissions here: https://www.synapse.org/#!Synapse:{view_id}/tables/"
+      body = f"Evaluation failed for Submission {submission_id}. Submission was left with a validation status of {status}. View your submissions here: https://www.synapse.org/#!Synapse:{view_id}/tables/"
 
       syn.sendMessage(userIds=ids_to_notify,
                       messageSubject=subject,

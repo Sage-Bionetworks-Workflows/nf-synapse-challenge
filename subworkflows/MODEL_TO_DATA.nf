@@ -37,15 +37,15 @@ workflow MODEL_TO_DATA {
     image_ch = GET_SUBMISSIONS.output 
         .splitCsv(header:true) 
         .map { row -> tuple(row.submission_id, row.image_id) }
-    UPDATE_SUBMISSION_STATUS_BEFORE_RUN(image_ch.map { tuple(it[0], "EVALUATION_IN_PROGRESS") }).onError { SEND_EMAIL(params.view_id, image_ch.map { it[0] }, "n/a") }
-    RUN_DOCKER(image_ch, SYNAPSE_STAGE.output, params.cpus, params.memory, UPDATE_SUBMISSION_STATUS_BEFORE_RUN.output).onError { SEND_EMAIL(params.view_id, image_ch.map { it[0] }, "n/a") }
-    UPDATE_SUBMISSION_STATUS_AFTER_RUN(RUN_DOCKER.output.map { tuple(it[1], "ACCEPTED") }).onError { SEND_EMAIL(params.view_id, image_ch.map { it[0] }, "n/a") }
-    // VALIDATE(RUN_DOCKER.output, UPDATE_SUBMISSION_STATUS_AFTER_RUN.output, params.validation_script)
-    // UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE(VALIDATE.output.map { tuple(it[0], it[2]) })
+    UPDATE_SUBMISSION_STATUS_BEFORE_RUN(image_ch.map { tuple(it[0], "EVALUATION_IN_PROGRESS") })
+    RUN_DOCKER(image_ch, SYNAPSE_STAGE.output, params.cpus, params.memory, UPDATE_SUBMISSION_STATUS_BEFORE_RUN.output)
+    UPDATE_SUBMISSION_STATUS_AFTER_RUN(RUN_DOCKER.output.map { tuple(it[0], "ACCEPTED") })
+    VALIDATE(RUN_DOCKER.output, UPDATE_SUBMISSION_STATUS_AFTER_RUN.output, params.validation_script)
+    UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE(VALIDATE.output.map { tuple(it[0], it[2]) })
     // ANNOTATE_SUBMISSION_AFTER_VALIDATE(VALIDATE.output)
     // SCORE(VALIDATE.output, UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE.output, ANNOTATE_SUBMISSION_AFTER_VALIDATE.output, params.scoring_script)
     // UPDATE_SUBMISSION_STATUS_AFTER_SCORE(SCORE.output.map { tuple(it[0], it[2]) })
     // ANNOTATE_SUBMISSION_AFTER_SCORE(SCORE.output)
     // SEND_EMAIL(params.view_id, image_ch.map { it[0] }, ANNOTATE_SUBMISSION_AFTER_SCORE.output)
-    SEND_EMAIL(params.view_id, image_ch.map { it[0] }, UPDATE_SUBMISSION_STATUS_AFTER_RUN.output)
+    SEND_EMAIL(params.view_id, image_ch.map { it[0] }, UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE.output)
 }
