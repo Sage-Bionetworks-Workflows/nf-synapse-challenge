@@ -32,19 +32,14 @@ include { ANNOTATE_SUBMISSION as ANNOTATE_SUBMISSION_AFTER_SCORE } from '../modu
 include { SEND_EMAIL } from '../modules/send_email.nf'
 
 workflow MODEL_TO_DATA {
-
-    // Flag for tracking failures
-    flag processFailed
-
-    // Begin workflow
-    SYNAPSE_STAGE(params.input_id).exitStatus { processFailed = it != 0 }
-    GET_SUBMISSIONS(params.view_id).exitStatus { processFailed = it != 0 }
+    SYNAPSE_STAGE(params.input_id)
+    GET_SUBMISSIONS(params.view_id)
     image_ch = GET_SUBMISSIONS.output 
         .splitCsv(header:true) 
         .map { row -> tuple(row.submission_id, row.image_id) }
-    UPDATE_SUBMISSION_STATUS_BEFORE_RUN(image_ch.map { tuple(it[0], "EVALUATION_IN_PROGRESS") }).exitStatus { processFailed = it != 0 }
-    RUN_DOCKER(image_ch, SYNAPSE_STAGE.output, params.cpus, params.memory, UPDATE_SUBMISSION_STATUS_BEFORE_RUN.output).exitStatus { processFailed = it != 0 }
-    UPDATE_SUBMISSION_STATUS_AFTER_RUN(RUN_DOCKER.output.map { tuple(it[1], "ACCEPTED") }).exitStatus { processFailed = it != 0 }
+    UPDATE_SUBMISSION_STATUS_BEFORE_RUN(image_ch.map { tuple(it[0], "EVALUATION_IN_PROGRESS") })
+    RUN_DOCKER(image_ch, SYNAPSE_STAGE.output, params.cpus, params.memory, UPDATE_SUBMISSION_STATUS_BEFORE_RUN.output)
+    UPDATE_SUBMISSION_STATUS_AFTER_RUN(RUN_DOCKER.output.map { tuple(it[1], "ACCEPTED") })
     // VALIDATE(RUN_DOCKER.output, UPDATE_SUBMISSION_STATUS_AFTER_RUN.output, params.validation_script)
     // UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE(VALIDATE.output.map { tuple(it[0], it[2]) })
     // ANNOTATE_SUBMISSION_AFTER_VALIDATE(VALIDATE.output)
@@ -52,5 +47,5 @@ workflow MODEL_TO_DATA {
     // UPDATE_SUBMISSION_STATUS_AFTER_SCORE(SCORE.output.map { tuple(it[0], it[2]) })
     // ANNOTATE_SUBMISSION_AFTER_SCORE(SCORE.output)
     // SEND_EMAIL(params.view_id, image_ch.map { it[0] }, ANNOTATE_SUBMISSION_AFTER_SCORE.output)
-    SEND_EMAIL(params.view_id, image_ch.map { it[0] }, UPDATE_SUBMISSION_STATUS_AFTER_RUN.output).when { !(processFailed) }
+    SEND_EMAIL(params.view_id, image_ch.map { it[0] }, UPDATE_SUBMISSION_STATUS_AFTER_RUN.output).resume()
 }
