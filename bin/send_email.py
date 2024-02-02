@@ -14,7 +14,7 @@ def get_participant_id(syn: synapseclient.Synapse, submission_id: str) -> List[s
 
     Arguments:
       syn: A Synapse Python client instance
-      submission_id : The ID for an individual submission within an evaluation queue
+      submission_id: The ID for an individual submission within an evaluation queue
 
     Returns:
       Returns the synID of a team or individual participant
@@ -30,10 +30,14 @@ def get_participant_id(syn: synapseclient.Synapse, submission_id: str) -> List[s
     return [participant_id]
 
 
-def send_email(view_id, submission_id):
+def send_email(view_id: str, submission_id: str):
     """
     Sends an e-mail on the status of the individual submission
     to the participant team or participant individual.
+
+    Arguments:
+      view_id: The view Id of the Submission View on Synapse
+      submission_id: The ID for an individual submission within an evaluation queue
     """
     syn = synapseclient.login()
     status = syn.getSubmissionStatus(submission_id)["submissionAnnotations"]["validation_status"]
