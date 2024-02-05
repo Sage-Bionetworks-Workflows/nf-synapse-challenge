@@ -5,8 +5,6 @@ import synapseclient
 import synapseutils
 import sys
 
-from synapseclient import Folder
-
 
 def is_new_submitter(syn, submitter_id, parent_folder_id):
     """
@@ -37,7 +35,7 @@ def build_subfolder(syn, folder_name, parent_folder):
     """
 
     # Create Folder object
-    subfolder = Folder(
+    subfolder = synapseclient.Folder(
         name=folder_name, parent=parent_folder
     )
     subfolder = syn.store(obj=subfolder)
