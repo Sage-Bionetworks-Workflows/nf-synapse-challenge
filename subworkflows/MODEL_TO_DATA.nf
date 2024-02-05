@@ -2,6 +2,8 @@
 // The tower space is PHI safe
 nextflow.enable.dsl = 2
 
+// Project Name (case-sensitive)
+params.project_name = "PEGS DREAM Challenge"
 // Synapse ID for Submission View
 params.view_id = "syn53461697"
 // Synapse ID for Input Data folder
@@ -38,15 +40,15 @@ workflow MODEL_TO_DATA {
         .splitCsv(header:true) 
         .map { row -> tuple(row.submission_id, row.image_id) }
     UPDATE_SUBMISSION_STATUS_BEFORE_RUN(image_ch.map { tuple(it[0], "EVALUATION_IN_PROGRESS") })
-    BUILD_SUBFOLDERS()
-    RUN_DOCKER(image_ch, SYNAPSE_STAGE.output, params.cpus, params.memory, UPDATE_SUBMISSION_STATUS_BEFORE_RUN.output)
+    BUILD_SUBFOLDERS(image_ch.map { tuple(it[0], "build") }, params.project_name, UPDATE_SUBMISSION_STATUS_BEFORE_RUN.output)
+    RUN_DOCKER(image_ch, SYNAPSE_STAGE.output, params.cpus, params.memory, BUILD_SUBFOLDERS.output)
     UPDATE_SUBMISSION_STATUS_AFTER_RUN(RUN_DOCKER.output.map { tuple(it[0], "ACCEPTED") })
     VALIDATE(RUN_DOCKER.output, UPDATE_SUBMISSION_STATUS_AFTER_RUN.output, params.validation_script)
     UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE(VALIDATE.output.map { tuple(it[0], it[2]) })
     ANNOTATE_SUBMISSION_AFTER_VALIDATE(VALIDATE.output)
     SCORE(VALIDATE.output, UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE.output, ANNOTATE_SUBMISSION_AFTER_VALIDATE.output, params.scoring_script)
-    UPDATE_SUBFOLDERS()
     UPDATE_SUBMISSION_STATUS_AFTER_SCORE(SCORE.output.map { tuple(it[0], it[2]) })
+    UPDATE_SUBFOLDERS(image_ch.map { tuple(it[0], "update") }, params.project_name, UPDATE_SUBMISSION_STATUS_AFTER_SCORE.output)
     ANNOTATE_SUBMISSION_AFTER_SCORE(SCORE.output)
     SEND_EMAIL(params.view_id, image_ch.map { it[0] }, ANNOTATE_SUBMISSION_AFTER_SCORE.output)
 }
