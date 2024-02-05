@@ -65,8 +65,8 @@ def get_parent_and_project_folder_id(syn, parent_folder, project_name):
 
 
 def build_update_subfolders(
-        project_name, submission_id, build_or_update, subfolders=["workflow_logs", "permissions"],
-        only_admins="permissions", parent_folder="Logs"
+        project_name, submission_id, build_or_update, subfolders=["workflow_logs", "predictions"],
+        only_admins="predictions", parent_folder="Logs"
         ):
     """
     This function can either build a new set of log subfolders under 
