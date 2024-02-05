@@ -19,12 +19,14 @@ params.validation_script = "validate.py"
 include { SYNAPSE_STAGE } from '../modules/synapse_stage.nf'
 include { GET_SUBMISSIONS } from '../modules/get_submissions.nf'
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_BEFORE_RUN } from '../modules/update_submission_status.nf'
+include { CREATE_LOGS as BUILD_SUBFOLDERS } from '../modules/create_logs.nf'
 include { RUN_DOCKER } from '../modules/run_docker.nf'
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_AFTER_RUN } from '../modules/update_submission_status.nf'
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE } from '../modules/update_submission_status.nf'
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_AFTER_SCORE } from '../modules/update_submission_status.nf'
 include { VALIDATE } from '../modules/validate.nf'
 include { SCORE } from '../modules/score.nf'
+include { CREATE_LOGS as UPDATE_SUBFOLDERS } from '../modules/create_logs.nf'
 include { ANNOTATE_SUBMISSION as ANNOTATE_SUBMISSION_AFTER_VALIDATE } from '../modules/annotate_submission.nf'
 include { ANNOTATE_SUBMISSION as ANNOTATE_SUBMISSION_AFTER_SCORE } from '../modules/annotate_submission.nf'
 include { SEND_EMAIL } from '../modules/send_email.nf'
@@ -36,12 +38,14 @@ workflow MODEL_TO_DATA {
         .splitCsv(header:true) 
         .map { row -> tuple(row.submission_id, row.image_id) }
     UPDATE_SUBMISSION_STATUS_BEFORE_RUN(image_ch.map { tuple(it[0], "EVALUATION_IN_PROGRESS") })
+    BUILD_SUBFOLDERS()
     RUN_DOCKER(image_ch, SYNAPSE_STAGE.output, params.cpus, params.memory, UPDATE_SUBMISSION_STATUS_BEFORE_RUN.output)
     UPDATE_SUBMISSION_STATUS_AFTER_RUN(RUN_DOCKER.output.map { tuple(it[0], "ACCEPTED") })
     VALIDATE(RUN_DOCKER.output, UPDATE_SUBMISSION_STATUS_AFTER_RUN.output, params.validation_script)
     UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE(VALIDATE.output.map { tuple(it[0], it[2]) })
     ANNOTATE_SUBMISSION_AFTER_VALIDATE(VALIDATE.output)
     SCORE(VALIDATE.output, UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE.output, ANNOTATE_SUBMISSION_AFTER_VALIDATE.output, params.scoring_script)
+    UPDATE_SUBFOLDERS()
     UPDATE_SUBMISSION_STATUS_AFTER_SCORE(SCORE.output.map { tuple(it[0], it[2]) })
     ANNOTATE_SUBMISSION_AFTER_SCORE(SCORE.output)
     SEND_EMAIL(params.view_id, image_ch.map { it[0] }, ANNOTATE_SUBMISSION_AFTER_SCORE.output)
