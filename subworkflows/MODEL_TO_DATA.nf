@@ -3,9 +3,9 @@
 nextflow.enable.dsl = 2
 
 // Project Name (case-sensitive)
-params.project_name = "PEGS DREAM Challenge"
+params.project_name = "DPE-testing"
 // Synapse ID for Submission View
-params.view_id = "syn53461697"
+params.view_id = "syn53462164"
 // Synapse ID for Input Data folder
 params.input_id = "syn51390589"
 // Default CPUs to dedicate to RUN_DOCKER
