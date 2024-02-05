@@ -106,5 +106,7 @@ def build_update_subfolders(
 
 
 if __name__ == "__main__":
-    build_or_update = sys.argv[1]
-    build_update_subfolders(build_or_update)
+    project_name = sys.argv[1]
+    submission_id = sys.argv[2]
+    build_or_update = sys.argv[3]
+    build_update_subfolders(project_name, submission_id, build_or_update)
