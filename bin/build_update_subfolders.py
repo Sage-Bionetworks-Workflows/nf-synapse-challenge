@@ -16,9 +16,12 @@ def is_new_submitter(syn, submitter_id, parent_folder_id):
     (i.e. The folders 1 level below the Parent-Folder, that are named after the submitter's synapse ID) to
     verify whether or not a submitter already has an existing folder created.
     """
+
     submitter_subfolders = []
     # Setting ``include_types`` to only Folders so that Files are excluded, and walk is faster.
-    for _, level1_subfolders, _ in synapseutils.walk(syn=syn, synId=parent_folder_id, includeTypes=["folder"]):
+    for _, level1_subfolders, _ in synapseutils.walk(syn=syn, synId=parent_folder_id,
+                                                     includeTypes=["folder"]
+                                                     ):
         for subfolder in level1_subfolders:
             # ``folder`` is a tuple structured as follows: (Folder name, synID). Let's just get the Folder name.
             submitter_subfolders.append(subfolder[0])
@@ -33,7 +36,7 @@ def build_subfolder(syn, folder_name, parent_folder):
     """
     """
 
-    # Create Folder object for
+    # Create Folder object
     subfolder = Folder(
         name=folder_name, parent=parent_folder
     )
@@ -47,22 +50,26 @@ def build_subfolder(syn, folder_name, parent_folder):
 #     """"""
 
 
-def update_permissions(syn):
+def update_permissions(syn, subfolder, project_folder_id, access_type=["CREATE", "READ", "DOWNLOAD", "UPDATE", "DELETE"]):
     """Updates the permissions (local share settings) of the given Folder/File"""
+    organizers_id = syn.get(project_folder_id, downloadFile=False).createdBy
     syn.setPermissions(
-        synid, principalId=pid, accessType=["READ", "DOWNLOAD"]
+        subfolder, principalId=organizers_id, accessType=access_type
         )
 
 
-def get_parent_folder_id(syn, parent_folder, project_name):
+def get_parent_and_project_folder_id(syn, parent_folder, project_name):
     """"""
     project_id = syn.findEntityId(name=project_name)
     parent_folder_id = syn.findEntityId(name=parent_folder, parent=project_id)
 
-    return parent_folder_id
+    return parent_folder_id, project_id
 
 
-def build_update_subfolders(project_name, submission_id, build_or_update, parent_folder="Logs", subfolders=["workflow_logs", "permissions"], only_admins="permissions"):
+def build_update_subfolders(
+        project_name, submission_id, build_or_update, subfolders=["workflow_logs", "permissions"],
+        only_admins="permissions", parent_folder="Logs"
+        ):
     """
     This function can either build a new set of log subfolders under 
     a participant folder, or update an existing participant folder with
@@ -77,7 +84,7 @@ def build_update_subfolders(project_name, submission_id, build_or_update, parent
     # Establish access to the Synapse API
     syn = synapseclient.login()
 
-    parent_folder_id = get_parent_folder_id(syn, parent_folder, project_name)
+    parent_folder_id, project_id = get_parent_and_project_folder_id(syn, parent_folder, project_name)
     submitter_id = send_email.get_participant_id(syn, submission_id)[0]
 
     if build_or_update == "build" and is_new_submitter(syn, submitter_id, parent_folder_id):
@@ -90,7 +97,7 @@ def build_update_subfolders(project_name, submission_id, build_or_update, parent
             level2_subfolder = build_subfolder(syn, folder_name=level2_subfolder, parent_folder=level1_subfolder)
             # Update the permissions for the folder that should only be accessed by Challenge admins.
             if level2_subfolder.name == only_admins:
-                update_permissions(syn, )
+                update_permissions(syn, level2_subfolder, project_id)
 
 
     # TODO: https://sagebionetworks.jira.com/browse/IBCDPE-809
