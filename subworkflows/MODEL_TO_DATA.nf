@@ -28,7 +28,6 @@ include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE } 
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_AFTER_SCORE } from '../modules/update_submission_status.nf'
 include { VALIDATE } from '../modules/validate.nf'
 include { SCORE } from '../modules/score.nf'
-include { BUILD_UPDATE_SUBFOLDERS as UPDATE_SUBFOLDERS } from '../modules/build_update_subfolders.nf'
 include { ANNOTATE_SUBMISSION as ANNOTATE_SUBMISSION_AFTER_VALIDATE } from '../modules/annotate_submission.nf'
 include { ANNOTATE_SUBMISSION as ANNOTATE_SUBMISSION_AFTER_SCORE } from '../modules/annotate_submission.nf'
 include { SEND_EMAIL } from '../modules/send_email.nf'
@@ -48,7 +47,6 @@ workflow MODEL_TO_DATA {
     ANNOTATE_SUBMISSION_AFTER_VALIDATE(VALIDATE.output)
     SCORE(VALIDATE.output, UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE.output, ANNOTATE_SUBMISSION_AFTER_VALIDATE.output, params.scoring_script)
     UPDATE_SUBMISSION_STATUS_AFTER_SCORE(SCORE.output.map { tuple(it[0], it[2]) })
-    UPDATE_SUBFOLDERS(image_ch.map { tuple(it[0], "update") }, params.project_name, UPDATE_SUBMISSION_STATUS_AFTER_SCORE.output)
     ANNOTATE_SUBMISSION_AFTER_SCORE(SCORE.output)
     SEND_EMAIL(params.view_id, image_ch.map { it[0] }, ANNOTATE_SUBMISSION_AFTER_SCORE.output)
 }
