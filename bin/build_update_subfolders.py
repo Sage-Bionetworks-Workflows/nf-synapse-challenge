@@ -8,29 +8,6 @@ import sys
 from typing import Any, List, Tuple, Union
 
 
-def is_new_submitter(syn, submitter_id, parent_folder_id):
-    """
-    Used to check if the submitter is new or already has an existing folder.
-
-    This function uses ``synapseutils.walk`` to crawl through the level 1 subfolders
-    (i.e. The folders 1 level below the Parent-Folder, that are named after the submitter's synapse ID) to
-    verify whether or not a submitter already has an existing folder created.
-    """
-
-    submitter_subfolders = []
-    # Setting ``include_types`` to only Folders so that Files are excluded, and walk is faster.
-    for _, level1_subfolders, _ in synapseutils.walk(syn=syn, synId=parent_folder_id,
-                                                     includeTypes=["folder"]
-                                                     ):
-        for folder_name, synid in level1_subfolders:
-            submitter_subfolders.append(folder_name)
-
-    if submitter_id in submitter_subfolders:
-        return False
-
-    return True
-
-
 def build_subfolder(syn: synapseclient.Synapse, folder_name: str, parent_folder: Union[str, synapseclient.Entity]) -> synapseclient.Entity:
     """
     Builds a subfolder under the designated ``parent_folder``.
@@ -99,7 +76,7 @@ def build_update_subfolders(
         only_admins: str = "predictions", parent_folder: str = "Logs"
         ):
     """
-    This function can either build a new set of log subfolders under 
+    This function can either build/rebuild a set of log subfolders under 
     a participant folder, or update an existing participant folder with
     new ancilliary files.
 
@@ -127,7 +104,7 @@ def build_update_subfolders(
     parent_folder_id, project_id = get_parent_and_project_folder_id(syn, parent_folder, project_name)
     submitter_id = send_email.get_participant_id(syn, submission_id)[0]
 
-    if build_or_update == "build" and is_new_submitter(syn, submitter_id, parent_folder_id):
+    if build_or_update == "build":
 
         # Creating the level 1 (directly under Parent-Folder/) subfolder, which is named
         # after the submitters' team/userIds.
