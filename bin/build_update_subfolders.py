@@ -5,7 +5,12 @@ import synapseclient
 import synapseutils
 import sys
 
-from typing import Any, List, Tuple, Union
+from typing import Any, List, NamedTuple, Union
+
+
+class SynapseIds(NamedTuple):
+    parent_folder_id: str
+    project_id: str
 
 
 def build_subfolder(syn: synapseclient.Synapse, folder_name: str, parent_folder: Union[str, synapseclient.Entity]) -> synapseclient.Entity:
@@ -59,7 +64,7 @@ def update_permissions(syn: synapseclient.Synapse, subfolder: Union[str, synapse
             )
 
 
-def get_parent_and_project_folder_id(syn: synapseclient.Synapse, parent_folder: str, project_name: str) -> Tuple[str, str]:
+def get_parent_and_project_folder_id(syn: synapseclient.Synapse, parent_folder: str, project_name: str) -> SynapseIds:
     """
     Retrieves the Synapse IDs of the Project and Parent Folder.
 
@@ -74,7 +79,7 @@ def get_parent_and_project_folder_id(syn: synapseclient.Synapse, parent_folder: 
     project_id = syn.findEntityId(name=project_name)
     parent_folder_id = syn.findEntityId(name=parent_folder, parent=project_id)
 
-    return parent_folder_id, project_id
+    return SynapseIds(parent_folder_id=parent_folder_id, project_id=project_id)
 
 
 def build_update_subfolders(
