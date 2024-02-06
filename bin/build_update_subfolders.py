@@ -20,9 +20,8 @@ def is_new_submitter(syn, submitter_id, parent_folder_id):
     for _, level1_subfolders, _ in synapseutils.walk(syn=syn, synId=parent_folder_id,
                                                      includeTypes=["folder"]
                                                      ):
-        for subfolder in level1_subfolders:
-            # ``folder`` is a tuple structured as follows: (Folder name, synID). Let's just get the Folder name.
-            submitter_subfolders.append(subfolder[0])
+        for folder_name, synid in level1_subfolders:
+            submitter_subfolders.append(folder_name)
 
     if submitter_id in submitter_subfolders:
         return False
