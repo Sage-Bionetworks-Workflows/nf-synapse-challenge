@@ -5,6 +5,8 @@ import synapseclient
 import synapseutils
 import sys
 
+from typing import Any, List, Tuple, Union
+
 
 def is_new_submitter(syn, submitter_id, parent_folder_id):
     """
@@ -29,8 +31,17 @@ def is_new_submitter(syn, submitter_id, parent_folder_id):
     return True
 
 
-def build_subfolder(syn, folder_name, parent_folder):
+def build_subfolder(syn: synapseclient.Synapse, folder_name: str, parent_folder: Union[str, synapseclient.Entity]) -> synapseclient.Entity:
     """
+    Builds a subfolder under the designated ``parent_folder``.
+
+    Arguments:
+        syn: A Synapse Python client instance
+        folder_name: The name of the subfolder to be created
+        parent_folder: A synapse Id or Entity of the parent folder under which the subfolder will live
+
+    Returns:
+        The created Synapse Folder entity
     """
 
     # Create Folder object
@@ -47,16 +58,36 @@ def build_subfolder(syn, folder_name, parent_folder):
 #     """"""
 
 
-def update_permissions(syn, subfolder, project_folder_id, access_type=["CREATE", "READ", "DOWNLOAD", "UPDATE", "DELETE"]):
-    """Updates the permissions (local share settings) of the given Folder/File"""
+def update_permissions(syn: synapseclient.Synapse, subfolder: Union[str, synapseclient.Entity],
+                       project_folder_id: str, access_type: Any = ["CREATE", "READ", "DOWNLOAD", "UPDATE", "DELETE"]):
+    """
+    Updates the permissions (local share settings) of the given Folder/File to grant the creators of the Project
+    unique permissions.
+
+    Arguments:
+        syn: A Synapse Python client instance
+        subfolder: The Folder whose permissions will be updated
+        project_folder_id: The Project Synapse ID
+        access_type: Type of permission to be granted
+    """
     organizers_id = syn.get(project_folder_id, downloadFile=False).createdBy
     syn.setPermissions(
         subfolder, principalId=organizers_id, accessType=access_type
         )
 
 
-def get_parent_and_project_folder_id(syn, parent_folder, project_name):
-    """"""
+def get_parent_and_project_folder_id(syn: synapseclient.Synapse, parent_folder: str, project_name: str) -> Tuple[str, str]:
+    """
+    Retrieves the Synapse IDs of the Project and Parent Folder.
+
+    Arguments:
+        syn: A Synapse Python client instance
+        parent_folder: The name of the parent folder
+        project_name: The name of the Project
+
+    Returns:
+        A tuple containing the Project Synapse ID and the Parent Folder ID
+    """
     project_id = syn.findEntityId(name=project_name)
     parent_folder_id = syn.findEntityId(name=parent_folder, parent=project_id)
 
@@ -64,19 +95,31 @@ def get_parent_and_project_folder_id(syn, parent_folder, project_name):
 
 
 def build_update_subfolders(
-        project_name, submission_id, build_or_update, subfolders=["workflow_logs", "predictions"],
-        only_admins="predictions", parent_folder="Logs"
+        project_name: str, submission_id: str, build_or_update: str, subfolders: List[str] = ["workflow_logs", "predictions"],
+        only_admins: str = "predictions", parent_folder: str = "Logs"
         ):
     """
     This function can either build a new set of log subfolders under 
     a participant folder, or update an existing participant folder with
     new ancilliary files.
 
-    The Folder structure is as follows:
+    The current Challenge Folder structure is as follows:
     >Parent-Folder/
     >>Level 1 Subfolder (Submitter-Folder)/
     >>>Level 2 Subfolder/
     >>>> ...
+
+    Arguments:
+        project_name: The name of the Project
+        submission_id: The Submission ID of the submission being processed
+        build_or_update: Determines whether the Folder structure will be built
+                         from scratch, or updated with new output files. Value
+                         can either be ''build'' or ''update''.
+        subfolders: The subfolders to be created under the parent folder.
+        only_admins: The name of the subfolder that will have local share settings
+                     differing from the other subfolders.
+        parent_folder: The name of the parent folder. Default is ''Logs''.
+
     """
     # Establish access to the Synapse API
     syn = synapseclient.login()
