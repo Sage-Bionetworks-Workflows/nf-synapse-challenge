@@ -36,10 +36,11 @@ def build_subfolder(syn: synapseclient.Synapse, folder_name: str, parent_folder:
 
 
 def update_permissions(syn: synapseclient.Synapse, subfolder: Union[str, synapseclient.Entity],
-                       project_folder_id: str, access_type: Any = ["CREATE", "READ", "DOWNLOAD", "UPDATE", "DELETE"]):
+                       project_folder_id: str, access_type: Any = []):
     """
-    Updates the permissions (local share settings) of the given Folder/File to grant the creators of the Project
-    unique permissions.
+    Updates the permissions (local share settings) of the given Folder/File to change access for all challenge participants
+    and the public.
+    Default is to revoke all access types.
 
     Arguments:
         syn: A Synapse Python client instance
@@ -47,10 +48,15 @@ def update_permissions(syn: synapseclient.Synapse, subfolder: Union[str, synapse
         project_folder_id: The Project Synapse ID
         access_type: Type of permission to be granted
     """
-    organizers_id = syn.get(project_folder_id, downloadFile=False).createdBy
-    syn.setPermissions(
-        subfolder, principalId=organizers_id, accessType=access_type
-        )
+    
+    all_participants = syn.restGET(f"/entity/{project_folder_id}/challenge").get('participantTeamId')
+    registered_users = "273948"
+    public = "273949"
+    # Revoke permissions on admin-only subfolder for all participants
+    for id in [all_participants, registered_users, public]:
+        syn.setPermissions(
+            subfolder, principalId=id, accessType=access_type
+            )
 
 
 def get_parent_and_project_folder_id(syn: synapseclient.Synapse, parent_folder: str, project_name: str) -> Tuple[str, str]:
