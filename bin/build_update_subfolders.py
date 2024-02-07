@@ -84,10 +84,11 @@ def build_update_subfolders(
     new ancilliary files.
 
     The current Challenge Folder structure is as follows:
-    >Parent-Folder/
-    >>Level 1 Subfolder (Submitter-Folder)/
-    >>>Level 2 Subfolder/
-    >>>> ...
+
+    Parent-Folder/
+    |--Level 1 Subfolder (Submitter-Folder)/
+    |  |--Level 2 Subfolder/
+    |  |  |-- ...
 
     Arguments:
         project_name: The name of the Project
