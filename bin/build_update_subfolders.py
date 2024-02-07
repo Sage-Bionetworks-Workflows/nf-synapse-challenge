@@ -136,7 +136,9 @@ def build_update_subfolders(
             # The subfolder denoted under ``only_admins`` will have its own ACL, and will be only accessed by
             # Project maintainers:
             if level2_subfolder.name == only_admins:
-                update_permissions(syn, subfolder=level2_subfolder, project_folder_id=synapse_ids.project_id)
+                update_permissions(syn, subfolder=level2_subfolder, project_folder_id=synapse_ids.project_id,
+                                   principalId=submitter_id, accessType=[]
+                                   )
 
 
     # TODO: https://sagebionetworks.jira.com/browse/IBCDPE-809
