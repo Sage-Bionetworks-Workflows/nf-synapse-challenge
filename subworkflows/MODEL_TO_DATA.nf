@@ -5,7 +5,7 @@ nextflow.enable.dsl = 2
 // Project Name (case-sensitive)
 params.project_name = "DPE-testing"
 // Synapse ID for Submission View
-params.view_id = "syn53472920"
+params.view_id = "syn53475818"
 // Synapse ID for Input Data folder
 params.input_id = "syn51390589"
 // Default CPUs to dedicate to RUN_DOCKER
