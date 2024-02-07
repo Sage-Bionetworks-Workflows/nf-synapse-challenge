@@ -2,7 +2,6 @@
 
 import send_email
 import synapseclient
-import synapseutils
 import sys
 
 from typing import List, Union
