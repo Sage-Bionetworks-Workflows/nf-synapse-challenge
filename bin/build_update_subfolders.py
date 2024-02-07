@@ -59,8 +59,8 @@ def update_permissions(
     all_participants = syn.restGET(f"/entity/{project_folder_id}/challenge").get(
         "participantTeamId"
     )
-    registered_users = "273948"
-    public = "273949"
+    registered_users = synapseclient.AUTHENTICATED_USERS
+    public = synapseclient.PUBLIC
 
     for id in [all_participants, registered_users, public]:
         syn.setPermissions(subfolder, principalId=id, accessType=[])
