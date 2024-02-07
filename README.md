@@ -52,23 +52,25 @@ nextflow run main.nf -entry MODEL_TO_DATA_CHALLENGE -profile local
 ### Workflow DAG
 
 ```mermaid
-  flowchart LR;
+flowchart LR;
     A[SYNAPSE STAGE]-->D[UPDATE STATUS];
     B[GET SUBMISSIONS]-->C([NEW SUBMISSIONS?]);
     C-->|YES|D;
     C-->|NO|END;
-    D-->E[RUN DOCKER];
-    E-->F[UPDATE STATUS];
-    F-->G[VALIDATE];
-    G-->H[UPDATE STATUS];
-    G-->I[ANNOTATE];
-    H-->J[SCORE];
-    I-->J;
-    J-->K[UPDATE STATUS];
-    J-->L[ANNOTATE];
-    K-->END;
-    L-->END;
+    D-->E[BUILD SUBFOLDERS];
+    E-->F[RUN DOCKER];
+		F-->G[UPDATE STATUS];
+    G-->H[VALIDATE];
+    H-->I[UPDATE STATUS];
+    H-->J[ANNOTATE];
+    I-->K[SCORE];
+    J-->K;
+		K-->L[UPDATE STATUS];
+    L-->M[ANNOTATE];
+		M-->N[SEND EMAIL];
+    N-->END;
 ```
+
 
 ## Data-to-Model Challenges
 
