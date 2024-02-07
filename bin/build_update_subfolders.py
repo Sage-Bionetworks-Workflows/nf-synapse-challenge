@@ -41,7 +41,7 @@ def build_subfolder(syn: synapseclient.Synapse, folder_name: str, parent_folder:
 
 
 def update_permissions(syn: synapseclient.Synapse, subfolder: Union[str, synapseclient.Entity],
-                       project_folder_id: str, principalId: str = None, accessType: List[str] = []):
+                       project_folder_id: str, principal_id: str = None, access_type: List[str] = []):
     """
     Updates the permissions (local share settings) of the given Folder/File to change access for the given principalId.
     By default it will always revoke all access types for all challenge participants and the public.
@@ -50,7 +50,7 @@ def update_permissions(syn: synapseclient.Synapse, subfolder: Union[str, synapse
         syn: A Synapse Python client instance
         subfolder: The Folder whose permissions will be updated
         project_folder_id: The Project Synapse ID
-        principalId: The synapse ID to change permissions for
+        principal_id: The synapse ID to change permissions for
         access_type: Type of permission to be granted
     """
 
@@ -63,8 +63,8 @@ def update_permissions(syn: synapseclient.Synapse, subfolder: Union[str, synapse
         syn.setPermissions(subfolder, principalId=id, accessType=[])
 
     # Also update the access type for the designated principalId if there is one
-    if principalId:
-        syn.setPermissions(subfolder, principalId, accessType)
+    if principal_id:
+        syn.setPermissions(subfolder, principalId=principal_id, accessType=access_type)
 
 
 def get_parent_and_project_folder_id(syn: synapseclient.Synapse, parent_folder: str, project_name: str) -> SynapseIds:
@@ -127,7 +127,7 @@ def build_update_subfolders(
                                            )
         update_permissions(syn, subfolder=level1_subfolder,
                            project_folder_id=synapse_ids.project_id,
-                           principalId=submitter_id, accessType=["READ", "DOWNLOAD"]
+                           principal_id=submitter_id, access_type=["READ", "DOWNLOAD"]
                            )
         # Creating the level 2 subfolders that live directly under submitter subfolder.
         for level2_subfolder in subfolders:
@@ -137,7 +137,7 @@ def build_update_subfolders(
             # Project maintainers:
             if level2_subfolder.name == only_admins:
                 update_permissions(syn, subfolder=level2_subfolder, project_folder_id=synapse_ids.project_id,
-                                   principalId=submitter_id, accessType=[]
+                                   principal_id=submitter_id, access_type=[]
                                    )
 
 
