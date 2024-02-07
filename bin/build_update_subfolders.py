@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
+import sys
+from typing import List, Union
+
 import send_email
 import synapseclient
-import sys
-
-from typing import List, Union
 
 
 def build_subfolder(
