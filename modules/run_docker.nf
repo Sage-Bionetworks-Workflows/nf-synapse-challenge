@@ -12,6 +12,8 @@ process RUN_DOCKER {
     val cpus
     val memory
     val ready
+    val build_or_update
+    val project_name
 
     output:
     tuple val(submission_id), path('predictions.csv')
@@ -20,5 +22,7 @@ process RUN_DOCKER {
     """
     echo \$SYNAPSE_AUTH_TOKEN | docker login docker.synapse.org --username foo --password-stdin
     docker run -v \$PWD/input:/input:ro -v \$PWD:/output:rw $container
+
+    build_update_subfolders.py '${project_name}' '${submission_id}' '${build_or_update}' \$PWD:/output/predictions.csv
     """
 }
