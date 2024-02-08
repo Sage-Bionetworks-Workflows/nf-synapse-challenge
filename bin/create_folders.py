@@ -32,9 +32,20 @@ def create_folder(
     return subfolder
 
 
-# TODO: https://sagebionetworks.jira.com/browse/IBCDPE-809
-# def update_subfolders():
-#     """"""
+def update_subfolders(
+    syn: synapseclient.Synapse,
+    predictions_file: str,
+    submitter_id: str,
+    parent_id: Union[str, synapseclient.Entity],
+):
+    submitter_folder = syn.findEntityId(submitter_id, parent_id)
+
+    for folder in syn.getChildren(submitter_folder, includeTypes=["folder"]):
+        if folder.get("name") == "predictions":
+            predictions_folder = folder.get("id")
+            break
+
+    syn.store(synapseclient.File(predictions_file, parentId=predictions_folder))
 
 
 def update_permissions(
@@ -75,6 +86,7 @@ def create_folders(
     project_name: str,
     submission_id: str,
     build_or_update: str,
+    predictions_file: str,
     subfolders: List[str] = ["workflow_logs", "predictions"],
     only_admins: str = "predictions",
     root_folder_name: str = "Logs",
@@ -110,9 +122,10 @@ def create_folders(
     submitter_id = send_email.get_participant_id(syn, submission_id)[0]
 
     if build_or_update == "build":
-
         # Create the Root-Folder/ directly under Project
-        root_folder = create_folder(syn, folder_name=root_folder_name, parent=project_id)
+        root_folder = create_folder(
+            syn, folder_name=root_folder_name, parent=project_id
+        )
 
         # Creating the level 1 (directly under Root-Folder/) subfolder,
         # which is named after the submitters' team/userIds.
@@ -143,13 +156,17 @@ def create_folders(
                     access_type=[],
                 )
 
-    # TODO: https://sagebionetworks.jira.com/browse/IBCDPE-809
-    # elif build_or_update == "update":
-    #     update_subfolders(syn, parent_folder_id)
+    elif build_or_update == "update":
+        root_folder_id = syn.findEntityId(name=root_folder_name, parent=project_id)
+        update_subfolders(syn, predictions_file, submitter_id, root_folder_id)
 
 
 if __name__ == "__main__":
     project_name = sys.argv[1]
     submission_id = sys.argv[2]
     create_or_update = sys.argv[3]
-    create_folders(project_name, submission_id, create_or_update)
+    try:
+        predictions_file = sys.argv[4]
+    except:
+        pass
+    create_folders(project_name, submission_id, create_or_update, predictions_file=None)
