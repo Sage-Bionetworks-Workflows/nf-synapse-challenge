@@ -36,9 +36,15 @@ def update_subfolders(
     syn: synapseclient.Synapse,
     predictions_file: str,
     submitter_id: str,
+<<<<<<< HEAD:bin/create_folders.py
     parent_id: Union[str, synapseclient.Entity],
 ):
     submitter_folder = syn.findEntityId(submitter_id, parent_id)
+=======
+    parent_folder_id: str,
+):
+    submitter_folder = syn.findEntityId(submitter_id, parent_folder_id)
+>>>>>>> 027b01b (Updating nextflow workflows):bin/build_update_subfolders.py
 
     for folder in syn.getChildren(submitter_folder, includeTypes=["folder"]):
         if folder.get("name") == "predictions":
@@ -168,5 +174,8 @@ if __name__ == "__main__":
     try:
         predictions_file = sys.argv[4]
     except IndexError:
+        predictions_file = None
         pass
-    create_folders(project_name, submission_id, create_or_update, predictions_file=None)
+    create_folders(
+        project_name, submission_id, create_or_update, predictions_file=predictions_file
+    )

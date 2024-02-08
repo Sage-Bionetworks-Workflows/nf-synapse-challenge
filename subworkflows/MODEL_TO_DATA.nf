@@ -26,7 +26,12 @@ assert params.email_with_score in ["yes", "no"], "Invalid value for ``email_with
 include { SYNAPSE_STAGE } from '../modules/synapse_stage.nf'
 include { GET_SUBMISSIONS } from '../modules/get_submissions.nf'
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_BEFORE_RUN } from '../modules/update_submission_status.nf'
+<<<<<<< HEAD
 include { CREATE_FOLDERS as CREATE_FOLDERS } from '../modules/create_folders.nf'
+=======
+include { BUILD_UPDATE_SUBFOLDERS as BUILD_SUBFOLDERS } from '../modules/build_update_subfolders.nf'
+include { BUILD_UPDATE_SUBFOLDERS as UPDATE_SUBFOLDERS } from '../modules/build_update_subfolders.nf'
+>>>>>>> 027b01b (Updating nextflow workflows)
 include { RUN_DOCKER } from '../modules/run_docker.nf'
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_AFTER_RUN } from '../modules/update_submission_status.nf'
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE } from '../modules/update_submission_status.nf'
@@ -53,5 +58,10 @@ workflow MODEL_TO_DATA {
     SCORE(VALIDATE.output, UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE.output, ANNOTATE_SUBMISSION_AFTER_VALIDATE.output, params.scoring_script)
     UPDATE_SUBMISSION_STATUS_AFTER_SCORE(SCORE.output.map { tuple(it[0], it[2]) })
     ANNOTATE_SUBMISSION_AFTER_SCORE(SCORE.output)
+<<<<<<< HEAD
     SEND_EMAIL(params.view_id, image_ch.map { it[0] }, params.email_with_score, ANNOTATE_SUBMISSION_AFTER_SCORE.output)
+=======
+    UPDATE_SUBFOLDERS(image_ch.map { tuple(it[0], "update") }, params.project_name, ANNOTATE_SUBMISSION_AFTER_SCORE.output)
+    SEND_EMAIL(params.view_id, image_ch.map { it[0] }, ANNOTATE_SUBMISSION_AFTER_SCORE.output, RUN_DOCKER.output.map { it[1] })
+>>>>>>> 027b01b (Updating nextflow workflows)
 }
