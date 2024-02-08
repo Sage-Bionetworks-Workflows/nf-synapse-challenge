@@ -167,6 +167,6 @@ if __name__ == "__main__":
     create_or_update = sys.argv[3]
     try:
         predictions_file = sys.argv[4]
-    except:
+    except IndexError:
         pass
     create_folders(project_name, submission_id, create_or_update, predictions_file=None)
