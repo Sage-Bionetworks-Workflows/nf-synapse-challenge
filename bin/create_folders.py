@@ -86,7 +86,7 @@ def create_folders(
     project_name: str,
     submission_id: str,
     build_or_update: str,
-    predictions_file: Union[str, None],
+    predictions_file: str,
     subfolders: List[str] = ["workflow_logs", "predictions"],
     only_admins: str = "predictions",
     root_folder_name: str = "Logs",

@@ -49,8 +49,13 @@ workflow MODEL_TO_DATA {
         .splitCsv(header:true) 
         .map { row -> tuple(row.submission_id, row.image_id) }
     UPDATE_SUBMISSION_STATUS_BEFORE_RUN(image_ch.map { tuple(it[0], "EVALUATION_IN_PROGRESS") })
+<<<<<<< HEAD
     CREATE_FOLDERS(image_ch.map { tuple(it[0], "build") }, params.project_name, UPDATE_SUBMISSION_STATUS_BEFORE_RUN.output)
     RUN_DOCKER(image_ch, SYNAPSE_STAGE.output, params.cpus, params.memory, CREATE_FOLDERS.output)
+=======
+    BUILD_SUBFOLDERS(image_ch.map { tuple(it[0], "build") }, params.project_name, "null")
+    RUN_DOCKER(image_ch, SYNAPSE_STAGE.output, params.cpus, params.memory, BUILD_SUBFOLDERS.output)
+>>>>>>> e682ba6 (removing extra input channel from build_update_subfolders process)
     UPDATE_SUBMISSION_STATUS_AFTER_RUN(RUN_DOCKER.output.map { tuple(it[0], "ACCEPTED") })
     VALIDATE(RUN_DOCKER.output, UPDATE_SUBMISSION_STATUS_AFTER_RUN.output, params.validation_script)
     UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE(VALIDATE.output.map { tuple(it[0], it[2]) })
@@ -59,9 +64,14 @@ workflow MODEL_TO_DATA {
     UPDATE_SUBMISSION_STATUS_AFTER_SCORE(SCORE.output.map { tuple(it[0], it[2]) })
     ANNOTATE_SUBMISSION_AFTER_SCORE(SCORE.output)
 <<<<<<< HEAD
+<<<<<<< HEAD
     SEND_EMAIL(params.view_id, image_ch.map { it[0] }, params.email_with_score, ANNOTATE_SUBMISSION_AFTER_SCORE.output)
 =======
     UPDATE_SUBFOLDERS(image_ch.map { tuple(it[0], "update") }, params.project_name, ANNOTATE_SUBMISSION_AFTER_SCORE.output)
     SEND_EMAIL(params.view_id, image_ch.map { it[0] }, ANNOTATE_SUBMISSION_AFTER_SCORE.output, RUN_DOCKER.output.map { it[1] })
 >>>>>>> 027b01b (Updating nextflow workflows)
+=======
+    UPDATE_SUBFOLDERS(image_ch.map { tuple(it[0], "update") }, params.project_name, RUN_DOCKER.output.map { it[1] })
+    SEND_EMAIL(params.view_id, image_ch.map { it[0] }, UPDATE_SUBFOLDERS.output)
+>>>>>>> e682ba6 (removing extra input channel from build_update_subfolders process)
 }

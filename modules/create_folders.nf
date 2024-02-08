@@ -7,7 +7,6 @@ process CREATE_FOLDERS {
     tuple val(submission_id), val(build_or_update)
     val project_name
     val predictions_file_path
-    val ready
 
     output:
     val "ready"
