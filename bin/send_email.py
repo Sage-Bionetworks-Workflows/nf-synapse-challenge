@@ -70,17 +70,17 @@ def send_email(view_id: str, submission_id: str, email_with_score: bool):
     Arguments:
       view_id: The view Id of the Submission View on Synapse
       submission_id: The ID for an individual submission within an evaluation queue
+
     """
     syn = synapseclient.login()
-    # TODO: Consolidate calls to submission Annotations
-    status = syn.getSubmissionStatus(submission_id)["submissionAnnotations"][
-        "validation_status"
-    ][0]
+
+    submission_annotations = syn.getSubmissionStatus(submission_id)[
+        "submissionAnnotations"
+    ]
+    status = submission_annotations.get("validation_status")[0]
     # TODO: "auc" may not always be the annotation name for score. How to generalize?
-    score = syn.getSubmissionStatus(submission_id)["submissionAnnotations"]["auc"][0]
-    reason = syn.getSubmissionStatus(submission_id)["submissionAnnotations"][
-        "validation_errors"
-    ][0]
+    score = submission_annotations.get("auc")[0]
+    reason = submission_annotations.get("validation_errors")[0]
 
     # Get the synapse users to send an e-mail to
     ids_to_notify = get_participant_id(syn, submission_id)
