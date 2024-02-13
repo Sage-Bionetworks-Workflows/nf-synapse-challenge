@@ -38,6 +38,22 @@ def email_template(
     score: int,
     reason: str,
 ) -> str:
+    """
+    Selects a pre-defined e-mail template based on user-fed email_with_score, and the validation
+    status of the particular submission.
+
+    Arguments:
+      status: The submission status
+      email_with_score: '0' if e-mail should not include score value / link to submissions views
+      submission_id: The submission ID of the given submission on Synapse
+      view_id: The Submission view ID on Synapse
+      score: The score value of the submission
+      reason: The reason for the validation error, if present.
+
+    Returns:
+      A string for that represents the body of the e-mail to be sent out to submitting team or individual.
+
+    """
     templates = {
         (
             "VALIDATED",
@@ -50,11 +66,19 @@ def email_template(
         (
             "INVALID",
             "1",
-        ): f"Evaluation failed for Submission {submission_id}. Reason: {reason}. View your submissions here: https://www.synapse.org/#!Synapse:{view_id}/tables/. Please contact the organizers for more information.",
+        ): f"Evaluation failed for Submission {submission_id}."
+        + "\n"
+        + f"Reason: '{reason}'."
+        + "\n"
+        + f"View your submissions here: https://www.synapse.org/#!Synapse:{view_id}/tables/, and contact the organizers for more information.",
         (
             "INVALID",
             "0",
-        ): f"Evaluation failed for Submission {submission_id}. Reason: {reason}. Please contact the organizers for more information.",
+        ): f"Evaluation failed for Submission {submission_id}."
+        + "\n"
+        + f"Reason: '{reason}'."
+        + "\n"
+        + "Please contact the organizers for more information.",
     }
 
     body = templates.get((status, email_with_score))
@@ -77,8 +101,9 @@ def send_email(view_id: str, submission_id: str, email_with_score: bool):
     submission_annotations = syn.getSubmissionStatus(submission_id)[
         "submissionAnnotations"
     ]
+    # TODO: "auc" may not always be the annotation name for score.
+    # Should enforce annotation names in the score/validation scripts.
     status = submission_annotations.get("validation_status")[0]
-    # TODO: "auc" may not always be the annotation name for score. How to generalize?
     score = submission_annotations.get("auc")[0]
     reason = submission_annotations.get("validation_errors")[0]
 
