@@ -41,19 +41,19 @@ def email_template(
     templates = {
         (
             "VALIDATED",
-            "True",
+            "1",
         ): f"Submission {submission_id} has been evaluated with a score value of {str(score)}. View all your scores here: https://www.synapse.org/#!Synapse:{view_id}/tables/",
         (
             "VALIDATED",
-            "False",
+            "0",
         ): f"Submission {submission_id} has been evaluated. Your score will be available after Challenge submissions are closed. Thank you for participating!",
         (
             "INVALID",
-            "True",
+            "1",
         ): f"Evaluation failed for Submission {submission_id}. Reason: {reason}. View your submissions here: https://www.synapse.org/#!Synapse:{view_id}/tables/. Please contact the organizers for more information.",
         (
             "INVALID",
-            "False",
+            "0",
         ): f"Evaluation failed for Submission {submission_id}. Reason: {reason}. Please contact the organizers for more information.",
     }
 
