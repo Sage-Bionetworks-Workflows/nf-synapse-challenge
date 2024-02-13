@@ -89,7 +89,7 @@ def email_template(
 def send_email(view_id: str, submission_id: str, email_with_score: bool):
     """
     Sends an e-mail on the status of the individual submission
-    to the participant team or participant individual.
+    to the submitting team or individual.
 
     Arguments:
       view_id: The view Id of the Submission View on Synapse
