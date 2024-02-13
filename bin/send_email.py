@@ -7,6 +7,11 @@ from typing import List
 
 
 class SendEmail:
+
+    def __init__(self):
+        # Establish access to the Synapse API
+        self.syn = synapseclient.login()
+
     def get_participant_id(self, submission_id: str) -> List[str]:
         """
         Retrieves the teamId of the participating team that made
@@ -116,9 +121,6 @@ class SendEmail:
           submission_id: The ID for an individual submission within an evaluation queue
 
         """
-        # Initialize bridge to Synapse API
-        self.syn = synapseclient.login()
-
         # Get MODEL_TO_DATA annotations for the given submission
         self.get_annotations(submission_id)
 

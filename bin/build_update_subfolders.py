@@ -107,7 +107,7 @@ def build_update_subfolders(
 
     project_id = syn.findEntityId(name=project_name)
     parent_folder_id = syn.findEntityId(name=parent_folder, parent=project_id)
-    submitter_id = send_email.get_participant_id(syn, submission_id)[0]
+    submitter_id = send_email.SendEmail().get_participant_id(syn, submission_id)[0]
 
     if build_or_update == "build":
         # Creating the level 1 (directly under Parent-Folder/) subfolder, which is named
