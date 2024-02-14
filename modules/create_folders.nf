@@ -13,6 +13,6 @@ process CREATE_FOLDERS {
 
     script:
     """
-    build_update_subfolders.py '${project_name}' '${submission_id}' '${build_or_update}'
+    create_folders.py '${project_name}' '${submission_id}' '${build_or_update}'
     """
 }
