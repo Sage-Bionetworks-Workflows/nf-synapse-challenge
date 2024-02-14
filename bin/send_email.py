@@ -159,7 +159,7 @@ def send_email(view_id: str, submission_id: str, email_with_score: str):
     )
 
     # Sends an e-mail notifying participant(s) that the evaluation succeeded or failed
-    message = syn.sendMessage(
+    syn.sendMessage(
         userIds=ids_to_notify, messageSubject=subject, messageBody=body
     )
 
