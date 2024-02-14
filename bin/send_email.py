@@ -6,7 +6,6 @@ import synapseclient
 from typing import List, NamedTuple
 
 
-
 class SubmissionAnnotations(NamedTuple):
     status: str
     score: int
@@ -64,15 +63,15 @@ def email_template(
     templates = {
         (
             "VALIDATED",
-            "1",
+            "yes",
         ): f"Submission {submission_id} has been evaluated with a score value of {str(score)}. View all your scores here: https://www.synapse.org/#!Synapse:{view_id}/tables/",
         (
             "VALIDATED",
-            "0",
+            "no",
         ): f"Submission {submission_id} has been evaluated. Your score will be available after Challenge submissions are closed. Thank you for participating!",
         (
             "INVALID",
-            "1",
+            "yes",
         ): f"Evaluation failed for Submission {submission_id}."
         + "\n"
         + f"Reason: '{reason}'."
@@ -80,7 +79,7 @@ def email_template(
         + f"View your submissions here: https://www.synapse.org/#!Synapse:{view_id}/tables/, and contact the organizers for more information.",
         (
             "INVALID",
-            "0",
+            "no",
         ): f"Evaluation failed for Submission {submission_id}."
         + "\n"
         + f"Reason: '{reason}'."
@@ -88,7 +87,12 @@ def email_template(
         + "Please contact the organizers for more information.",
     }
 
-    body = templates.get((status, email_with_score))
+    body = templates.get((status, email_with_score.lower()))
+
+    # If there is a typo in ``email_with_score``, ``body`` will be None;
+    # Raise an error if so, to avoid sending empty e-mails...
+    if body is None:
+        raise ValueError(f'``email_with_score`` can either be yes/no. Got {email_with_score}.')
 
     return body
 

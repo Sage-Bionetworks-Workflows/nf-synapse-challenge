@@ -8,8 +8,8 @@ params.project_name = "DPE-testing"
 params.view_id = "syn53475818"
 // Synapse ID for Input Data folder
 params.input_id = "syn51390589"
-// E-mail template (0 to send e-mail without score update, 1 to send an e-mail with)
-params.email_with_score = 0
+// E-mail template ("no" to send e-mail without score update, "yes" to send an e-mail with)
+params.email_with_score = "no"
 // Default CPUs to dedicate to RUN_DOCKER
 params.cpus = "4"
 // Default Memory to dedicate to RUN_DOCKER
