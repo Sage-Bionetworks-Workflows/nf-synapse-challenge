@@ -50,7 +50,7 @@ def email_template(
 
     Arguments:
       status: The submission status
-      email_with_score: '0' if e-mail should not include score value / link to submissions views
+      email_with_score: "no" if e-mail should not include score value / link to submissions views. Otherwise "yes".
       submission_id: The submission ID of the given submission on Synapse
       view_id: The submission view ID on Synapse
       score: The score value of the submission
@@ -92,7 +92,9 @@ def email_template(
     # If there is a typo in ``email_with_score``, ``body`` will be None;
     # Raise an error if so, to avoid sending empty e-mails...
     if body is None:
-        raise ValueError(f'``email_with_score`` can either be yes/no. Got {email_with_score}.')
+        raise ValueError(
+            f"``email_with_score`` can either be yes/no. Got {email_with_score}."
+        )
 
     return body
 
@@ -100,7 +102,7 @@ def email_template(
 def get_annotations(syn: synapseclient.Synapse, submission_id: str) -> NamedTuple:
     """
     Gets the ``status`` ``score`` and ``reason`` annotations for the given
-    submission on Synapse and makes them attributes of the class instance.
+    submission on Synapse.
 
     1. ``status`` is the submission status, as defined by the last begun stage
     in the MODEL_TO_SYNAPSE workflow.
@@ -117,7 +119,9 @@ def get_annotations(syn: synapseclient.Synapse, submission_id: str) -> NamedTupl
     submission_score = submission_annotations.get("auc")[0]
     error_reason = submission_annotations.get("validation_errors")[0]
 
-    return SubmissionAnnotations(status=submission_status, score=submission_score, reason=error_reason)
+    return SubmissionAnnotations(
+        status=submission_status, score=submission_score, reason=error_reason
+    )
 
 
 def send_email(view_id: str, submission_id: str, email_with_score: str):
@@ -155,7 +159,7 @@ def send_email(view_id: str, submission_id: str, email_with_score: str):
     )
 
     # Sends an e-mail notifying participant(s) that the evaluation succeeded or failed
-    syn.sendMessage(
+    message = syn.sendMessage(
         userIds=ids_to_notify, messageSubject=subject, messageBody=body
     )
 
@@ -164,5 +168,5 @@ if __name__ == "__main__":
     view_id = sys.argv[1]
     submission_id = sys.argv[2]
     email_with_score = sys.argv[3]
-    
+
     send_email(view_id, submission_id, email_with_score)
