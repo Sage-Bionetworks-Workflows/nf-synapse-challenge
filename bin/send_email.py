@@ -36,6 +36,15 @@ def get_participant_id(syn: synapseclient.Synapse, submission_id: str) -> List[s
     return [participant_id]
 
 
+def get_score_dict(score):
+        strs = [""]
+        for key in score.keys():
+            str = f"{key} : {score[key][0]}"+"\n"
+            strs.append(str)
+
+        return strs
+
+
 def email_template(
     status: str,
     email_with_score: bool,
@@ -60,20 +69,11 @@ def email_template(
       A string for that represents the body of the e-mail to be sent out to submitting team or individual.
 
     """
-    def get_score_dict(score):
-        strs = [""]
-        for key in score.keys():
-            str = f"{key} : {score[key][0]}"+"\n"
-            strs.append(str)
-
-        return strs
-
     templates = {
         (
             "VALIDATED",
             "yes",
         ):
-        #f"Submission {submission_id} has been evaluated with the following scores:"+"\n"+"View all your scores here: https://www.synapse.org/#!Synapse:{view_id}/tables/",
         f"Submission {submission_id} has been evaluated with the following scores:\n" + "\n".join(get_score_dict(score)) + f"\nView all your scores here: https://www.synapse.org/#!Synapse:{view_id}/tables/",
         (
             "VALIDATED",
