@@ -1,5 +1,5 @@
 // builds or updates the subfolders with log and predictions files
-process BUILD_UPDATE_SUBFOLDERS {
+process CREATE_SUBFOLDERS {
     secret "SYNAPSE_AUTH_TOKEN"
     container "sagebionetworks/synapsepythonclient:v4.0.0"
 
