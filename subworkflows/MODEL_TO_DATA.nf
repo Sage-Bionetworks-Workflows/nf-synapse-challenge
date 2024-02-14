@@ -9,7 +9,7 @@ params.view_id = "syn53475818"
 // Synapse ID for Input Data folder
 params.input_id = "syn51390589"
 // E-mail template (case-sensitive. "no" to send e-mail without score update, "yes" to send an e-mail with)
-params.email_with_score = "no"
+params.email_with_score = "yes"
 // Default CPUs to dedicate to RUN_DOCKER
 params.cpus = "4"
 // Default Memory to dedicate to RUN_DOCKER
