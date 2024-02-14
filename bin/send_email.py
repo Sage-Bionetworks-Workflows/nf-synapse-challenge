@@ -60,10 +60,13 @@ def email_template(
       A string for that represents the body of the e-mail to be sent out to submitting team or individual.
 
     """
-    strs = [""]
-    for key in score.keys():
-        str = f"{key} : {score[key][0]}"+"\n"
-        strs.append(str)
+    def get_score_dict(score):
+        strs = [""]
+        for key in score.keys():
+            str = f"{key} : {score[key][0]}"+"\n"
+            strs.append(str)
+
+        return strs
 
     templates = {
         (
@@ -71,7 +74,7 @@ def email_template(
             "yes",
         ):
         #f"Submission {submission_id} has been evaluated with the following scores:"+"\n"+"View all your scores here: https://www.synapse.org/#!Synapse:{view_id}/tables/",
-        f"Submission {submission_id} has been evaluated with the following scores:\n" + "\n".join(strs) + f"\nView all your scores here: https://www.synapse.org/#!Synapse:{view_id}/tables/",
+        f"Submission {submission_id} has been evaluated with the following scores:\n" + "\n".join(get_score_dict(score)) + f"\nView all your scores here: https://www.synapse.org/#!Synapse:{view_id}/tables/",
         (
             "VALIDATED",
             "no",
