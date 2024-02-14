@@ -7,25 +7,26 @@ import send_email
 import synapseclient
 
 
-def build_subfolder(
+def create_folder(
     syn: synapseclient.Synapse,
     folder_name: str,
-    parent_folder: Union[str, synapseclient.Entity],
+    parent: Union[str, synapseclient.Entity],
 ) -> synapseclient.Entity:
     """
-    Builds a subfolder under the designated ``parent_folder``.
+    Creates a Folder entity under the designated ``parent``.
 
     Arguments:
         syn: A Synapse Python client instance
         folder_name: The name of the subfolder to be created
-        parent_folder: A synapse Id or Entity of the parent folder under which the subfolder will live
+        parent: A synapse Id or Entity of the parent folder or project under which the new folder will live
 
     Returns:
         The created Synapse Folder entity
     """
 
     # Create Folder object
-    subfolder = synapseclient.Folder(name=folder_name, parent=parent_folder)
+    subfolder = synapseclient.Folder(name=folder_name, parent=parent)
+    # Store in Synapse
     subfolder = syn.store(obj=subfolder)
 
     return subfolder
@@ -39,10 +40,10 @@ def build_subfolder(
 def update_permissions(
     syn: synapseclient.Synapse,
     subfolder: Union[str, synapseclient.Entity],
-    project_folder_id: str,
+    project_id: str,
     principal_id: str = None,
     access_type: List[str] = [],
-):
+) -> None:
     """
     Updates the permissions (local share settings) of the given Folder/File to change access for the given principalId.
     By default it will always revoke all access types for all challenge participants and the public.
@@ -50,13 +51,13 @@ def update_permissions(
     Arguments:
         syn: A Synapse Python client instance
         subfolder: The Folder whose permissions will be updated
-        project_folder_id: The Project Synapse ID
+        project_id: The Project Synapse ID
         principal_id: The synapse ID to change permissions for
         access_type: Type of permission to be granted
     """
 
     # New ACL has all access types revoked for everyone except Project maintainers by default
-    all_participants = syn.restGET(f"/entity/{project_folder_id}/challenge").get(
+    all_participants = syn.restGET(f"/entity/{project_id}/challenge").get(
         "participantTeamId"
     )
     registered_users = synapseclient.AUTHENTICATED_USERS
@@ -76,16 +77,15 @@ def build_update_subfolders(
     build_or_update: str,
     subfolders: List[str] = ["workflow_logs", "predictions"],
     only_admins: str = "predictions",
-    parent_folder: str = "Logs",
-):
+    root_folder_name: str = "Logs",
+) -> None:
     """
-    This function can either build/rebuild a set of log subfolders under
-    a participant folder, or update an existing participant folder with
-    new ancilliary files.
+    This function can either build/rebuild a root folder and set of subfolders to
+    hold Challenge output files for participants.
 
     The current Challenge Folder structure is as follows:
 
-    Parent-Folder/
+    Root-Folder/
     |--Level 1 Subfolder (Submitter-Folder)/
     |  |--Level 2 Subfolder/
     |  |  |-- ...
@@ -99,33 +99,37 @@ def build_update_subfolders(
         subfolders: The subfolders to be created under the parent folder.
         only_admins: The name of the subfolder that will have local share settings
                      differing from the other subfolders.
-        parent_folder: The name of the parent folder. Default is ''Logs''.
+        root_folder_name: The name of the root folder under the Project. Default is ''Logs''.
 
     """
     # Establish access to the Synapse API
     syn = synapseclient.login()
 
+    # Retrieving Synapse IDs that will be necessary later
     project_id = syn.findEntityId(name=project_name)
-    parent_folder_id = syn.findEntityId(name=parent_folder, parent=project_id)
     submitter_id = send_email.get_participant_id(syn, submission_id)[0]
 
     if build_or_update == "build":
-        # Creating the level 1 (directly under Parent-Folder/) subfolder, which is named
-        # after the submitters' team/userIds.
-        level1_subfolder = build_subfolder(
-            syn, folder_name=submitter_id, parent_folder=parent_folder_id
+
+        # Create the Root-Folder/ directly under Project
+        root_folder = create_folder(syn, folder_name=root_folder_name, parent=project_id)
+
+        # Creating the level 1 (directly under Root-Folder/) subfolder,
+        # which is named after the submitters' team/userIds.
+        level1_subfolder = create_folder(
+            syn, folder_name=submitter_id, parent=root_folder
         )
         update_permissions(
             syn,
             subfolder=level1_subfolder,
-            project_folder_id=project_id,
+            project_id=project_id,
             principal_id=submitter_id,
             access_type=["READ", "DOWNLOAD"],
         )
         # Creating the level 2 subfolders that live directly under submitter subfolder.
         for level2_subfolder in subfolders:
-            level2_subfolder = build_subfolder(
-                syn, folder_name=level2_subfolder, parent_folder=level1_subfolder
+            level2_subfolder = create_folder(
+                syn, folder_name=level2_subfolder, parent=level1_subfolder
             )
             # The level 2 subfolders will inherit the permissions set on the level 1 subfolder above.
             # The subfolder denoted under ``only_admins`` will have its own ACL, and will be only accessed by
@@ -134,7 +138,7 @@ def build_update_subfolders(
                 update_permissions(
                     syn,
                     subfolder=level2_subfolder,
-                    project_folder_id=project_id,
+                    project_id=project_id,
                     principal_id=submitter_id,
                     access_type=[],
                 )
@@ -148,4 +152,4 @@ if __name__ == "__main__":
     project_name = sys.argv[1]
     submission_id = sys.argv[2]
     build_or_update = sys.argv[3]
-    build_update_subfolders(project_name, submission_id, build_or_update)
+    build_update_subfolders(project_name, submission_id, build_or_update, root_folder_name="logs-test")
