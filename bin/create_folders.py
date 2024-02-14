@@ -71,7 +71,7 @@ def update_permissions(
         syn.setPermissions(subfolder, principalId=principal_id, accessType=access_type)
 
 
-def build_update_subfolders(
+def create_folders(
     project_name: str,
     submission_id: str,
     build_or_update: str,
@@ -80,8 +80,8 @@ def build_update_subfolders(
     root_folder_name: str = "Logs",
 ) -> None:
     """
-    This function can either build/rebuild a root folder and set of subfolders to
-    hold Challenge output files for participants.
+    This function can either create or re-create a root folder and set of subfolders to
+    store Challenge output files for Challenge participants and organizers.
 
     The current Challenge Folder structure is as follows:
 
@@ -151,5 +151,5 @@ def build_update_subfolders(
 if __name__ == "__main__":
     project_name = sys.argv[1]
     submission_id = sys.argv[2]
-    build_or_update = sys.argv[3]
-    build_update_subfolders(project_name, submission_id, build_or_update, root_folder_name="logs-test")
+    create_or_update = sys.argv[3]
+    create_folders(project_name, submission_id, create_or_update)
