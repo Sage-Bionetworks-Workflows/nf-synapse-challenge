@@ -17,22 +17,26 @@ def score_submission(predictions_path: str, status: str) -> dict:
     """
     if status == "INVALID":
         score_status = "INVALID"
-        score = None
+        score1, score2, score3 = None, None, None
     else:
         # placeholder file reading
         with open(predictions_path, "r") as sub_file:
             predictions_contents = sub_file.read()
         try:
             # placeholder scoring
-            score = 1 + 1
+            score1 = 1 + 1
+            score2 = score1 * 2
+            score3 = score1 * 3
             score_status = "SCORED"
             message = ""
         except Exception as e:
             message = f"Error {e} occurred while scoring"
-            score = None
+            score1, score2, score3 = None, None, None
             score_status = "INVALID"
     result = {
-        "auc": score,
+        "score1": score1,
+        "score2": score2,
+        "score3": score3,
         "score_status": score_status,
         "score_errors": message,
     }

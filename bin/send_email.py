@@ -8,7 +8,7 @@ from typing import List, NamedTuple
 
 class SubmissionAnnotations(NamedTuple):
     status: str
-    score: int
+    score: List[int]
     reason: str
 
 
@@ -60,11 +60,18 @@ def email_template(
       A string for that represents the body of the e-mail to be sent out to submitting team or individual.
 
     """
+    strs = [""]
+    for key in score.keys():
+        str = f"{key} : {score[key][0]}"+"\n"
+        strs.append(str)
+
     templates = {
         (
             "VALIDATED",
             "yes",
-        ): f"Submission {submission_id} has been evaluated with a score value of {str(score)}. View all your scores here: https://www.synapse.org/#!Synapse:{view_id}/tables/",
+        ):
+        #f"Submission {submission_id} has been evaluated with the following scores:"+"\n"+"View all your scores here: https://www.synapse.org/#!Synapse:{view_id}/tables/",
+        f"Submission {submission_id} has been evaluated with the following scores:\n" + "\n".join(strs) + f"\nView all your scores here: https://www.synapse.org/#!Synapse:{view_id}/tables/",
         (
             "VALIDATED",
             "no",
@@ -109,18 +116,29 @@ def get_annotations(syn: synapseclient.Synapse, submission_id: str) -> NamedTupl
     2. ``score`` is the score of the model, used to determine its accuracy.
     3. ``reason`` is the reason for the validation error, if there was one.
     It remains an empty string (None) if no validation error.
+
     """
     submission_annotations = syn.getSubmissionStatus(submission_id)[
         "submissionAnnotations"
     ]
-    # TODO: "auc" may not always be the annotation name for score.
-    # Should enforce annotation names in the score/validation scripts.
     submission_status = submission_annotations.get("validation_status")[0]
-    submission_score = submission_annotations.get("auc")[0]
+    submission_scores = submission_annotations.get("auc")[0]
     error_reason = submission_annotations.get("validation_errors")[0]
 
+    # TODO: A more elegant way to only get the score annotations?
+    non_score_annotations = [
+        "score_errors",
+        "score_status",
+        "validation_errors",
+        "validation_status",
+    ]
+    submission_scores = {
+        key:submission_annotations.get(key)
+        for key in submission_annotations.keys()
+        if key not in non_score_annotations
+    }
     return SubmissionAnnotations(
-        status=submission_status, score=submission_score, reason=error_reason
+        status=submission_status, score=submission_scores, reason=error_reason
     )
 
 
@@ -159,9 +177,7 @@ def send_email(view_id: str, submission_id: str, email_with_score: str):
     )
 
     # Sends an e-mail notifying participant(s) that the evaluation succeeded or failed
-    syn.sendMessage(
-        userIds=ids_to_notify, messageSubject=subject, messageBody=body
-    )
+    syn.sendMessage(userIds=ids_to_notify, messageSubject=subject, messageBody=body)
 
 
 if __name__ == "__main__":
