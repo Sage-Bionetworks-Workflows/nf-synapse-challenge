@@ -87,7 +87,7 @@ def email_template(
         + "Please contact the organizers for more information.",
     }
 
-    body = templates.get((status, email_with_score.lower()))
+    body = templates.get((status, email_with_score))
 
     # If there is a typo in ``email_with_score``, ``body`` will be None;
     # Raise an error if so, to avoid sending empty e-mails...

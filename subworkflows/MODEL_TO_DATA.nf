@@ -8,7 +8,7 @@ params.project_name = "DPE-testing"
 params.view_id = "syn53475818"
 // Synapse ID for Input Data folder
 params.input_id = "syn51390589"
-// E-mail template ("no" to send e-mail without score update, "yes" to send an e-mail with)
+// E-mail template (case-sensitive. "no" to send e-mail without score update, "yes" to send an e-mail with)
 params.email_with_score = "No"
 // Default CPUs to dedicate to RUN_DOCKER
 params.cpus = "4"
@@ -20,7 +20,7 @@ params.scoring_script = "score.py"
 params.validation_script = "validate.py"
 
 // Ensuring correct input parameter values
-assert params.email_with_score.toLowerCase() in ["yes", "no"], "Invalid value for ``email_with_score``. Can either be ''yes'' or ''no''."
+assert params.email_with_score in ["yes", "no"], "Invalid value for ``email_with_score``. Can either be ''yes'' or ''no''."
 
 // import modules
 include { SYNAPSE_STAGE } from '../modules/synapse_stage.nf'
