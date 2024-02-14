@@ -52,7 +52,7 @@ def email_template(
       status: The submission status
       email_with_score: '0' if e-mail should not include score value / link to submissions views
       submission_id: The submission ID of the given submission on Synapse
-      view_id: The Submission view ID on Synapse
+      view_id: The submission view ID on Synapse
       score: The score value of the submission
       reason: The reason for the validation error, if present.
 
