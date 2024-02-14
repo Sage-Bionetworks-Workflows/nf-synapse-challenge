@@ -93,7 +93,7 @@ def email_template(
     # Raise an error if so, to avoid sending empty e-mails...
     if body is None:
         raise ValueError(
-            f"``email_with_score`` can either be yes/no. Got {email_with_score}."
+            f"Incorrect status and/or email_with_score arguments. Got status: {status}, email_with_score: {email_with_score}."
         )
 
     return body
