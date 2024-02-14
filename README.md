@@ -37,12 +37,14 @@ In order to use this workflow, you must already have completed the following ste
 
 The workflow takes the following inputs:
 
-1. `view_id` (required): The Synapse ID for your submission view.
-2. `input_id` (required): The Synapse ID for the folder holding the testing data for submissions.
-3. `cpus` (required): Number of CPUs to dedicate to the `RUN_DOCKER` process i.e. the challenge executions. Defaults to `4`
-4. `memory` (required): Amount of memory to dedicate to the `RUN_DOCKER` process i.e. the challenge executions. Defaults to `16.GB`
-5. `scoring_script` (required): The string name of the scoring script to use for the `SCORE` step of the workflow run. Defaults to `score.py`
-6. `validation_script` (required): The string name of the validation script to use for the `VALIDATE` step of the workflow run. Defaults to `validate.py`
+1. `project_name` (required & case-sensitive): The name of your Project the Challenge is running in (case-sensitive)
+2. `view_id` (required): The Synapse ID for your submission view.
+3. `input_id` (required): The Synapse ID for the folder holding the testing data for submissions.
+4. `email_with_score` (required & case-sensitive): Choose whether or not the e-mail sent out to participants will include the evaluation score or not. Can either be "yes" or "no".
+5. `cpus` (required): Number of CPUs to dedicate to the `RUN_DOCKER` process i.e. the challenge executions. Defaults to `4`
+6. `memory` (required): Amount of memory to dedicate to the `RUN_DOCKER` process i.e. the challenge executions. Defaults to `16.GB`
+7. `scoring_script` (required): The string name of the scoring script to use for the `SCORE` step of the workflow run. Defaults to `score.py`
+8. `validation_script` (required): The string name of the validation script to use for the `VALIDATE` step of the workflow run. Defaults to `validate.py`
 
 Run the workflow locally with default inputs:
 ```
