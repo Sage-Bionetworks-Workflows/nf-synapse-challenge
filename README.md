@@ -37,7 +37,7 @@ In order to use this workflow, you must already have completed the following ste
 
 The workflow takes the following inputs:
 
-1. `project_name` (required & case-sensitive): The name of your Project the Challenge is running in (case-sensitive)
+1. `project_name` (required & case-sensitive): The name of your Project the Challenge is running in.
 2. `view_id` (required): The Synapse ID for your submission view.
 3. `input_id` (required): The Synapse ID for the folder holding the testing data for submissions.
 4. `email_with_score` (required & case-sensitive): Choose whether or not the e-mail sent out to participants will include the evaluation score or not. Can either be "yes" or "no".
