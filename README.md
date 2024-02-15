@@ -57,7 +57,7 @@ flowchart LR;
     B[GET SUBMISSIONS]-->C([NEW SUBMISSIONS?]);
     C-->|YES|D;
     C-->|NO|END;
-    D-->E[BUILD SUBFOLDERS];
+    D-->E[CREATE FOLDERS];
     E-->F[RUN DOCKER];
 		F-->G[UPDATE STATUS];
     G-->H[VALIDATE];
