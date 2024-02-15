@@ -5,6 +5,7 @@ from typing import List, Union
 
 import send_email
 import synapseclient
+from synapseclient.core import remote_file_storage_wrappers
 
 
 def create_folder(
@@ -81,6 +82,21 @@ def update_permissions(
     if principal_id:
         syn.setPermissions(subfolder, principalId=principal_id, accessType=access_type)
 
+def download_s3(work_dir):
+    """
+    Download a file from an S3 bucket using the given work directory and S3 client wrapper.
+    
+    Arguments:
+        work_dir (str): The local directory where the file will be downloaded.
+
+    Returns:
+        None
+    """
+    remote_file_storage_wrappers.S3ClientWrapper.download_file(download_file_path=work_dir,
+                                                               bucket="example-dev-project-tower-scratch",
+                                                               endpoint_url='https://s3.amazonaws.com',
+                                                               remote_file_key=f"work/9b/39daf3462e9c37b75137481d8c5b3d/predictions.csv")
+    print("Download complete")
 
 def create_folders(
     project_name: str,
@@ -165,11 +181,10 @@ if __name__ == "__main__":
     project_name = sys.argv[1]
     submission_id = sys.argv[2]
     create_or_update = sys.argv[3]
-    try:
-        predictions_file = sys.argv[4]
-    except IndexError:
-        predictions_file = None
+    predictions_file = sys.argv[4]
+    work_dir = sys.argv[5]
 
-    create_folders(
-        project_name, submission_id, create_or_update, predictions_file=predictions_file
-    )
+    download_s3(work_dir)
+    # create_folders(
+    #     project_name, submission_id, create_or_update, predictions_file=predictions_file
+    # )
