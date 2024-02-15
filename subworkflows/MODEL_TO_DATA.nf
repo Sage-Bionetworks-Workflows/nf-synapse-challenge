@@ -26,13 +26,8 @@ assert params.email_with_score in ["yes", "no"], "Invalid value for ``email_with
 include { SYNAPSE_STAGE } from '../modules/synapse_stage.nf'
 include { GET_SUBMISSIONS } from '../modules/get_submissions.nf'
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_BEFORE_RUN } from '../modules/update_submission_status.nf'
-<<<<<<< HEAD
 include { CREATE_FOLDERS as CREATE_FOLDERS } from '../modules/create_folders.nf'
 include { CREATE_FOLDERS as UPDATE_FOLDERS } from '../modules/create_folders.nf'
-=======
-include { BUILD_UPDATE_SUBFOLDERS as BUILD_SUBFOLDERS } from '../modules/build_update_subfolders.nf'
-include { BUILD_UPDATE_SUBFOLDERS as UPDATE_SUBFOLDERS } from '../modules/build_update_subfolders.nf'
->>>>>>> 1c18157 (update subfolders)
 include { RUN_DOCKER } from '../modules/run_docker.nf'
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_AFTER_RUN } from '../modules/update_submission_status.nf'
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE } from '../modules/update_submission_status.nf'
