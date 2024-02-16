@@ -13,9 +13,10 @@ process CREATE_FOLDERS {
 
     script:
     """
-    if (${predictions_file_path} != None) {
+    if [ ${predictions_file_path} != None ]
+    then
         workDir ${predictions_file_path}
-    }
+    fi
     create_folders.py '${project_name}' '${submission_id}' '${create_or_update}' 'predictions.csv'
     """
 }
