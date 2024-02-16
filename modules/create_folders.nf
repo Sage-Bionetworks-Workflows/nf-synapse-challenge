@@ -8,15 +8,16 @@ process CREATE_FOLDERS {
     val project_name
     val predictions_file_path
 
+    // Change workDir conditionally
+    if ( predictions_file_path != "None" ) {
+        workDir "${predictions_file_path}"
+    }
+
     output:
     val "ready"
 
     script:
     """
-    if [ ${predictions_file_path} != None ]
-    then
-        workDir ${predictions_file_path}
-    fi
     create_folders.py '${project_name}' '${submission_id}' '${create_or_update}' 'predictions.csv'
     emit 'ready'
     """
