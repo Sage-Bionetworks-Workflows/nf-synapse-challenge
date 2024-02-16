@@ -13,6 +13,9 @@ process CREATE_FOLDERS {
 
     script:
     """
-    create_folders.py '${project_name}' '${submission_id}' '${create_or_update}' '${predictions_file_path}' \$PWD
+    if (task.prevOutput.path != "None") {
+        workDir predictions_file_path
+    }
+    create_folders.py '${project_name}' '${submission_id}' '${create_or_update}' 'predictions.csv'
     """
 }
