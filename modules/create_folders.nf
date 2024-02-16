@@ -9,7 +9,7 @@ process CREATE_FOLDERS {
     val predictions_file_path
 
     // Change workDir conditionally
-    if ( predictions_file_path != "None" ) {
+    if ( "${predictions_file_path}" != "None" ) {
         workDir "${predictions_file_path}"
     }
 
