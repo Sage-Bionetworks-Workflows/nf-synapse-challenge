@@ -18,5 +18,6 @@ process CREATE_FOLDERS {
         workDir ${predictions_file_path}
     fi
     create_folders.py '${project_name}' '${submission_id}' '${create_or_update}' 'predictions.csv'
+    emit 'ready'
     """
 }
