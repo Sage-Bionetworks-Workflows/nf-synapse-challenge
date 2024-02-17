@@ -5,6 +5,8 @@ from typing import List, Union
 
 import send_email
 import synapseclient
+import synapseutils
+
 from synapseclient.core import remote_file_storage_wrappers
 
 
@@ -33,6 +35,19 @@ def create_folder(
     return subfolder
 
 
+def prefix_with_subid(syn, submission_id, file_entity):
+    filename = file_entity.name
+    predictions_file_name = f"{submission_id}_{filename}"
+
+    file_entity = synapseutils.changeFileMetaData(
+        syn,
+        entity=file_entity,
+        downloadAs=predictions_file_name,
+        name=predictions_file_name,
+    )
+    syn.store(file_entity)
+
+
 def update_subfolders(
     syn: synapseclient.Synapse,
     predictions_file: str,
@@ -46,7 +61,10 @@ def update_subfolders(
             predictions_folder = folder.get("id")
             break
 
-    syn.store(synapseclient.File(predictions_file, parentId=predictions_folder))
+    file_entity = syn.store(
+        synapseclient.File(predictions_file, parentId=predictions_folder)
+    )
+    return file_entity
 
 
 def update_permissions(
@@ -160,19 +178,24 @@ def create_folders(
     elif build_or_update == "update":
         root_folder_id = syn.findEntityId(name=root_folder_name, parent=project_id)
 
-        predictions_file_renamed = f"{submission_id}_{predictions_file}"
-        update_subfolders(syn, predictions_file_renamed, submitter_id, root_folder_id)
+        file_entity = update_subfolders(
+            syn, predictions_file, submitter_id, root_folder_id
+        )
+        # TODO: Function too specific?
+        prefix_with_subid(syn, submission_id, file_entity)
 
 
 if __name__ == "__main__":
-
     project_name = sys.argv[1]
     submission_id = sys.argv[2]
     create_or_update = sys.argv[3]
     predictions_file = sys.argv[4] if len(sys.argv) > 4 else None
 
     if create_or_update == "update" and not predictions_file:
-        raise ValueError("Predictions file(s) must be provided to update folders. Exiting.")
+        raise ValueError(
+            "Predictions file(s) must be provided to update folders. Exiting."
+        )
 
-    create_folders(project_name, submission_id, create_or_update, predictions_file=predictions_file)
-
+    create_folders(
+        project_name, submission_id, create_or_update, predictions_file=predictions_file
+    )
