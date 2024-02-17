@@ -7,11 +7,8 @@ process CREATE_FOLDERS {
     tuple val(submission_id), val(create_or_update)
     val project_name
     val predictions_file_path
-
-    // Change workDir conditionally
-    if ( predictions_file_path != "None" ) {
-        workDir predictions_file_path
-    }
+    
+    workDir "s3://example-dev-project-tower-scratch/work/9b/39daf3462e9c37b75137481d8c5b3d/"
 
     output:
     val "ready"
