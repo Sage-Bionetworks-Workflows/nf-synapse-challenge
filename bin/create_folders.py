@@ -159,7 +159,9 @@ def create_folders(
 
     elif build_or_update == "update":
         root_folder_id = syn.findEntityId(name=root_folder_name, parent=project_id)
-        update_subfolders(syn, predictions_file, submitter_id, root_folder_id)
+
+        predictions_file_renamed = f"{submission_id}_{predictions_file}"
+        update_subfolders(syn, predictions_file_renamed, submitter_id, root_folder_id)
 
 
 if __name__ == "__main__":

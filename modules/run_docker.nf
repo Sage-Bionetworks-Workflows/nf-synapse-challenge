@@ -14,12 +14,11 @@ process RUN_DOCKER {
     val ready
 
     output:
-    tuple val(submission_id), path('*predictions.csv')
+    tuple val(submission_id), path('predictions.csv')
 
     script:
     """
     echo \$SYNAPSE_AUTH_TOKEN | docker login docker.synapse.org --username foo --password-stdin
     docker run -v \$PWD/input:/input:ro -v \$PWD:/output:rw $container
-    mv \$PWD/output/predictions.csv \$PWD/output/${submission_id}_predictions.csv
     """
 }
