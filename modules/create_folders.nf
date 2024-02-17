@@ -6,16 +6,14 @@ process CREATE_FOLDERS {
     input:
     tuple val(submission_id), val(create_or_update)
     val project_name
-    val predictions_file_path
-    
-    workDir "s3://example-dev-project-tower-scratch/work/9b/39daf3462e9c37b75137481d8c5b3d/"
+    path predictions_file_path, stageAs: 'predictions.csv'
 
     output:
     val "ready"
 
     script:
     """
-    create_folders.py '${project_name}' '${submission_id}' '${create_or_update}' 'predictions.csv'
+    create_folders.py '${project_name}' '${submission_id}' '${create_or_update}' '${predictions_file_path}'
     emit 'ready'
     """
 }

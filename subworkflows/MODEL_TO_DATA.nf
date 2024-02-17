@@ -45,9 +45,9 @@ workflow MODEL_TO_DATA {
         .splitCsv(header:true) 
         .map { row -> tuple(row.submission_id, row.image_id) }
     UPDATE_SUBMISSION_STATUS_BEFORE_RUN(image_ch.map { tuple(it[0], "EVALUATION_IN_PROGRESS") })
-    CREATE_FOLDERS(image_ch.map { tuple(it[0], "build") }, params.project_name, "None")
+    CREATE_FOLDERS(image_ch.map { tuple(it[0], "build") }, params.project_name, "s3://example-dev-project-tower-scratch/work/9b/39daf3462e9c37b75137481d8c5b3d/predictions.csv")
     RUN_DOCKER(image_ch, SYNAPSE_STAGE.output, params.cpus, params.memory, CREATE_FOLDERS.output)
-    UPDATE_FOLDERS(image_ch.map { tuple(it[0], "update") }, params.project_name, "s3://example-dev-project-tower-scratch/work/9b/39daf3462e9c37b75137481d8c5b3d/")
+    UPDATE_FOLDERS(image_ch.map { tuple(it[0], "update") }, params.project_name, "s3://example-dev-project-tower-scratch/work/9b/39daf3462e9c37b75137481d8c5b3d/predictions.csv")
     // UPDATE_SUBMISSION_STATUS_AFTER_RUN(RUN_DOCKER.output.map { tuple(it[0], "ACCEPTED") })
     // VALIDATE(RUN_DOCKER.output, UPDATE_SUBMISSION_STATUS_AFTER_RUN.output, params.validation_script)
     // UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE(VALIDATE.output.map { tuple(it[0], it[2]) })
