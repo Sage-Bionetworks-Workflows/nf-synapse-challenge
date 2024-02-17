@@ -7,8 +7,6 @@ import send_email
 import synapseclient
 import synapseutils
 
-from synapseclient.core import remote_file_storage_wrappers
-
 
 def create_folder(
     syn: synapseclient.Synapse,
@@ -25,6 +23,7 @@ def create_folder(
 
     Returns:
         The created Synapse Folder entity
+
     """
 
     # Create Folder object
@@ -35,7 +34,16 @@ def create_folder(
     return subfolder
 
 
-def prefix_with_subid(syn, submission_id, old_file_entity):
+def prefix_with_subid(syn: synapseclient.Synapse, submission_id: str, old_file_entity: synapseclient.Entity) -> None:
+    """
+    Prefixes the name of the old file entity with the submission ID and updates the file name and metadata in Synapse.
+
+    Arguments:
+        syn: The Synapse Python client instance
+        submission_id: The ID of the submission
+        old_file_entity: The old file entity to be updated
+
+    """
     filename = old_file_entity.name
     predictions_file_name = f"{submission_id}_{filename}"
 
@@ -54,7 +62,16 @@ def update_subfolders(
     predictions_file: str,
     submitter_id: str,
     parent_id: Union[str, synapseclient.Entity],
-):
+) -> synapseclient.Entity:
+    """
+    Update subfolders based on the given predictions file, submitter ID, and parent ID, and returns the file entity.
+    
+    Arguments:
+        syn: A Synapse Python client instance
+        predictions_file: The name of the predictions file
+        submitter_id: The ID of the submitter
+        parent_id: The ID of the parent folder
+    """
     submitter_folder = syn.findEntityId(submitter_id, parent_id)
 
     for folder in syn.getChildren(submitter_folder, includeTypes=["folder"]):
