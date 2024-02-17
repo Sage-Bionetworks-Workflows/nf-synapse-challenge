@@ -7,6 +7,7 @@ process CREATE_FOLDERS {
     tuple val(submission_id), val(create_or_update)
     val project_name
     path predictions_file_path, stageAs: 'predictions.csv'
+    val ready
 
     output:
     val "ready"
