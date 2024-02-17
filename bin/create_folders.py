@@ -35,17 +35,18 @@ def create_folder(
     return subfolder
 
 
-def prefix_with_subid(syn, submission_id, file_entity):
-    filename = file_entity.name
+def prefix_with_subid(syn, submission_id, old_file_entity):
+    filename = old_file_entity.name
     predictions_file_name = f"{submission_id}_{filename}"
 
-    file_entity = synapseutils.changeFileMetaData(
+    new_file_entity = synapseutils.changeFileMetaData(
         syn,
-        file_entity,
+        old_file_entity,
         predictions_file_name,
         predictions_file_name,
     )
-    syn.store(file_entity)
+    syn.store(new_file_entity)
+    syn.delete(old_file_entity)
 
 
 def update_subfolders(
