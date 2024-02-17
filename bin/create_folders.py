@@ -41,9 +41,9 @@ def prefix_with_subid(syn, submission_id, file_entity):
 
     file_entity = synapseutils.changeFileMetaData(
         syn,
-        entity=file_entity,
-        downloadAs=predictions_file_name,
-        name=predictions_file_name,
+        file_entity,
+        predictions_file_name,
+        predictions_file_name,
     )
     syn.store(file_entity)
 
