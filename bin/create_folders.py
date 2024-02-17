@@ -39,14 +39,14 @@ def prefix_with_subid(syn, submission_id, old_file_entity):
     filename = old_file_entity.name
     predictions_file_name = f"{submission_id}_{filename}"
 
-    new_file_entity = synapseutils.changeFileMetaData(
+    updated_file_entity = synapseutils.changeFileMetaData(
         syn,
-        old_file_entity,
-        predictions_file_name,
-        predictions_file_name,
+        entity=old_file_entity,
+        downloadAs=predictions_file_name,
+        forceVersion=False
     )
-    syn.store(new_file_entity)
-    syn.delete(old_file_entity)
+    updated_file_entity.name = predictions_file_name
+    syn.store(updated_file_entity)
 
 
 def update_subfolders(
