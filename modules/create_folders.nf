@@ -28,7 +28,7 @@ process UPDATE_FOLDERS {
     input:
     tuple val(submission_id), val(create_or_update)
     val project_name
-    path predictions_file_path, stageAs: "${submission_id}_predictions.csv"
+    path predictions_file_path, stageAs: "predictions.csv"
 
     output:
     val "ready"
