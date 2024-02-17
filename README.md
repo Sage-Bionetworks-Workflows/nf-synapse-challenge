@@ -55,22 +55,26 @@ nextflow run main.nf -entry MODEL_TO_DATA_CHALLENGE -profile local
 
 ```mermaid
 flowchart LR;
-    A[SYNAPSE STAGE]-->D[UPDATE STATUS];
+    A[SYNAPSE STAGE]-->F;
     B[GET SUBMISSIONS]-->C([NEW SUBMISSIONS?]);
-    C-->|YES|D;
+    C-->|YES|D[CREATE FOLDERS];
+		C-->|YES|E[UPDATE STATUS];
     C-->|NO|END;
-    D-->E[CREATE FOLDERS];
+    D-->F[RUN DOCKER];
     E-->F[RUN DOCKER];
-		F-->G[UPDATE STATUS];
-    G-->H[VALIDATE];
-    H-->I[UPDATE STATUS];
-    H-->J[ANNOTATE];
-    I-->K[SCORE];
-    J-->K;
-		K-->L[UPDATE STATUS];
-    L-->M[ANNOTATE];
-		M-->N[SEND EMAIL];
-    N-->END;
+		F-->G[UPDATE FOLDERS];
+		F-->H[UPDATE STATUS];
+		G-->I[VALIDATE];
+		H-->I[VALIDATE];
+		I-->J[ANNOTATE];
+		I-->K[UPDATE STATUS];
+		J-->L[SCORE];
+		K-->L[SCORE];
+		L-->M[ANNOTATE];
+		L-->N[UPDATE STATUS];
+		M-->O[SEND EMAIL];
+		N-->O[SEND EMAIL];
+		O-->END;
 ```
 
 
