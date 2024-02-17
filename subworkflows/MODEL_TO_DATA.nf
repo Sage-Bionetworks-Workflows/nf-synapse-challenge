@@ -27,7 +27,7 @@ include { SYNAPSE_STAGE } from '../modules/synapse_stage.nf'
 include { GET_SUBMISSIONS } from '../modules/get_submissions.nf'
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_BEFORE_RUN } from '../modules/update_submission_status.nf'
 include { CREATE_FOLDERS as CREATE_FOLDERS } from '../modules/create_folders.nf'
-include { CREATE_FOLDERS as UPDATE_FOLDERS } from '../modules/create_folders.nf'
+include { UPDATE_FOLDERS as UPDATE_FOLDERS } from '../modules/create_folders.nf'
 include { RUN_DOCKER } from '../modules/run_docker.nf'
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_AFTER_RUN } from '../modules/update_submission_status.nf'
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE } from '../modules/update_submission_status.nf'
@@ -44,10 +44,10 @@ workflow MODEL_TO_DATA {
     image_ch = GET_SUBMISSIONS.output 
         .splitCsv(header:true) 
         .map { row -> tuple(row.submission_id, row.image_id) }
+    CREATE_FOLDERS(image_ch.map { tuple(it[0], "build") }, params.project_name)
     UPDATE_SUBMISSION_STATUS_BEFORE_RUN(image_ch.map { tuple(it[0], "EVALUATION_IN_PROGRESS") })
     RUN_DOCKER(image_ch, SYNAPSE_STAGE.output, params.cpus, params.memory, UPDATE_SUBMISSION_STATUS_BEFORE_RUN.output)
-    CREATE_FOLDERS(image_ch.map { tuple(it[0], "build") }, params.project_name, RUN_DOCKER.output.map { it[1] }, "ready")
-    UPDATE_FOLDERS(image_ch.map { tuple(it[0], "update") }, params.project_name, RUN_DOCKER.output.map { it[1] }, CREATE_FOLDERS.output)
+    UPDATE_FOLDERS(image_ch.map { tuple(it[0], "update") }, params.project_name, RUN_DOCKER.output.map { it[1] })
     // UPDATE_SUBMISSION_STATUS_AFTER_RUN(RUN_DOCKER.output.map { tuple(it[0], "ACCEPTED") })
     // VALIDATE(RUN_DOCKER.output, UPDATE_SUBMISSION_STATUS_AFTER_RUN.output, params.validation_script)
     // UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE(VALIDATE.output.map { tuple(it[0], it[2]) })

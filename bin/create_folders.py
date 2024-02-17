@@ -87,7 +87,7 @@ def create_folders(
     project_name: str,
     submission_id: str,
     build_or_update: str,
-    predictions_file: str,
+    predictions_file: Union[None, str],
     subfolders: List[str] = ["workflow_logs", "predictions"],
     only_admins: str = "predictions",
     root_folder_name: str = "Logs",
@@ -163,11 +163,14 @@ def create_folders(
 
 
 if __name__ == "__main__":
+
     project_name = sys.argv[1]
     submission_id = sys.argv[2]
     create_or_update = sys.argv[3]
-    predictions_file = sys.argv[4]
+    predictions_file = sys.argv[4] if len(sys.argv) > 4 else None
 
-    create_folders(
-        project_name, submission_id, create_or_update, predictions_file=predictions_file
-    )
+    if create_or_update == "update" and not predictions_file:
+        raise ValueError("Predictions file(s) must be provided to update folders. Exiting.")
+
+    create_folders(project_name, submission_id, create_or_update, predictions_file=predictions_file)
+
