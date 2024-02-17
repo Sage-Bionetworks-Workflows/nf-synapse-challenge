@@ -20,6 +20,6 @@ process RUN_DOCKER {
     """
     echo \$SYNAPSE_AUTH_TOKEN | docker login docker.synapse.org --username foo --password-stdin
     docker run -v \$PWD/input:/input:ro -v \$PWD:/output:rw $container
-    mv /output/predictions.csv /output/${submission_id}_predictions.csv
+    mv \$PWD/output/predictions.csv \$PWD/output/${submission_id}_predictions.csv
     """
 }
