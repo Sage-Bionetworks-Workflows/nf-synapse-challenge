@@ -124,7 +124,7 @@ def update_permissions(
 def create_folders(
     project_name: str,
     submission_id: str,
-    build_or_update: str,
+    create_or_update: str,
     predictions_file: Union[None, str],
     subfolders: List[str] = ["workflow_logs", "predictions"],
     only_admins: str = "predictions",
@@ -144,9 +144,9 @@ def create_folders(
     Arguments:
         project_name: The name of the Project
         submission_id: The Submission ID of the submission being processed
-        build_or_update: Determines whether the Folder structure will be built
+        create_or_update: Determines whether the Folder structure will be built
                          from scratch, or updated with new output files. Value
-                         can either be ''build'' or ''update''.
+                         can either be ''create'' or ''update''.
         subfolders: The subfolders to be created under the parent folder.
         only_admins: The name of the subfolder that will have local share settings
                      differing from the other subfolders.
@@ -160,7 +160,7 @@ def create_folders(
     project_id = syn.findEntityId(name=project_name)
     submitter_id = send_email.get_participant_id(syn, submission_id)[0]
 
-    if build_or_update == "build":
+    if create_or_update == "create":
         # Create the Root-Folder/ directly under Project
         root_folder = create_folder(
             syn, folder_name=root_folder_name, parent=project_id
@@ -195,13 +195,21 @@ def create_folders(
                     access_type=[],
                 )
 
-    elif build_or_update == "update":
+    elif create_or_update == "update":
         root_folder_id = syn.findEntityId(name=root_folder_name, parent=project_id)
 
         file_entity = update_subfolders(
-            syn, predictions_file, submitter_id, root_folder_id
+            syn,
+            predictions_file=predictions_file,
+            submitter_id=submitter_id,
+            parent_id=root_folder_id,
         )
         prefix_filename(syn, prefix_name=submission_id, old_file_entity=file_entity)
+
+    else:
+        raise ValueError(
+            "``create_or_update`` must be either 'create' or 'update'. Exiting."
+        )
 
 
 if __name__ == "__main__":
@@ -216,5 +224,8 @@ if __name__ == "__main__":
         )
 
     create_folders(
-        project_name, submission_id, create_or_update, predictions_file=predictions_file
+        project_name=project_name,
+        submission_id=submission_id,
+        create_or_update=create_or_update,
+        predictions_file=predictions_file,
     )

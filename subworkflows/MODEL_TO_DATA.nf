@@ -44,7 +44,7 @@ workflow MODEL_TO_DATA {
     image_ch = GET_SUBMISSIONS.output 
         .splitCsv(header:true) 
         .map { row -> tuple(row.submission_id, row.image_id) }
-    CREATE_FOLDERS(image_ch.map { tuple(it[0], "build") }, params.project_name)
+    CREATE_FOLDERS(image_ch.map { tuple(it[0], "create") }, params.project_name)
     UPDATE_SUBMISSION_STATUS_BEFORE_RUN(image_ch.map { tuple(it[0], "EVALUATION_IN_PROGRESS") })
     RUN_DOCKER(image_ch, SYNAPSE_STAGE.output, params.cpus, params.memory, UPDATE_SUBMISSION_STATUS_BEFORE_RUN.output)
     UPDATE_FOLDERS(image_ch.map { tuple(it[0], "update") }, params.project_name, RUN_DOCKER.output.map { it[1] })
