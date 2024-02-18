@@ -35,7 +35,7 @@ def create_folder(
 
 
 def prefix_filename(
-    syn: synapseclient.Synapse, prefix_name: str, old_file_entity: synapseclient.Entity
+    syn: synapseclient.Synapse, prefix_name: str, old_file_entity: synapseclient.File
 ) -> None:
     """
     Prefixes the name of the old file entity with the desired ``prefix_name`` and updates the file name and metadata in Synapse.
