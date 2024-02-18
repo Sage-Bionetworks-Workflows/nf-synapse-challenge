@@ -64,7 +64,7 @@ def update_subfolders(
     predictions_file: str,
     submitter_id: str,
     parent_id: Union[str, synapseclient.Entity],
-) -> synapseclient.Entity:
+) -> synapseclient.File:
     """
     Update subfolders based on the given predictions file, submitter ID, and parent ID, and returns the file entity.
 
