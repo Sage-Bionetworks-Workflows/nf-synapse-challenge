@@ -10,6 +10,7 @@ if __name__ == "__main__":
         prediction_status = "INVALID"
         invalid_reasons.append("Predictions file not found")
     else:
+        if ".csv" in predictions_path:
         with open(predictions_path, "r") as sub_file:
             message = sub_file.read()
         prediction_status = "VALIDATED"

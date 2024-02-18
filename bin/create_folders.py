@@ -34,9 +34,11 @@ def create_folder(
     return subfolder
 
 
-def prefix_with_subid(syn: synapseclient.Synapse, submission_id: str, old_file_entity: synapseclient.Entity) -> None:
+def prefix_filename(
+    syn: synapseclient.Synapse, prefix_name: str, old_file_entity: synapseclient.Entity
+) -> None:
     """
-    Prefixes the name of the old file entity with the submission ID and updates the file name and metadata in Synapse.
+    Prefixes the name of the old file entity with the desired ``prefix_name`` and updates the file name and metadata in Synapse.
 
     Arguments:
         syn: The Synapse Python client instance
@@ -45,13 +47,13 @@ def prefix_with_subid(syn: synapseclient.Synapse, submission_id: str, old_file_e
 
     """
     filename = old_file_entity.name
-    predictions_file_name = f"{submission_id}_{filename}"
+    predictions_file_name = f"{prefix_name}_{filename}"
 
     updated_file_entity = synapseutils.changeFileMetaData(
         syn,
         entity=old_file_entity,
         downloadAs=predictions_file_name,
-        forceVersion=False
+        forceVersion=False,
     )
     updated_file_entity.name = predictions_file_name
     syn.store(updated_file_entity)
@@ -65,7 +67,7 @@ def update_subfolders(
 ) -> synapseclient.Entity:
     """
     Update subfolders based on the given predictions file, submitter ID, and parent ID, and returns the file entity.
-    
+
     Arguments:
         syn: A Synapse Python client instance
         predictions_file: The name of the predictions file
@@ -199,8 +201,7 @@ def create_folders(
         file_entity = update_subfolders(
             syn, predictions_file, submitter_id, root_folder_id
         )
-        # TODO: Function too specific?
-        prefix_with_subid(syn, submission_id, file_entity)
+        prefix_filename(syn, prefix_name=submission_id, old_file_entity=file_entity)
 
 
 if __name__ == "__main__":
