@@ -13,14 +13,21 @@ if __name__ == "__main__":
         prediction_status = "INVALID"
         invalid_reasons.append("Predictions file not found")
     else:
+        # Unzipping the predictions and extracting the files in
+        # the current working directory
         if ".zip" in os.path.basename(predictions_path):
-            # Unzipping the predictions and extracting the files in
-            # the current working directory
             with zipfile.ZipFile(predictions_path, 'r') as zip_ref:
                 zip_ref.extractall(os.getcwd())
 
         # Grabbing the extracted predictions files
         predictions_files = glob.glob(os.path.join(os.getcwd(), "*.csv"))
+
+        # Checking if there are any files
+        if len(predictions_files) == 0:
+            prediction_status = "INVALID"
+            invalid_reasons.append("No predictions files found")
+
+        # Validating file contents
         for file in predictions_files:
             with open(file, "r") as sub_file:
                 message = sub_file.read()
