@@ -42,8 +42,8 @@ def prefix_filename(
 
     Arguments:
         syn: The Synapse Python client instance
-        submission_id: The ID of the submission
-        old_file_entity: The old file entity to be updated
+        prefix_name: The prefix to be added to your Synapse File name
+        old_file_entity: The old File entity to be updated
 
     """
     filename = old_file_entity.name
@@ -144,6 +144,8 @@ def create_folders(
         create_or_update: Determines whether the Folder structure will be built
                          from scratch, or updated with new output files. Value
                          can either be ''create'' or ''update''.
+        predictions_file: The name of the predictions file that the predictions folder
+                          should be updated with.
         subfolders: The subfolders to be created under the parent folder.
         only_admins: The name of the subfolder that will have local share settings
                      differing from the other subfolders.
