@@ -76,10 +76,7 @@ def update_subfolders(
     """
     submitter_folder = syn.findEntityId(submitter_id, parent_id)
 
-    for folder in syn.getChildren(submitter_folder, includeTypes=["folder"]):
-        if folder.get("name") == "predictions":
-            predictions_folder = folder.get("id")
-            break
+    predictions_folder = syn.findEntityId("predictions", submitter_folder )
 
     file_entity = syn.store(
         synapseclient.File(predictions_file, parentId=predictions_folder)
