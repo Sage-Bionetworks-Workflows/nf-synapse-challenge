@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
+import glob
 import json
 import os
 import sys
-
+import zipfile
 
 def score_submission(predictions_path: str, status: str) -> dict:
     """Determine the score of a submission. This is a placeholder function.
@@ -19,9 +20,26 @@ def score_submission(predictions_path: str, status: str) -> dict:
         score_status = "INVALID"
         score1, score2, score3 = None, None, None
     else:
+        # Unzipping the predictions and extracting the files in
+        # the current working directory
+        if ".zip" in os.path.basename(predictions_path):
+            with zipfile.ZipFile(predictions_path, 'r') as zip_ref:
+                zip_ref.extractall(os.getcwd())
+
+        # Grabbing the extracted predictions files
+        predictions_files = glob.glob(os.path.join(os.getcwd(), "*.csv"))
+
+        # Checking if there are any files
+        if len(predictions_files) == 0:
+            score_status = "INVALID"
+            message = "No predictions files found"
+            score1, score2, score3 = None, None, None
+
         # placeholder file reading
-        with open(predictions_path, "r") as sub_file:
-            predictions_contents = sub_file.read()
+        for file in predictions_files:
+            with open(file, "r") as sub_file:
+                predictions_contents = sub_file.read()
+
         try:
             # placeholder scoring
             score1 = 1 + 1
