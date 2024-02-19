@@ -17,7 +17,12 @@ if __name__ == "__main__":
         # the current working directory
         if ".zip" in os.path.basename(predictions_path):
             with zipfile.ZipFile(predictions_path, 'r') as zip_ref:
-                zip_ref.extractall(os.getcwd())
+                for zip_info in zip_ref.infolist():
+                    if zip_info.is_dir():
+                        continue
+                    # Extract the file ignoring directory structure it was zipped in
+                    zip_info.filename = os.path.basename(zip_info.filename)
+                    zip_ref.extract(zip_info, os.getcwd())
 
         # Grabbing the extracted predictions files
         predictions_files = glob.glob(os.path.join(os.getcwd(), "*.csv"))
