@@ -77,7 +77,7 @@ def update_subfolders(
     submitter_folder = syn.findEntityId(submitter_id, parent_id)
 
     predictions_folder = syn.findEntityId("predictions", submitter_folder )
-
+    predictions_folder = None
     file_entity = syn.store(
         synapseclient.File(predictions_file, parentId=predictions_folder)
     )
@@ -195,6 +195,12 @@ def create_folders(
                 )
 
     elif create_or_update == "update":
+
+        if not predictions_file:
+            raise ValueError(
+                "Predictions file(s) must be provided to update folders. Exiting."
+            )
+
         root_folder_id = syn.findEntityId(name=root_folder_name, parent=project_id)
 
         file_entity = update_subfolders(
@@ -216,11 +222,6 @@ if __name__ == "__main__":
     submission_id = sys.argv[2]
     create_or_update = sys.argv[3]
     predictions_file = sys.argv[4] if len(sys.argv) > 4 else None
-
-    if create_or_update == "update" and not predictions_file:
-        raise ValueError(
-            "Predictions file(s) must be provided to update folders. Exiting."
-        )
 
     create_folders(
         project_name=project_name,
