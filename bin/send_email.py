@@ -125,7 +125,6 @@ def get_annotations(syn: synapseclient.Synapse, submission_id: str) -> NamedTupl
         "submissionAnnotations"
     ]
     submission_status = submission_annotations.get("validation_status")[0]
-    submission_scores = submission_annotations.get("auc")[0]
     error_reason = submission_annotations.get("validation_errors")[0]
 
     # TODO: A more elegant way to only get the score annotations?
