@@ -37,12 +37,12 @@ def get_participant_id(syn: synapseclient.Synapse, submission_id: str) -> List[s
 
 
 def get_score_dict(score):
-    strs = [""]
+    strings = [""]
     for key in score.keys():
-        str = f"{key} : {score[key][0]}" + "\n"
-        strs.append(str)
+        string = f"{key} : {score[key][0]}" + "\n"
+        strings.append(string)
 
-    return strs
+    return strings
 
 
 def email_template(
