@@ -43,5 +43,4 @@ workflow DATA_TO_MODEL {
     UPDATE_SUBMISSION_STATUS_AFTER_SCORE(SCORE.output.map { tuple(it[0], it[2]) })
     ANNOTATE_SUBMISSION_AFTER_SCORE(SCORE.output)
     SEND_EMAIL(params.view_id, image_ch.map { it[0] }, params.email_with_score, ANNOTATE_SUBMISSION_AFTER_SCORE.output)
-
 }
