@@ -13,6 +13,6 @@ process ANNOTATE_SUBMISSION {
 
     script:
     """
-    challengeutils annotate-submission ${submission_id} ${results}
+    challengeutils annotate-submission -f ${submission_id} ${results}
     """
 }
