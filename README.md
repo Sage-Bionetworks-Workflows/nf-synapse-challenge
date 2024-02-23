@@ -119,7 +119,9 @@ nextflow run main.nf -entry DATA_TO_MODEL_CHALLENGE -profile local
     H-->I;
     I-->J[UPDATE STATUS];
     I-->K[ANNOTATE];
-    J-->END;
+    J-->L[SEND EMAIL];
+		K-->L[SEND EMAIL];
+    L-->END;
 ```
 
 ## Profiles
