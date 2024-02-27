@@ -49,8 +49,7 @@ workflow MODEL_TO_DATA {
     GET_SUBMISSION_IMAGE(submission_ch)
     CREATE_FOLDERS(submission_ch, "create", params.project_name)
     UPDATE_SUBMISSION_STATUS_BEFORE_RUN(submission_ch, "EVALUATION_IN_PROGRESS")
-    // make sure create folders happens before run
-    RUN_DOCKER(GET_SUBMISSION_IMAGE.output, SYNAPSE_STAGE.output, params.cpus, params.memory, UPDATE_SUBMISSION_STATUS_BEFORE_RUN.output)
+    RUN_DOCKER(GET_SUBMISSION_IMAGE.output, SYNAPSE_STAGE.output, params.cpus, params.memory, CREATE_FOLDERS.output, UPDATE_SUBMISSION_STATUS_BEFORE_RUN.output)
     UPDATE_FOLDERS(submission_ch, "update", params.project_name, RUN_DOCKER.output.map { it[1] })
     UPDATE_SUBMISSION_STATUS_AFTER_RUN(RUN_DOCKER.output.map { it[0] }, "ACCEPTED")
     VALIDATE(RUN_DOCKER.output, UPDATE_SUBMISSION_STATUS_AFTER_RUN.output, params.validation_script)

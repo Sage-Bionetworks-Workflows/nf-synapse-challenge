@@ -14,6 +14,7 @@ process RUN_DOCKER {
     val cpus
     val memory
     val ready
+    val ready
 
     output:
     tuple val(submission_id), path('predictions.{csv,zip}')
