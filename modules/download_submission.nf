@@ -1,4 +1,4 @@
-// change submission status
+// download submission file(s) for Data to Model Challenges
 process DOWNLOAD_SUBMISSION {
     tag "${submission_id}"
     

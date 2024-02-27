@@ -6,7 +6,8 @@ process UPDATE_SUBMISSION_STATUS {
     container "sagebionetworks/challengeutils:v4.2.0"
 
     input:
-    tuple val(submission_id), val(new_status)
+    val submission_id
+    val new_status
 
     output:
     val "ready"
