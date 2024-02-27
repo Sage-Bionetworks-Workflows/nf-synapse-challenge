@@ -3,6 +3,8 @@
 
 process CREATE_FOLDERS {
     tag "${submission_id}"
+
+    maxForks 1
     
     secret "SYNAPSE_AUTH_TOKEN"
     container "sagebionetworks/synapsepythonclient:v4.0.0"

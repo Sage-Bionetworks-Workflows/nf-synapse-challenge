@@ -2,6 +2,8 @@
 // fed by RUN_DOCKER, to update the subfolders created in CREATE_FOLDERS
 
 process UPDATE_FOLDERS {
+    tag "${submission_id}"
+
     secret "SYNAPSE_AUTH_TOKEN"
     container "sagebionetworks/synapsepythonclient:v4.0.0"
 
