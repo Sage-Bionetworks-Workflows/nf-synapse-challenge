@@ -6,7 +6,8 @@ process DOWNLOAD_SUBMISSION {
     container "sagebionetworks/challengeutils:v4.2.0"
 
     input:
-    val(submission_id)
+    val submission_id
+    val ready
 
     output:
     tuple val(submission_id), path('*')
