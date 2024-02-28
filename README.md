@@ -21,6 +21,24 @@ This workflow expects a secret called `SYNAPSE_AUTH_TOKEN` (a Synapse Authentica
 - [Model-to-Data](#model-to-data-challenges)
 - [Data-to-Model](#data-to-model-challenges)
 
+## Submission Inputs
+
+Each of the supported challenge workflows can take inputs providing the submissions to evaluate including:
+
+1. `submissions` (optional): A comma separated list of submission IDs to evaluate.
+
+Example: `9741046,9741047`
+
+1. `manifest` (optional): A path to a submission manifest containing submission IDs to evaluate.
+
+Example:  
+
+  ```CSV
+  submission_id
+  9741046
+  9741047
+  ```
+
 ## Model-to-Data Challenges
 
 ### Prerequisites
@@ -28,53 +46,54 @@ This workflow expects a secret called `SYNAPSE_AUTH_TOKEN` (a Synapse Authentica
 In order to use this workflow, you must already have completed the following steps:
 
 1. Created a Synapse project shared with challenge participants.
-2. Created an evaluation queue within the Synapse project.
-3. One or more Docker images have already been submitted to your evaluation queue.
-4. Created a submission view that includes the `id` and `status` columns.
-5. Added the input data for evaluating submissions to a folder within your Synapse project.
+1. Created an evaluation queue within the Synapse project.
+1. One or more Docker images have already been submitted to your evaluation queue.
+1. Created a submission view that includes the `id` and `status` columns.
+1. Added the input data for evaluating submissions to a folder within your Synapse project.
 
 ### Running the workflow
 
 The workflow takes the following inputs:
 
+1. `submissions` (required): A comma separated lis tof submission IDs to evaluate.
+1. `manifest` (required): A path to a submission manifest containing submissions IDs to evaluate.
 1. `project_name` (required & case-sensitive): The name of your Project the Challenge is running in. Please replace placeholder value.
-2. `view_id` (required): The Synapse ID for your submission view. Please replace placeholder value.
-3. `input_id` (required): The Synapse ID for the folder holding the testing data for submissions. Please replace placeholder value.
-4. `email_with_score` (optional & case-sensitive): Choose whether or not the e-mail sent out to participants will include the evaluation score or not. Can either be "yes" or "no". Defaults to "yes".
-5. `cpus` (optional): Number of CPUs to dedicate to the `RUN_DOCKER` process i.e. the challenge executions. Defaults to `4`
-6. `memory` (optional): Amount of memory to dedicate to the `RUN_DOCKER` process i.e. the challenge executions. Defaults to `16.GB`
-7. `scoring_script` (optional): The string name of the scoring script to use for the `SCORE` step of the workflow run. Defaults to `model_to_data_score.py`
-8. `validation_script` (optional): The string name of the validation script to use for the `VALIDATE` step of the workflow run. Defaults to `validate.py`
+1. `view_id` (required): The Synapse ID for your submission view. Please replace placeholder value.
+1. `input_id` (required): The Synapse ID for the folder holding the testing data for submissions. Please replace placeholder value.
+1. `email_with_score` (optional & case-sensitive): Choose whether or not the e-mail sent out to participants will include the evaluation score or not. Can either be "yes" or "no". Defaults to "yes".
+1. `cpus` (optional): Number of CPUs to dedicate to the `RUN_DOCKER` process i.e. the challenge executions. Defaults to `4`
+1. `memory` (optional): Amount of memory to dedicate to the `RUN_DOCKER` process i.e. the challenge executions. Defaults to `16.GB`
+1. `scoring_script` (optional): The string name of the scoring script to use for the `SCORE` step of the workflow run. Defaults to `model_to_data_score.py`
+1. `validation_script` (optional): The string name of the validation script to use for the `VALIDATE` step of the workflow run. Defaults to `validate.py`
 
-Run the workflow locally with default inputs:
+***Note:*** You must provide one of `submissions` or `manifest`. If you provide both, `submissions` will take precedence. Generally, `submissions` should be used for testing and `manifest` for automation.
+
+Run the workflow locally with default inputs and a `submissions` string input:
 ```
-nextflow run main.nf -entry MODEL_TO_DATA_CHALLENGE -profile local
+nextflow run main.nf -entry MODEL_TO_DATA_CHALLENGE -profile local --submissions 9741046,9741047
 ```
 
 ### Workflow DAG
 
 ```mermaid
 flowchart LR;
-    A[SYNAPSE STAGE]-->F;
-    B[GET SUBMISSIONS]-->C([NEW SUBMISSIONS?]);
-    C-->|YES|D[CREATE FOLDERS];
-		C-->|YES|E[UPDATE STATUS];
-    C-->|NO|END;
-    D-->F[RUN DOCKER];
-    E-->F[RUN DOCKER];
-		F-->G[UPDATE FOLDERS];
-		F-->H[UPDATE STATUS];
-		G-->I[VALIDATE];
-		H-->I[VALIDATE];
-		I-->J[ANNOTATE];
-		I-->K[UPDATE STATUS];
-		J-->L[SCORE];
-		K-->L[SCORE];
-		L-->M[ANNOTATE];
-		L-->N[UPDATE STATUS];
-		M-->O[SEND EMAIL];
-		N-->O[SEND EMAIL];
-		O-->END;
+    A[SYNAPSE STAGE]-->E[RUN DOCKER];
+    B[UPDATE STATUS]-->E;
+    C[CREATE FOLDERS]-->E;
+    D[GET_SUBMISSION_IMAGE]-->E;
+    E-->F[UPDATE FOLDERS];
+    E-->G[UPDATE STATUS];
+    F-->H[VALIDATE];
+    G-->H[VALIDATE];
+    H-->I[ANNOTATE];
+    H-->J[UPDATE STATUS];
+    I-->K[SCORE];
+    J-->K;
+    K-->L[ANNOTATE];
+    K-->M[UPDATE STATUS];
+    L-->N;
+    M-->N[SEND EMAIL];
+    N-->O[END];
 ```
 
 
@@ -85,43 +104,44 @@ flowchart LR;
 In order to use this workflow, you must already have completed the following steps:
 
 1. Created a Synapse project shared with challenge participants.
-2. Created an evaluation queue within the Synapse project.
-3. One or more data files have already been submitted to your evaluation queue.
-4. Created a submission view that includes the `id` and `status` columns.
+1. Created an evaluation queue within the Synapse project.
+1. One or more data files have already been submitted to your evaluation queue.
+1. Created a submission view that includes the `id` and `status` columns.
 
 ### Running the workflow
 
 The workflow requires the following inputs:
 
+1. `submissions` (required): A comma separated lis tof submission IDs to evaluate.
+1. `manifest` (required): A path to a submission manifest containing submissions IDs to evaluate.
 1. `view_id` (required): The Synapse ID for your submission view.
-2. `scoring_script` (required): The string name of the scoring script to use for the `SCORE` step of the workflow run. Defaults to `data_to_model_score.py`
-3. `validation_script` (required): The string name of the validation script to use for the `VALIDATE` step of the workflow run. Defaults to `validate.py`
-4. `testing_data` (required): The Synapse ID for the folder holding the testing data for submissions.
+1. `scoring_script` (required): The string name of the scoring script to use for the `SCORE` step of the workflow run. Defaults to `data_to_model_score.py`
+1. `validation_script` (required): The string name of the validation script to use for the `VALIDATE` step of the workflow run. Defaults to `validate.py`
+1. `testing_data` (required): The Synapse ID for the folder holding the testing data for submissions.
+1. `email_with_score` (optional & case-sensitive): Choose whether or not the e-mail sent out to participants will include the evaluation score or not. Can either be "yes" or "no". Defaults to "yes".
 
-Run the workflow locally with default inputs:
+
+Run the workflow locally with default inputs and a `submissions` string input:
 ```
-nextflow run main.nf -entry DATA_TO_MODEL_CHALLENGE -profile local
+nextflow run main.nf -entry DATA_TO_MODEL_CHALLENGE -profile local --submissions 9741046,9741047
 ```
 
 ### Workflow DAG
 
 ```mermaid
   flowchart LR;
-    A[SYNAPSE STAGE]-->I[SCORE];
-    B[GET SUBMISSIONS]-->C([NEW SUBMISSIONS?]);
-    C-->|YES|D[UPDATE STATUS];
-    C-->|NO|END;
-    D-->E[DOWNLOAD SUBMISSIONS];
-    E-->F[VALIDATE];
-    F-->G[UPDATE STATUS];
-    F-->H[ANNOTATE];
-    G-->I[SCORE];
-    H-->I;
-    I-->J[UPDATE STATUS];
-    I-->K[ANNOTATE];
-    J-->L[SEND EMAIL];
-		K-->L[SEND EMAIL];
-    L-->END;
+    A[SYNAPSE STAGE]-->G[SCORE];
+    B[UPDATE STATUS]-->C[DOWNLOAD SUBMISSION];
+    C-->D[VALIDATE];
+    D-->E[ANNOTATE];
+    D-->F[UPDATE STATUS];
+    E-->G;
+    F-->G;
+    G-->H[ANNOTATE];
+    G-->I[UPDATE STATUS];
+    H-->J[SEND EMAIL];
+    I-->J;
+    J-->K[END];
 ```
 
 ## Profiles
