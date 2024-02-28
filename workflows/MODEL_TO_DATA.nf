@@ -2,8 +2,8 @@
 // The tower space is PHI safe
 nextflow.enable.dsl = 2
 
-// params.manifest = "assets/data_to_model_manifest.csv"
-if (params.manifest) { params.manifest = file(params.manifest) } else { exit 1, 'Input manifest not specified!' }
+// Empty string default to avoid warning
+params.submissions = ""
 // Project Name (case-sensitive)
 params.project_name = "DPE-testing"
 // Synapse ID for Submission View
@@ -25,6 +25,7 @@ params.validation_script = "validate.py"
 assert params.email_with_score in ["yes", "no"], "Invalid value for ``email_with_score``. Can either be ''yes'' or ''no''."
 
 // import modules
+include { CREATE_SUBMISSION_CHANNEL } from '../subworkflows/create_submission_channel.nf'
 include { SYNAPSE_STAGE } from '../modules/synapse_stage.nf'
 include { GET_SUBMISSION_IMAGE } from '../modules/get_submission_image.nf'
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_BEFORE_RUN } from '../modules/update_submission_status.nf'
@@ -41,11 +42,8 @@ include { ANNOTATE_SUBMISSION as ANNOTATE_SUBMISSION_AFTER_SCORE } from '../modu
 include { SEND_EMAIL } from '../modules/send_email.nf'
 
 workflow MODEL_TO_DATA {
+    submission_ch = CREATE_SUBMISSION_CHANNEL()
     SYNAPSE_STAGE(params.input_id, "input")
-    submission_ch = Channel
-        .fromPath(params.manifest)
-        .splitCsv(header:true) 
-        .map { row -> row.submission_id }
     GET_SUBMISSION_IMAGE(submission_ch)
     CREATE_FOLDERS(submission_ch, "create", params.project_name)
     UPDATE_SUBMISSION_STATUS_BEFORE_RUN(submission_ch, "EVALUATION_IN_PROGRESS")

@@ -2,9 +2,8 @@
 // The tower space is PHI safe
 nextflow.enable.dsl = 2
 
-// CSV manifest with submissions to evaluate
-// params.manifest = "assets/data_to_model_manifest.csv"
-if (params.manifest) { params.manifest = file(params.manifest) } else { exit 1, 'Input manifest not specified!' }
+// Empty string default to avoid warning
+params.submissions = ""
 // Synapse ID for Submission View
 params.view_id = "syn52576179"
 // Scoring Script
@@ -21,6 +20,7 @@ assert params.email_with_score in ["yes", "no"], "Invalid value for ``email_with
 
 
 // import modules
+include { CREATE_SUBMISSION_CHANNEL } from '../subworkflows/create_submission_channel.nf'
 include { SYNAPSE_STAGE } from '../modules/synapse_stage.nf'
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_BEFORE_EVALUATION } from '../modules/update_submission_status.nf'
 include { DOWNLOAD_SUBMISSION } from '../modules/download_submission.nf'
@@ -33,11 +33,8 @@ include { ANNOTATE_SUBMISSION as ANNOTATE_SUBMISSION_AFTER_SCORE } from '../modu
 include { SEND_EMAIL } from '../modules/send_email.nf'
 
 workflow DATA_TO_MODEL {
+    submission_ch = CREATE_SUBMISSION_CHANNEL()
     SYNAPSE_STAGE(params.testing_data, "testing_data")
-    submission_ch = Channel
-        .fromPath(params.manifest)
-        .splitCsv(header:true) 
-        .map { row -> row.submission_id }
     UPDATE_SUBMISSION_STATUS_BEFORE_EVALUATION(submission_ch, "EVALUATION_IN_PROGRESS")
     DOWNLOAD_SUBMISSION(submission_ch, UPDATE_SUBMISSION_STATUS_BEFORE_EVALUATION.output)
     VALIDATE(DOWNLOAD_SUBMISSION.output, "ready", params.validation_script)
