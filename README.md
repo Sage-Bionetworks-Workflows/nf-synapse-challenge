@@ -55,8 +55,10 @@ In order to use this workflow, you must already have completed the following ste
 
 The workflow takes the following inputs:
 
-1. `submissions` (required): A comma separated lis tof submission IDs to evaluate.
-1. `manifest` (required): A path to a submission manifest containing submissions IDs to evaluate.
+***Note:*** You must provide one of `submissions` or `manifest`. If you provide both, `submissions` will take precedence. Generally, `submissions` should be used for testing and `manifest` for automation.
+
+1. `submissions` (required if `manifest` is not provided): A comma separated list of submission IDs to evaluate.
+1. `manifest` (required if `submissions` is not provided): A path to a submission manifest containing submissions IDs to evaluate.
 1. `project_name` (required & case-sensitive): The name of your Project the Challenge is running in. Please replace placeholder value.
 1. `view_id` (required): The Synapse ID for your submission view. Please replace placeholder value.
 1. `input_id` (required): The Synapse ID for the folder holding the testing data for submissions. Please replace placeholder value.
@@ -66,11 +68,15 @@ The workflow takes the following inputs:
 1. `scoring_script` (optional): The string name of the scoring script to use for the `SCORE` step of the workflow run. Defaults to `model_to_data_score.py`
 1. `validation_script` (optional): The string name of the validation script to use for the `VALIDATE` step of the workflow run. Defaults to `validate.py`
 
-***Note:*** You must provide one of `submissions` or `manifest`. If you provide both, `submissions` will take precedence. Generally, `submissions` should be used for testing and `manifest` for automation.
 
 Run the workflow locally with default inputs and a `submissions` string input:
 ```
 nextflow run main.nf -entry MODEL_TO_DATA_CHALLENGE -profile local --submissions 9741046,9741047
+```
+
+With a `manifest` input:
+```
+nextflow run main.nf -entry DATA_TO_MODEL_CHALLENGE -profile local --manifest assets/model_to_data_submission_manifest.csv
 ```
 
 ### Workflow DAG
@@ -112,8 +118,10 @@ In order to use this workflow, you must already have completed the following ste
 
 The workflow requires the following inputs:
 
-1. `submissions` (required): A comma separated lis tof submission IDs to evaluate.
-1. `manifest` (required): A path to a submission manifest containing submissions IDs to evaluate.
+***Note:*** You must provide one of `submissions` or `manifest`. If you provide both, `submissions` will take precedence. Generally, `submissions` should be used for testing and `manifest` for automation.
+
+1. `submissions` (required if `manifest` is not provided): A comma separated lis tof submission IDs to evaluate.
+1. `manifest` (required if `submissions` is not provided): A path to a submission manifest containing submissions IDs to evaluate.
 1. `view_id` (required): The Synapse ID for your submission view.
 1. `scoring_script` (required): The string name of the scoring script to use for the `SCORE` step of the workflow run. Defaults to `data_to_model_score.py`
 1. `validation_script` (required): The string name of the validation script to use for the `VALIDATE` step of the workflow run. Defaults to `validate.py`
@@ -124,6 +132,11 @@ The workflow requires the following inputs:
 Run the workflow locally with default inputs and a `submissions` string input:
 ```
 nextflow run main.nf -entry DATA_TO_MODEL_CHALLENGE -profile local --submissions 9741046,9741047
+```
+
+With a `manifest` input:
+```
+nextflow run main.nf -entry DATA_TO_MODEL_CHALLENGE -profile local --manifest assets/data_to_model_submission_manifest.csv
 ```
 
 ### Workflow DAG

@@ -5,7 +5,7 @@ import pandas as pd
 import synapseclient
 
 
-def get_submission_image(submission_id: str) -> pd.DataFrame:
+def get_submission_image(submission_id: str) -> str:
     """
     Retrieves Docker Image ID from submission
 
