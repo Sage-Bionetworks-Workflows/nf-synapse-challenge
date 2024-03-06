@@ -1,5 +1,7 @@
 FROM ubuntu:22.04
 
+LABEL org.opencontainers.image.source=https://github.com/Sage-Bionetworks-Workflows/nf-synapse-challenge
+
 #install apt-get dependencies
 RUN apt-get update -y && apt-get upgrade -y && apt-get install -y \
     bash \
