@@ -1,6 +1,7 @@
 // validate submission results
 process VALIDATE {
     tag "${submission_id}"
+    label "flexible_compute"
     
     secret "SYNAPSE_AUTH_TOKEN"
     container "sagebionetworks/synapsepythonclient:v4.0.0"

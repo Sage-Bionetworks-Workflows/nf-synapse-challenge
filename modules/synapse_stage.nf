@@ -1,5 +1,6 @@
 // downloads synapse folder given Synapse ID and stages to /input
 process SYNAPSE_STAGE {
+    label "flexible_compute"
 
     container "sagebionetworks/synapsepythonclient:v2.7.0"
     

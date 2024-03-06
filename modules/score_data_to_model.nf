@@ -1,6 +1,7 @@
 // score submission results for data to model challenges
 process SCORE_DATA_TO_MODEL {
     tag "${submission_id}"
+    label "flexible_compute"
     
     secret "SYNAPSE_AUTH_TOKEN"
     container "sagebionetworks/synapsepythonclient:v4.0.0"
