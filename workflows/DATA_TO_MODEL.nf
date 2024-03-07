@@ -43,5 +43,5 @@ workflow DATA_TO_MODEL {
     SCORE(VALIDATE.output, SYNAPSE_STAGE.output, UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE.output, ANNOTATE_SUBMISSION_AFTER_VALIDATE.output, params.scoring_script)
     UPDATE_SUBMISSION_STATUS_AFTER_SCORE(submission_ch, SCORE.output.map { it[2] })
     ANNOTATE_SUBMISSION_AFTER_SCORE(SCORE.output)
-    //SEND_EMAIL(params.view_id, submission_ch, params.email_with_score, ANNOTATE_SUBMISSION_AFTER_SCORE.output)
+    SEND_EMAIL(params.view_id, submission_ch, params.email_with_score, ANNOTATE_SUBMISSION_AFTER_SCORE.output)
 }
