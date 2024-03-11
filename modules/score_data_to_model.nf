@@ -18,6 +18,6 @@ process SCORE_DATA_TO_MODEL {
 
     script:
     """
-    ${scoring_script} '${submission_id}' '${status}' '${predictions}' '${staged_path}' '${results}'
+    ${scoring_script} ${submission_id} ${status} ${predictions} ${staged_path} ${results}
     """
 }
