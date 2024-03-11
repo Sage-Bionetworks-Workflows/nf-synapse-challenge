@@ -3,7 +3,7 @@
 import sys
 import synapseclient
 
-from typing import List, NamedTuple
+from typing import List, NamedTuple, Tuple
 
 
 class SubmissionAnnotations(NamedTuple):
@@ -147,7 +147,7 @@ def get_annotations(syn: synapseclient.Synapse, submission_id: str) -> NamedTupl
     )
 
 
-def get_evaluation(syn: synapseclient.Synapse, submission_id: str) -> tuple[str, str]:
+def get_evaluation(syn: synapseclient.Synapse, submission_id: str) -> Tuple[str, str]:
     """Get evaluation id for the submission
 
     Arguments:
@@ -161,8 +161,9 @@ def get_evaluation(syn: synapseclient.Synapse, submission_id: str) -> tuple[str,
         Exception: if an error occurs
     """
     try:
-        eval_id = syn.getSubmission(
-            submission_id, downloadFile=False).get("evaluationId")
+        eval_id = syn.getSubmission(submission_id, downloadFile=False).get(
+            "evaluationId"
+        )
         eval_name = syn.getEvaluation(eval_id).get("name")
         return eval_id, eval_name
     except Exception as e:
@@ -187,7 +188,7 @@ def get_target_link(synapse_client: synapseclient.Synapse, eval_id: str) -> str:
         "9615379": "https://www.synapse.org/#!Synapse:syn52052735/wiki/626195",
         "9615532": "https://www.synapse.org/#!Synapse:syn52052735/wiki/626203",
         "9615534": "https://www.synapse.org/#!Synapse:syn52052735/wiki/626211",
-        "9615535": "https://www.synapse.org/#!Synapse:syn52052735/wiki/626216"
+        "9615535": "https://www.synapse.org/#!Synapse:syn52052735/wiki/626216",
     }
 
     if eval_id in EVAL_TO_LINK:
@@ -238,8 +239,7 @@ def send_email(view_id: str, submission_id: str, email_with_score: str):
     )
 
     # Sends an e-mail notifying participant(s) that the evaluation succeeded or failed
-    syn.sendMessage(userIds=ids_to_notify,
-                    messageSubject=subject, messageBody=body)
+    syn.sendMessage(userIds=ids_to_notify, messageSubject=subject, messageBody=body)
 
 
 if __name__ == "__main__":
