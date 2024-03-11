@@ -3,7 +3,7 @@ process SEND_EMAIL {
     tag "${submission_id}"
     
     secret "SYNAPSE_AUTH_TOKEN"
-    container "sagebionetworks/synapsepythonclient:v2.7.0"
+    container "sagebionetworks/synapsepythonclient:v4.1.1"
 
     input:
     val email_script
