@@ -23,6 +23,8 @@ params.validation_script = "validate.py"
 assert params.email_with_score in ["yes", "no"], "Invalid value for ``email_with_score``. Can either be ''yes'' or ''no''."
 // toggle email notification
 params.send_email = true
+// set email script
+params.email_script = "send_email.py"
 
 // import modules
 include { CREATE_SUBMISSION_CHANNEL } from '../subworkflows/create_submission_channel.nf'
@@ -53,6 +55,6 @@ workflow MODEL_TO_DATA {
     UPDATE_SUBMISSION_STATUS_AFTER_SCORE(submission_ch, SCORE.output.map { it[2] })
     ANNOTATE_SUBMISSION_AFTER_SCORE(SCORE.output)
     if (params.send_email) {
-        SEND_EMAIL(params.view_id, submission_ch, params.email_with_score, ANNOTATE_SUBMISSION_AFTER_SCORE.output)
+        SEND_EMAIL(params.email_script, params.view_id, submission_ch, params.email_with_score, ANNOTATE_SUBMISSION_AFTER_SCORE.output)
     }
 }

@@ -6,6 +6,7 @@ process SEND_EMAIL {
     container "sagebionetworks/synapsepythonclient:v2.7.0"
 
     input:
+    val email_script
     val view_id
     val submission_id
     val email_with_score
@@ -13,6 +14,6 @@ process SEND_EMAIL {
 
     script:
     """
-    send_email.py '${view_id}' '${submission_id}' '${email_with_score}'
+    ${email_script} '${view_id}' '${submission_id}' '${email_with_score}'
     """
 }
