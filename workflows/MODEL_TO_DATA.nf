@@ -1,7 +1,6 @@
 // Find your tower s3 bucket and upload your input files into it
 // The tower space is PHI safe
 nextflow.enable.dsl = 2
-
 // Empty string default to avoid warning
 params.submissions = ""
 // Project Name (case-sensitive)
@@ -20,9 +19,10 @@ params.memory = "16.GB"
 params.scoring_script = "model_to_data_score.py"
 // Validation Script
 params.validation_script = "validate.py"
-
 // Ensuring correct input parameter values
 assert params.email_with_score in ["yes", "no"], "Invalid value for ``email_with_score``. Can either be ''yes'' or ''no''."
+// toggle email notification
+params.send_email = true
 
 // import modules
 include { CREATE_SUBMISSION_CHANNEL } from '../subworkflows/create_submission_channel.nf'
@@ -52,5 +52,7 @@ workflow MODEL_TO_DATA {
     SCORE(VALIDATE.output, UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE.output, ANNOTATE_SUBMISSION_AFTER_VALIDATE.output, params.scoring_script)
     UPDATE_SUBMISSION_STATUS_AFTER_SCORE(submission_ch, SCORE.output.map { it[2] })
     ANNOTATE_SUBMISSION_AFTER_SCORE(SCORE.output)
-    SEND_EMAIL(params.view_id, submission_ch, params.email_with_score, ANNOTATE_SUBMISSION_AFTER_SCORE.output)
+    if (params.send_email) {
+        SEND_EMAIL(params.view_id, submission_ch, params.email_with_score, ANNOTATE_SUBMISSION_AFTER_SCORE.output)
+    }
 }
