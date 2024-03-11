@@ -74,7 +74,7 @@ def email_template(
             "VALIDATED",
             "yes",
         ): f"Submission {submission_id} has been evaluated with the following scores:\n"
-        + get_score_dict(score)
+        + "\n".join(get_score_dict(score))
         + f"\nView all your submissions here: {target_link}.",
         (
             "VALIDATED",
