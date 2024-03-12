@@ -9,10 +9,10 @@ process RENAME_FILE {
     path input_file
 
     output:
-    path "${input_file.path}${input_file.baseName}_renamed${input_file.extension}"
+    path("${submission_id}_*")
 
     script:
     """
-    mv ${input_file} ${input_file.path}${input_file.baseName}_renamed${input_file.extension}
+    rename_file.py '${submission_id}' '${input_file}'
     """
 }
