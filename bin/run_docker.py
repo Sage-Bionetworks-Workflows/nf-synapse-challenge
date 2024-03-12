@@ -183,5 +183,6 @@ def run_docker(submission_id: str, log_file_name: str = "docker.log") -> None:
 
 if __name__ == "__main__":
     submission_id = sys.argv[1]
+    log_file_name = f"{submission_id}_docker.log"
 
-    run_docker(submission_id)
+    run_docker(submission_id, log_file_name=log_file_name)

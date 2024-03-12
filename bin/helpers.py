@@ -1,4 +1,3 @@
-
 import synapseclient
 from typing import List
 
