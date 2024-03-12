@@ -187,5 +187,8 @@ if __name__ == "__main__":
     view_id = sys.argv[1]
     submission_id = sys.argv[2]
     email_with_score = sys.argv[3]
+    # This is here despite not currently being used.
+    # This is so that we can still use one `send_email.nf` process while supporting both `BEFORE` and `AFTER` notifications
+    notification_type = sys.argv[4]
 
     send_email(view_id, submission_id, email_with_score)

@@ -31,10 +31,14 @@ include { VALIDATE } from '../modules/validate.nf'
 include { SCORE_DATA_TO_MODEL as SCORE } from '../modules/score_data_to_model.nf'
 include { ANNOTATE_SUBMISSION as ANNOTATE_SUBMISSION_AFTER_VALIDATE } from '../modules/annotate_submission.nf'
 include { ANNOTATE_SUBMISSION as ANNOTATE_SUBMISSION_AFTER_SCORE } from '../modules/annotate_submission.nf'
-include { SEND_EMAIL } from '../modules/send_email.nf'
+include { SEND_EMAIL as SEND_EMAIL_BEFORE } from '../modules/send_email.nf'
+include { SEND_EMAIL as SEND_EMAIL_AFTER } from '../modules/send_email.nf'
 
 workflow DATA_TO_MODEL {
     submission_ch = CREATE_SUBMISSION_CHANNEL()
+    if (params.send_email) {
+        SEND_EMAIL_BEFORE(params.email_script, params.view_id, submission_ch, "BEFORE", params.email_with_score, "ready")
+    }
     SYNAPSE_STAGE(params.testing_data, "testing_data")
     UPDATE_SUBMISSION_STATUS_BEFORE_EVALUATION(submission_ch, "EVALUATION_IN_PROGRESS")
     DOWNLOAD_SUBMISSION(submission_ch, UPDATE_SUBMISSION_STATUS_BEFORE_EVALUATION.output)
@@ -45,6 +49,6 @@ workflow DATA_TO_MODEL {
     UPDATE_SUBMISSION_STATUS_AFTER_SCORE(submission_ch, SCORE.output.map { it[2] })
     ANNOTATE_SUBMISSION_AFTER_SCORE(SCORE.output)
     if (params.send_email) {
-        SEND_EMAIL(params.email_script, params.view_id, submission_ch, params.email_with_score, ANNOTATE_SUBMISSION_AFTER_SCORE.output)
+        SEND_EMAIL_AFTER(params.email_script, params.view_id, submission_ch, "AFTER", params.email_with_score, ANNOTATE_SUBMISSION_AFTER_SCORE.output)
     }
 }

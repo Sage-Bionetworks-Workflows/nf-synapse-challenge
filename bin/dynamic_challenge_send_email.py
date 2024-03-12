@@ -198,53 +198,65 @@ def get_target_link(synapse_client: synapseclient.Synapse, eval_id: str) -> str:
         return f"https://www.synapse.org/#!Synapse:{project_id}"
 
 
-def send_email(view_id: str, submission_id: str, email_with_score: str):
+def send_email(submission_id: str, email_with_score: str, notification_type: str):
     """
     Sends an e-mail on the status of the individual submission
     to the submitting team or individual.
 
     Arguments:
-      view_id: The view Id of the Submission View on Synapse
       submission_id: The ID for an individual submission within an evaluation queue
-
+      email_with_score: Whether to include the score in the e-mail
+      notification_type: The type of notification to send
     """
     # Initiate connection to Synapse
     syn = synapseclient.login()
 
-    # Get MODEL_TO_DATA annotations for the given submission
-    submission_annotations = get_annotations(syn, submission_id)
-
     # Get the Synapse users to send an e-mail to
     ids_to_notify = get_participant_id(syn, submission_id)
 
-    # Get the evaluation's Id and name for the given submission
-    eval_id, eval_name = get_evaluation(syn, submission_id)
+    if notification_type == "AFTER":
+        # Get MODEL_TO_DATA annotations for the given submission
+        submission_annotations = get_annotations(syn, submission_id)
 
-    # Get the redirection link to view submission page
-    target_link = get_target_link(syn, eval_id)
+        # Get the evaluation's Id and name for the given submission
+        eval_id, eval_name = get_evaluation(syn, submission_id)
 
-    # Create the subject and body of the e-mail message, depending on submission status
-    subject = (
-        f"Submission to '{eval_name}' Success: {submission_id}"
-        if submission_annotations.status == "VALIDATED"
-        else f"Submission to '{eval_name}' Failed: {submission_id}"
-    )
-    body = email_template(
-        submission_annotations.status,
-        email_with_score,
-        submission_id,
-        target_link,
-        submission_annotations.score,
-        submission_annotations.reason,
-    )
+        # Get the redirection link to view submission page
+        target_link = get_target_link(syn, eval_id)
+
+        # Create the subject and body of the e-mail message, depending on submission status
+        subject = (
+            f"Submission to '{eval_name}' Success: {submission_id}"
+            if submission_annotations.status == "VALIDATED"
+            else f"Submission to '{eval_name}' Failed: {submission_id}"
+        )
+        body = email_template(
+            submission_annotations.status,
+            email_with_score,
+            submission_id,
+            target_link,
+            submission_annotations.score,
+            submission_annotations.reason,
+        )
+    elif notification_type == "BEFORE":
+        subject = f"Evaluation for Submission {submission_id} is In Progress"
+        body = (
+            f"Evaluation for Submission {submission_id} is In Progress. "
+            "Further notification will be provided when evaluation is complete."
+        )
+    else:
+        raise ValueError("Invalid notification_type. Must be 'BEFORE' or 'AFTER'")
 
     # Sends an e-mail notifying participant(s) that the evaluation succeeded or failed
     syn.sendMessage(userIds=ids_to_notify, messageSubject=subject, messageBody=body)
 
 
 if __name__ == "__main__":
+    # Keeping view_id in despite not being used.
+    # This is so that we can still use one `send_email.nf` process while supporting both `BEFORE` and `AFTER` notifications
     view_id = sys.argv[1]
     submission_id = sys.argv[2]
     email_with_score = sys.argv[3]
+    notification_type = sys.argv[4]
 
-    send_email(view_id, submission_id, email_with_score)
+    send_email(submission_id, email_with_score, notification_type)
