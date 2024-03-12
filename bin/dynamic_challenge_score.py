@@ -340,7 +340,7 @@ def calculate_all_scores(
 
                 for key, index in zip(score_keys, score_indices):
                     # set the score to 0 if negative
-                    score_result[f'{system}_{key}'] = max(scores[index], 0)
+                    score_result[f"{system}_{key}"] = max(scores[index], 0)
 
     return score_result
 
@@ -359,7 +359,7 @@ def score_submission(
     Returns:
         Tuple: score status string and dictionary containing score, status and errors
     """
-    if status == INVALID:
+    if INVALID in status:
         score_status = INVALID
         scores = None
     else:
