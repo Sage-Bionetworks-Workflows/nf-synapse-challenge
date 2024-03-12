@@ -3,8 +3,18 @@
 import sys
 import os
 
-def rename_file(submission_id, input_path):
 
+def rename_file(submission_id: str, input_path: str) -> None:
+    """
+    Prefixes the name of a file with the given ``submission_id``.
+    E.g: Given ``submission_id``="123", the file ``path/to/file.txt`` is
+    renamed as ``path/to/123_file.txt``.
+
+    Arguments:
+        submission_id: The ID used to rename the file
+        input_path: The path of the file to be renamed
+
+    """
     # Extract the directory from the input path
     dirname = os.path.dirname(input_path)
 
@@ -24,6 +34,7 @@ def rename_file(submission_id, input_path):
     print("File renamed successfully.")
     print("Original file: ", input_path)
     print("Renamed file: ", new_path)
+
 
 if __name__ == "__main__":
     submission_id = sys.argv[1]
