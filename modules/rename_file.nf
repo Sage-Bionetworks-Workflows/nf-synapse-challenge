@@ -13,6 +13,6 @@ process RENAME_FILE {
 
     script:
     """
-    mv ${input_file} ${output}
+    mv ${input_file} ${input_file.path}${input_file.baseName}_renamed${input_file.extension}
     """
 }
