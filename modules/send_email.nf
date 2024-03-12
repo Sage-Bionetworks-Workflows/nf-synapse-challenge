@@ -11,6 +11,7 @@ process SEND_EMAIL {
     val submission_id
     val notification_type
     val email_with_score
+    val ready
 
     script:
     """
