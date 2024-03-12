@@ -38,9 +38,11 @@ workflow DATA_TO_MODEL {
     submission_ch = CREATE_SUBMISSION_CHANNEL()
     if (params.send_email) {
         SEND_EMAIL_BEFORE(params.email_script, params.view_id, submission_ch, "BEFORE", params.email_with_score, "ready")
+        update_status ready = SEND_EMAIL_BEFORE.output
     }
+    update_status_ready = "ready"
     SYNAPSE_STAGE(params.testing_data, "testing_data")
-    UPDATE_SUBMISSION_STATUS_BEFORE_EVALUATION(submission_ch, "EVALUATION_IN_PROGRESS", SEND_EMAIL_BEFORE.output)
+    UPDATE_SUBMISSION_STATUS_BEFORE_EVALUATION(submission_ch, "EVALUATION_IN_PROGRESS", update_status_ready)
     DOWNLOAD_SUBMISSION(submission_ch, UPDATE_SUBMISSION_STATUS_BEFORE_EVALUATION.output)
     VALIDATE(DOWNLOAD_SUBMISSION.output, "ready", params.validation_script)
     UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE(submission_ch, VALIDATE.output.map { it[2] }, "ready")
