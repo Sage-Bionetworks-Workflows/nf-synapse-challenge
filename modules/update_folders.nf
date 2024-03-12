@@ -5,8 +5,8 @@ process UPDATE_FOLDERS {
     container "sagebionetworks/synapsepythonclient:v4.1.1"
 
     input:
-    val project_name
     val submission_id
+    val project_name
     path predictions_file
     path docker_log_file
 

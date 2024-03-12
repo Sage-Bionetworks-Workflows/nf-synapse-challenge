@@ -28,7 +28,8 @@ assert params.email_with_score in ["yes", "no"], "Invalid value for ``email_with
 include { CREATE_SUBMISSION_CHANNEL } from '../subworkflows/create_submission_channel.nf'
 include { SYNAPSE_STAGE } from '../modules/synapse_stage.nf'
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_BEFORE_RUN } from '../modules/update_submission_status.nf'
-include { CREATE_FOLDERS as CREATE_FOLDERS } from '../modules/create_folders.nf'
+include { CREATE_FOLDERS } from '../modules/create_folders.nf'
+include { UPDATE_FOLDERS } from '../modules/update_folders.nf'
 include { RUN_DOCKER } from '../modules/run_docker.nf'
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_AFTER_RUN } from '../modules/update_submission_status.nf'
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE } from '../modules/update_submission_status.nf'
@@ -45,7 +46,7 @@ workflow MODEL_TO_DATA {
     CREATE_FOLDERS(submission_ch, "create", params.project_name)
     UPDATE_SUBMISSION_STATUS_BEFORE_RUN(submission_ch, "EVALUATION_IN_PROGRESS")
     RUN_DOCKER(submission_ch, SYNAPSE_STAGE.output, params.project_name, params.cpus, params.memory, CREATE_FOLDERS.output, UPDATE_SUBMISSION_STATUS_BEFORE_RUN.output)
-    UPDATE_FOLDERS()
+    UPDATE_FOLDERS(submission_ch, params.project_name, RUN_DOCKER.output.map { it[0] }, RUN_DOCKER.output.map { it[1] })
     UPDATE_SUBMISSION_STATUS_AFTER_RUN(RUN_DOCKER.output.map { it[0] }, "ACCEPTED")
     VALIDATE(RUN_DOCKER.output, UPDATE_SUBMISSION_STATUS_AFTER_RUN.output, params.validation_script)
     UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE(submission_ch, VALIDATE.output.map { it[2] })
