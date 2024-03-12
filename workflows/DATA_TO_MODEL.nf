@@ -38,7 +38,7 @@ workflow DATA_TO_MODEL {
     submission_ch = CREATE_SUBMISSION_CHANNEL()
     if (params.send_email) {
         SEND_EMAIL_BEFORE(params.email_script, params.view_id, submission_ch, "BEFORE", params.email_with_score, "ready")
-        update_status ready = SEND_EMAIL_BEFORE.output
+        update_status_ready = SEND_EMAIL_BEFORE.output
     }
     update_status_ready = "ready"
     SYNAPSE_STAGE(params.testing_data, "testing_data")
