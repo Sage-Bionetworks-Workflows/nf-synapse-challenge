@@ -359,7 +359,7 @@ def score_submission(
     Returns:
         Tuple: score status string and dictionary containing score, status and errors
     """
-    if INVALID in status:
+    if status == INVALID:
         score_status = INVALID
         scores = None
         message = f"Submission was not scored due to {INVALID} status"
