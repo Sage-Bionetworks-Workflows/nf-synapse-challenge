@@ -25,6 +25,7 @@ def score_submission(predictions_path: str, status: str) -> typing.Tuple[str, di
     if status == INVALID:
         score_status = INVALID
         score1, score2, score3 = None, None, None
+        message = f"Submission was not scored due to {INVALID} status"
     else:
         # Unzipping the predictions and extracting the files in
         # the current working directory

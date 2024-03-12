@@ -23,6 +23,7 @@ def score_submission(predictions_path: str, status: str) -> typing.Tuple[str, di
     if status == INVALID:
         score_status = INVALID
         score = None
+        message = f"Submission was not scored due to {INVALID} status"
     else:
         # placeholder file reading
         with open(predictions_path, "r") as sub_file:
