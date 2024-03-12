@@ -362,6 +362,7 @@ def score_submission(
     if INVALID in status:
         score_status = INVALID
         scores = None
+        message = f"Submission was not scored due to {INVALID} status"
     else:
         try:
             # assume predictions are compressed into a tarball file
