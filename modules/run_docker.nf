@@ -11,17 +11,16 @@ process RUN_DOCKER {
     input:
     val submission_id
     path staged_path
-    val project_name
     val cpus
     val memory
     val ready
     val ready
 
     output:
-    tuple val(submission_id), path('output/predictions.{csv,zip}')
+    tuple val(submission_id), path('output/predictions.{csv,zip}'), path('output/*.log')
 
     script:
     """
-    run_docker.py '${project_name}' '${submission_id}'
+    run_docker.py '${submission_id}'
     """
 }

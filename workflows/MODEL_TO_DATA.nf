@@ -2,7 +2,7 @@
 // The tower space is PHI safe
 nextflow.enable.dsl = 2
 // Empty string default to avoid warning
-params.submissions = ""
+params.submissions = "9743264"
 // Project Name (case-sensitive)
 params.project_name = "DPE-testing"
 // Synapse ID for Submission View
@@ -30,7 +30,8 @@ params.email_script = "send_email.py"
 include { CREATE_SUBMISSION_CHANNEL } from '../subworkflows/create_submission_channel.nf'
 include { SYNAPSE_STAGE } from '../modules/synapse_stage.nf'
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_BEFORE_RUN } from '../modules/update_submission_status.nf'
-include { CREATE_FOLDERS as CREATE_FOLDERS } from '../modules/create_folders.nf'
+include { CREATE_FOLDERS } from '../modules/create_folders.nf'
+include { UPDATE_FOLDERS } from '../modules/update_folders.nf'
 include { RUN_DOCKER } from '../modules/run_docker.nf'
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_AFTER_RUN } from '../modules/update_submission_status.nf'
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE } from '../modules/update_submission_status.nf'
