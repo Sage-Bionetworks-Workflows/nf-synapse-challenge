@@ -9,17 +9,10 @@ process RENAME_FILE {
     path input_file
 
     output:
-    path 'output/*_predictions.{csv,zip}'
+    path "${input_file.path}${input_file.baseName}_renamed${input_file.extension}"
 
     script:
     """
-    #!/usr/bin/env python3
-
-    import os
-
-    file_name = os.path.basename('${input_file}')
-    new_file_name = f"{'${submission_id}'}_{file_name}"
-    os.rename('${input_file}', os.path.join(os.path.dirname('${input_file}'), new_file_name))
-    print("File name changed:", new_file_name)
+    mv ${input_file} ${output}
     """
 }
