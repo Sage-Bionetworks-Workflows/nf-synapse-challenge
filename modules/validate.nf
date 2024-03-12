@@ -12,10 +12,10 @@ process VALIDATE {
     val validation_script
 
     output:
-    tuple val(submission_id), path(predictions), stdout, path("results.json")
+    tuple val(submission_id), path(predictions), env(status), path("results.json")
 
     script:
     """
-    ${validation_script} '${submission_id}' '${predictions}'
+    status=\$(${validation_script} '${submission_id}' '${predictions}')
     """
 }
