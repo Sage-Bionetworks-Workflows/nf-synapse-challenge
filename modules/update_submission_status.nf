@@ -8,7 +8,6 @@ process UPDATE_SUBMISSION_STATUS {
     input:
     val submission_id
     val new_status
-    val ready
 
     output:
     val "ready"

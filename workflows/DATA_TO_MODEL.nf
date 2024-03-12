@@ -38,17 +38,15 @@ workflow DATA_TO_MODEL {
     submission_ch = CREATE_SUBMISSION_CHANNEL()
     if (params.send_email) {
         SEND_EMAIL_BEFORE(params.email_script, params.view_id, submission_ch, "BEFORE", params.email_with_score, "ready")
-        update_status_ready = SEND_EMAIL_BEFORE.output
     }
-    update_status_ready = "ready"
     SYNAPSE_STAGE(params.testing_data, "testing_data")
-    UPDATE_SUBMISSION_STATUS_BEFORE_EVALUATION(submission_ch, "EVALUATION_IN_PROGRESS", update_status_ready)
+    UPDATE_SUBMISSION_STATUS_BEFORE_EVALUATION(submission_ch, "EVALUATION_IN_PROGRESS")
     DOWNLOAD_SUBMISSION(submission_ch, UPDATE_SUBMISSION_STATUS_BEFORE_EVALUATION.output)
     VALIDATE(DOWNLOAD_SUBMISSION.output, "ready", params.validation_script)
-    UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE(submission_ch, VALIDATE.output.map { it[2] }, "ready")
+    UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE(submission_ch, VALIDATE.output.map { it[2] })
     ANNOTATE_SUBMISSION_AFTER_VALIDATE(VALIDATE.output)
     SCORE(VALIDATE.output, SYNAPSE_STAGE.output, UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE.output, ANNOTATE_SUBMISSION_AFTER_VALIDATE.output, params.scoring_script)
-    UPDATE_SUBMISSION_STATUS_AFTER_SCORE(submission_ch, SCORE.output.map { it[2] }, "ready")
+    UPDATE_SUBMISSION_STATUS_AFTER_SCORE(submission_ch, SCORE.output.map { it[2] })
     ANNOTATE_SUBMISSION_AFTER_SCORE(SCORE.output)
     if (params.send_email) {
         SEND_EMAIL_AFTER(params.email_script, params.view_id, submission_ch, "AFTER", params.email_with_score, ANNOTATE_SUBMISSION_AFTER_SCORE.output)
