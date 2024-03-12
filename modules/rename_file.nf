@@ -5,6 +5,7 @@ process RENAME_FILE {
     container "sagebionetworks/synapsepythonclient:v4.1.1"
 
     input:
+    val submission_id
     path input_file
 
     output:
