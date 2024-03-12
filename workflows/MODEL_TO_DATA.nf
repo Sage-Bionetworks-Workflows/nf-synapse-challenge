@@ -31,6 +31,7 @@ include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_BEFORE_RUN } from
 include { CREATE_FOLDERS } from '../modules/create_folders.nf'
 include { UPDATE_FOLDERS } from '../modules/update_folders.nf'
 include { RUN_DOCKER } from '../modules/run_docker.nf'
+include { RENAME_FILE } from '../modules/rename_file.nf'
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_AFTER_RUN } from '../modules/update_submission_status.nf'
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE } from '../modules/update_submission_status.nf'
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_AFTER_SCORE } from '../modules/update_submission_status.nf'
