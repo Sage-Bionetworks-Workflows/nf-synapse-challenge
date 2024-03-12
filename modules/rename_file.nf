@@ -1,3 +1,4 @@
+// Renames a given input file by prefixing it with the given submission_id
 process RENAME_FILE {
     tag "${submission_id}"
     
