@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+"""
+This module uses functions from send_email.py and some custom logic to
+send email notofications for the dynamic challenge
+"""
 
 import sys
 import synapseclient
@@ -133,7 +137,9 @@ def get_target_link(synapse_client: synapseclient.Synapse, eval_id: str) -> str:
     return f"https://www.synapse.org/#!Synapse:{project_id}"
 
 
-def send_email(submission_id: str, email_with_score: str, notification_type: str):
+def send_email(
+    submission_id: str, email_with_score: str, notification_type: str
+) -> None:
     """
     Sends an e-mail on the status of the individual submission
     to the submitting team or individual.
