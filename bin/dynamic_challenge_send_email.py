@@ -12,6 +12,10 @@ from send_email import (
 )
 
 
+BEFORE = "BEFORE"
+AFTER = "AFTER"
+
+
 def email_template(
     status: str,
     email_with_score: bool,
@@ -87,7 +91,7 @@ def get_evaluation(syn: synapseclient.Synapse, submission_id: str) -> Tuple[str,
         submission_id: The id of submission
 
     Returns:
-        eval: the tuple of evaluation ID and evaluation name, or None if an error occurs.
+        eval: the tuple of evaluation ID and evaluation name.
 
     Raises:
         Exception: if an error occurs
@@ -110,7 +114,7 @@ def get_target_link(synapse_client: synapseclient.Synapse, eval_id: str) -> str:
 
     Arguments:
         syn: Synapse connection
-        eval_id (str): the evaluation id of submission.
+        eval_id: the evaluation id of submission.
 
     Returns:
         link: The redirection link to the submission page.
@@ -122,12 +126,11 @@ def get_target_link(synapse_client: synapseclient.Synapse, eval_id: str) -> str:
         "9615534": "https://www.synapse.org/#!Synapse:syn52052735/wiki/626211",
         "9615535": "https://www.synapse.org/#!Synapse:syn52052735/wiki/626216",
     }
-
-    if eval_id in EVAL_TO_LINK:
-        return EVAL_TO_LINK[eval_id]
-    else:
-        project_id = synapse_client.getEvaluation(eval_id).get("contentSource")
-        return f"https://www.synapse.org/#!Synapse:{project_id}"
+    link = EVAL_TO_LINK.get(eval_id, None)
+    if link:
+        return link
+    project_id = synapse_client.getEvaluation(eval_id).get("contentSource")
+    return f"https://www.synapse.org/#!Synapse:{project_id}"
 
 
 def send_email(submission_id: str, email_with_score: str, notification_type: str):
@@ -139,6 +142,9 @@ def send_email(submission_id: str, email_with_score: str, notification_type: str
       submission_id: The ID for an individual submission within an evaluation queue
       email_with_score: Whether to include the score in the e-mail
       notification_type: The type of notification to send
+
+    Raises:
+      ValueError: if an incorrect type is provided for notification_type
     """
     # Initiate connection to Synapse
     syn = synapseclient.login()
@@ -146,7 +152,7 @@ def send_email(submission_id: str, email_with_score: str, notification_type: str
     # Get the Synapse users to send an e-mail to
     ids_to_notify = get_participant_id(syn, submission_id)
 
-    if notification_type == "AFTER":
+    if notification_type == AFTER:
         # Get MODEL_TO_DATA annotations for the given submission
         submission_annotations = get_annotations(syn, submission_id)
 
@@ -170,14 +176,14 @@ def send_email(submission_id: str, email_with_score: str, notification_type: str
             submission_annotations.score,
             submission_annotations.reason,
         )
-    elif notification_type == "BEFORE":
+    elif notification_type == BEFORE:
         subject = f"Evaluation for Submission {submission_id} is In Progress"
         body = (
             f"Evaluation for Submission {submission_id} is In Progress. "
             "Further notification will be provided when evaluation is complete."
         )
     else:
-        raise ValueError("Invalid notification_type. Must be 'BEFORE' or 'AFTER'")
+        raise ValueError(f"Invalid notification_type. Must be '{BEFORE}' or '{AFTER}'")
 
     # Sends an e-mail notifying participant(s) that the evaluation succeeded or failed
     syn.sendMessage(userIds=ids_to_notify, messageSubject=subject, messageBody=body)
