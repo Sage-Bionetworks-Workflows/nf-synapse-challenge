@@ -12,10 +12,10 @@ process SCORE_MODEL_TO_DATA {
     val scoring_script
 
     output:
-    tuple val(submission_id), path(predictions), stdout, path("results.json")
+    tuple val(submission_id), path(predictions), env(status), path("results.json")
 
     script:
     """
-    ${scoring_script} '${predictions}' '${results}' '${status}'
+    status=\$(${scoring_script} '${predictions}' '${results}' '${status}')
     """
 }
