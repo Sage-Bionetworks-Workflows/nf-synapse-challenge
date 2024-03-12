@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+import helpers
 import synapseclient
 
 from typing import List, NamedTuple
@@ -10,30 +11,6 @@ class SubmissionAnnotations(NamedTuple):
     status: str
     score: List[int]
     reason: str
-
-
-def get_participant_id(syn: synapseclient.Synapse, submission_id: str) -> List[str]:
-    """
-    Retrieves the teamId of the participating team that made
-    the submission. If the submitter is an individual rather than
-    a team, the userId for the individual is retrieved.
-
-    Arguments:
-      syn: A Synapse Python client instance
-      submission_id: The ID for an individual submission within an evaluation queue
-
-    Returns:
-      Returns the synID of a team or individual participant
-    """
-    # Retrieve a Submission object
-    submission = syn.getSubmission(submission_id, downloadFile=False)
-
-    # Get the teamId or userId of submitter
-    participant_id = submission.get("teamId") or submission.get("userId")
-
-    # Ensure that the participant_id returned is a list
-    # so it can be fed into syn.sendMessage(...) later.
-    return [participant_id]
 
 
 def get_score_dict(score):
@@ -162,7 +139,7 @@ def send_email(view_id: str, submission_id: str, email_with_score: str):
     submission_annotations = get_annotations(syn, submission_id)
 
     # Get the Synapse users to send an e-mail to
-    ids_to_notify = get_participant_id(syn, submission_id)
+    ids_to_notify = helpers.get_participant_id(syn, submission_id)
 
     # Create the subject and body of the e-mail message, depending on submission status
     subject = (

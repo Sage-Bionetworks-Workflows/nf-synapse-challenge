@@ -11,7 +11,7 @@ from logging import root
 import os
 import sys
 
-import send_email
+import helpers
 
 import synapseclient
 import synapseutils
@@ -182,7 +182,7 @@ def create_folders(
 
     # Retrieving Synapse IDs that will be necessary later
     project_id = syn.findEntityId(name=project_name)
-    submitter_id = send_email.get_participant_id(syn, submission_id)[0]
+    submitter_id = helpers.get_participant_id(syn, submission_id)[0]
 
     if create_or_update == "create":
         # Create the Root-Folder/ directly under Project

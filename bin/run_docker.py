@@ -42,7 +42,9 @@ def get_submission_image(syn: synapseclient.Synapse, submission_id: str) -> str:
 
 
 def create_log_file(
-    log_file_name: str, log_file_path: Optional[Union[None, str]] = None, log_text: Optional[Union[str, bytes]] = None
+    log_file_name: str,
+    log_file_path: Optional[Union[None, str]] = None,
+    log_text: Optional[Union[str, bytes]] = None,
 ) -> None:
     """
     Creates the Docker submission execution log file.
@@ -59,7 +61,12 @@ def create_log_file(
     if not log_file_path:
         log_file_path = os.getcwd()
 
-    with open(os.path.join(log_file_path, log_file_name), "w", encoding="ascii", errors="ignore") as log_file:
+    with open(
+        os.path.join(log_file_path, log_file_name),
+        "w",
+        encoding="ascii",
+        errors="ignore",
+    ) as log_file:
         if log_text is not None:
             if isinstance(log_text, bytes):
                 log_text = log_text.decode("utf-8")
@@ -162,12 +169,16 @@ def run_docker(submission_id: str, log_file_name: str = "docker.log") -> None:
 
     except Exception as e:
         log_text = str(e).replace("\\n", "\n")
-        create_log_file(log_file_name=log_file_name, log_file_path=log_file_path, log_text=log_text)
+        create_log_file(
+            log_file_name=log_file_name, log_file_path=log_file_path, log_text=log_text
+        )
 
         raise
 
     # Create log file and store the log message (``log_text``) inside
-    create_log_file(log_file_name=log_file_name, log_file_path=log_file_path, log_text=log_text)
+    create_log_file(
+        log_file_name=log_file_name, log_file_path=log_file_path, log_text=log_text
+    )
 
 
 if __name__ == "__main__":
