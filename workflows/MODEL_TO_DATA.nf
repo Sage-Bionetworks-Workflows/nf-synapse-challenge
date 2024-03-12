@@ -3,7 +3,7 @@
 nextflow.enable.dsl = 2
 
 // Empty string default to avoid warning
-params.submissions = "9743264"
+params.submissions = ""
 // Project Name (case-sensitive)
 params.project_name = "DPE-testing"
 // Synapse ID for Submission View
@@ -49,12 +49,12 @@ workflow MODEL_TO_DATA {
     RUN_DOCKER(submission_ch, SYNAPSE_STAGE.output, params.cpus, params.memory, CREATE_FOLDERS.output, UPDATE_SUBMISSION_STATUS_BEFORE_RUN.output)
     RENAME_FILE(submission_ch, RUN_DOCKER.output.map { it[1] })
     UPDATE_FOLDERS(submission_ch, params.project_name, RENAME_FILE.output, RUN_DOCKER.output.map { it[2] })
-    // UPDATE_SUBMISSION_STATUS_AFTER_RUN(RUN_DOCKER.output.map { it[0] }, "ACCEPTED")
-    // VALIDATE(RUN_DOCKER.output, UPDATE_SUBMISSION_STATUS_AFTER_RUN.output, params.validation_script)
-    // UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE(submission_ch, VALIDATE.output.map { it[2] })
-    // ANNOTATE_SUBMISSION_AFTER_VALIDATE(VALIDATE.output)
-    // SCORE(VALIDATE.output, UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE.output, ANNOTATE_SUBMISSION_AFTER_VALIDATE.output, params.scoring_script)
-    // UPDATE_SUBMISSION_STATUS_AFTER_SCORE(submission_ch, SCORE.output.map { it[2] })
-    // ANNOTATE_SUBMISSION_AFTER_SCORE(SCORE.output)
-    // SEND_EMAIL(params.view_id, submission_ch, params.email_with_score, ANNOTATE_SUBMISSION_AFTER_SCORE.output)
+    UPDATE_SUBMISSION_STATUS_AFTER_RUN(RUN_DOCKER.output.map { it[0] }, "ACCEPTED")
+    VALIDATE(RUN_DOCKER.output, UPDATE_SUBMISSION_STATUS_AFTER_RUN.output, params.validation_script)
+    UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE(submission_ch, VALIDATE.output.map { it[2] })
+    ANNOTATE_SUBMISSION_AFTER_VALIDATE(VALIDATE.output)
+    SCORE(VALIDATE.output, UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE.output, ANNOTATE_SUBMISSION_AFTER_VALIDATE.output, params.scoring_script)
+    UPDATE_SUBMISSION_STATUS_AFTER_SCORE(submission_ch, SCORE.output.map { it[2] })
+    ANNOTATE_SUBMISSION_AFTER_SCORE(SCORE.output)
+    SEND_EMAIL(params.view_id, submission_ch, params.email_with_score, ANNOTATE_SUBMISSION_AFTER_SCORE.output)
 }
