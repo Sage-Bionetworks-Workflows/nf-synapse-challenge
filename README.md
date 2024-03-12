@@ -140,6 +140,7 @@ nextflow run main.nf -entry DATA_TO_MODEL_CHALLENGE -profile local --manifest as
 
 ```mermaid
   flowchart LR;
+    L[SEND EMAIL BEFORE];
     A[SYNAPSE STAGE]-->G[SCORE];
     B[UPDATE STATUS]-->C[DOWNLOAD SUBMISSION];
     C-->D[VALIDATE];
@@ -149,7 +150,7 @@ nextflow run main.nf -entry DATA_TO_MODEL_CHALLENGE -profile local --manifest as
     F-->G;
     G-->H[ANNOTATE];
     G-->I[UPDATE STATUS];
-    H-->J[SEND EMAIL];
+    H-->J[SEND EMAIL AFTER];
     I-->J;
     J-->K[END];
 ```
