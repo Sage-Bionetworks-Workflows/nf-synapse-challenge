@@ -3,46 +3,13 @@
 import sys
 import synapseclient
 
-from typing import List, NamedTuple, Tuple
+from typing import Tuple
 
-
-class SubmissionAnnotations(NamedTuple):
-    status: str
-    score: List[int]
-    reason: str
-
-
-def get_participant_id(syn: synapseclient.Synapse, submission_id: str) -> List[str]:
-    """
-    Retrieves the teamId of the participating team that made
-    the submission. If the submitter is an individual rather than
-    a team, the userId for the individual is retrieved.
-
-    Arguments:
-      syn: A Synapse Python client instance
-      submission_id: The ID for an individual submission within an evaluation queue
-
-    Returns:
-      Returns the synID of a team or individual participant
-    """
-    # Retrieve a Submission object
-    submission = syn.getSubmission(submission_id, downloadFile=False)
-
-    # Get the teamId or userId of submitter
-    participant_id = submission.get("teamId") or submission.get("userId")
-
-    # Ensure that the participant_id returned is a list
-    # so it can be fed into syn.sendMessage(...) later.
-    return [participant_id]
-
-
-def get_score_dict(score):
-    strings = [""]
-    for key in score.keys():
-        string = f"{key} : {score[key][0]}" + "\n"
-        strings.append(string)
-
-    return strings
+from send_email import (
+    get_participant_id,
+    get_score_dict,
+    get_annotations,
+)
 
 
 def email_template(
@@ -110,41 +77,6 @@ def email_template(
         )
 
     return body
-
-
-def get_annotations(syn: synapseclient.Synapse, submission_id: str) -> NamedTuple:
-    """
-    Gets the ``status`` ``score`` and ``reason`` annotations for the given
-    submission on Synapse.
-
-    1. ``status`` is the submission status, as defined by the last begun stage
-    in the MODEL_TO_SYNAPSE workflow.
-    2. ``score`` is the score of the model, used to determine its accuracy.
-    3. ``reason`` is the reason for the validation error, if there was one.
-    It remains an empty string (None) if no validation error.
-
-    """
-    submission_annotations = syn.getSubmissionStatus(submission_id)[
-        "submissionAnnotations"
-    ]
-    submission_status = submission_annotations.get("validation_status")[0]
-    error_reason = submission_annotations.get("validation_errors")[0]
-
-    # TODO: A more elegant way to only get the score annotations?
-    non_score_annotations = [
-        "score_errors",
-        "score_status",
-        "validation_errors",
-        "validation_status",
-    ]
-    submission_scores = {
-        key: submission_annotations.get(key)
-        for key in submission_annotations.keys()
-        if key not in non_score_annotations
-    }
-    return SubmissionAnnotations(
-        status=submission_status, score=submission_scores, reason=error_reason
-    )
 
 
 def get_evaluation(syn: synapseclient.Synapse, submission_id: str) -> Tuple[str, str]:
