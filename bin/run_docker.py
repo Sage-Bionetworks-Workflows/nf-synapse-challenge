@@ -121,8 +121,8 @@ def run_docker(submission_id: str, log_file_name: str = "docker.log") -> None:
     Synapse.
 
     Args:
-        project: The Synapse project ID where the submission is located.
         submission_id: The ID of the submission to run.
+        log_file_name: The name of the log file to create.
 
     Returns:
         None

@@ -11,7 +11,6 @@ process RUN_DOCKER {
     input:
     val submission_id
     path staged_path
-    val project_name
     val cpus
     val memory
     val ready
@@ -22,6 +21,6 @@ process RUN_DOCKER {
 
     script:
     """
-    run_docker.py '${project_name}' '${submission_id}'
+    run_docker.py '${submission_id}'
     """
 }
