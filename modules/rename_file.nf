@@ -1,4 +1,4 @@
-process UPDATE_FOLDERS {
+process RENAME_FILE {
     tag "${submission_id}"
     
     secret "SYNAPSE_AUTH_TOKEN"
