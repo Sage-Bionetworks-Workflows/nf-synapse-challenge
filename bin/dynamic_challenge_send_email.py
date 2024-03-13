@@ -152,12 +152,20 @@ def send_email(
     Raises:
       ValueError: if an incorrect type is provided for notification_type
     """
+    if notification_type not in [BEFORE, AFTER]:
+        raise ValueError(f"Invalid notification_type. Must be '{BEFORE}' or '{AFTER}'")
     # Initiate connection to Synapse
     syn = synapseclient.login()
 
     # Get the Synapse users to send an e-mail to
     ids_to_notify = get_participant_id(syn, submission_id)
 
+    if notification_type == BEFORE:
+        subject = f"Evaluation for Submission {submission_id} is In Progress"
+        body = (
+            f"Evaluation for Submission {submission_id} is In Progress. "
+            "Further notification will be provided when evaluation is complete."
+        )
     if notification_type == AFTER:
         # Get MODEL_TO_DATA annotations for the given submission
         submission_annotations = get_annotations(syn, submission_id)
@@ -182,14 +190,6 @@ def send_email(
             submission_annotations.score,
             submission_annotations.reason,
         )
-    elif notification_type == BEFORE:
-        subject = f"Evaluation for Submission {submission_id} is In Progress"
-        body = (
-            f"Evaluation for Submission {submission_id} is In Progress. "
-            "Further notification will be provided when evaluation is complete."
-        )
-    else:
-        raise ValueError(f"Invalid notification_type. Must be '{BEFORE}' or '{AFTER}'")
 
     # Sends an e-mail notifying participant(s) that the evaluation succeeded or failed
     syn.sendMessage(userIds=ids_to_notify, messageSubject=subject, messageBody=body)
