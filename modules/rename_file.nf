@@ -10,7 +10,7 @@ process RENAME_FILE {
     path input_file
 
     output:
-    path("${submission_id}_*") into renamed_file
+    path("${submission_id}_*") renamed_file
 
     script:
     """
