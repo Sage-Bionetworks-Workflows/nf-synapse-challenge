@@ -48,7 +48,7 @@ workflow MODEL_TO_DATA {
     UPDATE_SUBMISSION_STATUS_BEFORE_RUN(submission_ch, "EVALUATION_IN_PROGRESS")
     RUN_DOCKER(submission_ch, SYNAPSE_STAGE.output, params.cpus, params.memory, CREATE_FOLDERS.output, UPDATE_SUBMISSION_STATUS_BEFORE_RUN.output)
     RENAME_FILE(submission_ch, RUN_DOCKER.output.map { it[1] })
-    UPDATE_FOLDERS(submission_ch, params.project_name, RENAME_FILE.output, RUN_DOCKER.output.map { it[2] })
+    UPDATE_FOLDERS(submission_ch, params.project_name, RENAME_FILE.renamed_file, RUN_DOCKER.output.map { it[2] })
     UPDATE_SUBMISSION_STATUS_AFTER_RUN(RUN_DOCKER.output.map { it[0] }, "ACCEPTED")
     VALIDATE(RUN_DOCKER.output, UPDATE_SUBMISSION_STATUS_AFTER_RUN.output, params.validation_script)
     UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE(submission_ch, VALIDATE.output.map { it[2] })
