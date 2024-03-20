@@ -187,12 +187,17 @@ def run_docker(submission_id: str, log_file_name: str = "docker.log", rename_out
 
     # Rename the predictions file if requested
     if rename_output:
-        output_dir = next((volumes[key] for key in volumes.keys() if "output" in volumes[key]["bind"]), None)
+        # Get the output directory based on the mounted volumes dictionary used to run the container
+        output_dir = next((key for key in volumes.keys() if "output" in volumes[key]["bind"]), None)
         if not os.path.exists(output_dir):
             raise ValueError("Output directory found in ``volumes`` does not exist.")
-        predictions_file = next(glob(os.path.join(output_dir, "predict*")), None)
+
+        # Get the predictions file, assuming the file exists. Otherwise, ``predictions_file = None``
+        predictions_file = next((file for file in glob(os.path.join(output_dir, "predictions.*")) if os.path.exists(file)), None)
         if predictions_file is None:
             raise ValueError("No predictions file found in output directory.")
+
+        # Rename the predictions file to include the submission ID
         helpers.rename_file(submission_id, predictions_file)
 
 
