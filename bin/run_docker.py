@@ -9,6 +9,8 @@ https://github.com/Sage-Bionetworks-Challenges/model-to-data-challenge-workflow/
 
 import os
 import sys
+import helpers
+from glob import glob
 from typing import Optional, Union
 
 import docker
@@ -108,21 +110,24 @@ def mount_volumes() -> dict:
     return volumes
 
 
-def run_docker(submission_id: str, log_file_name: str = "docker.log") -> None:
+def run_docker(submission_id: str, log_file_name: str = "docker.log", rename_output: bool = True) -> None:
     """
     A function to run a Docker container with the specified image and handle any exceptions that may occur.
 
     This function will run a Docker container using the image specified by the
     ``submission_id`` argument, and will mount the input/ and output/ directories
     in the current working directory to the corresponding locations in the
-    container. If the container runs successfully, the function will copy any
-    generated predictions file in the /output directory to Synapse. If the
-    container fails, the function will store the error message in a log file on
-    Synapse.
+    container. If the container runs successfully, the function will store any
+    generated predictions file in the /output directory to Synapse, along with
+    any logs generated. If the container run fails, the function will store the
+    error message in a log file on Synapse.
 
     Args:
         submission_id: The ID of the submission to run.
         log_file_name: The name of the log file to create.
+        rename_output: If True, renames the output file to include the submission ID.
+                       For example, if the submission ID is '123' and the output file is 'predictions.csv',
+                       then the 'predictions.csv' file is renamed to '123_predictions.csv'.
 
     Returns:
         None
@@ -179,6 +184,16 @@ def run_docker(submission_id: str, log_file_name: str = "docker.log") -> None:
     create_log_file(
         log_file_name=log_file_name, log_file_path=log_file_path, log_text=log_text
     )
+
+    # Rename the predictions file if requested
+    if rename_output:
+        output_dir = next((volumes[key] for key in volumes.keys() if "output" in volumes[key]["bind"]), None)
+        if not os.path.exists(output_dir):
+            raise ValueError("Output directory found in ``volumes`` does not exist.")
+        predictions_file = next(glob(os.path.join(output_dir, "predict*")), None)
+        if predictions_file is None:
+            raise ValueError("No predictions file found in output directory.")
+        helpers.rename_file(submission_id, predictions_file)
 
 
 if __name__ == "__main__":

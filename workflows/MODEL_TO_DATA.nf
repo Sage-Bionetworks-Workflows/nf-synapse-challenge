@@ -31,7 +31,6 @@ include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_BEFORE_RUN } from
 include { CREATE_FOLDERS } from '../modules/create_folders.nf'
 include { UPDATE_FOLDERS } from '../modules/update_folders.nf'
 include { RUN_DOCKER } from '../modules/run_docker.nf'
-include { RENAME_FILE } from '../modules/rename_file.nf'
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_AFTER_RUN } from '../modules/update_submission_status.nf'
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE } from '../modules/update_submission_status.nf'
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_AFTER_SCORE } from '../modules/update_submission_status.nf'
@@ -47,8 +46,7 @@ workflow MODEL_TO_DATA {
     CREATE_FOLDERS(submission_ch, "create", params.project_name)
     UPDATE_SUBMISSION_STATUS_BEFORE_RUN(submission_ch, "EVALUATION_IN_PROGRESS")
     RUN_DOCKER(submission_ch, SYNAPSE_STAGE.output, params.cpus, params.memory, CREATE_FOLDERS.output, UPDATE_SUBMISSION_STATUS_BEFORE_RUN.output)
-    renamed_file = RENAME_FILE(submission_ch, RUN_DOCKER.output.map { it[1] })
-    UPDATE_FOLDERS(submission_ch, params.project_name, renamed_file, RUN_DOCKER.output.map { it[2] })
+    UPDATE_FOLDERS(submission_ch, params.project_name, RUN_DOCKER.output.map { it[1] }, RUN_DOCKER.output.map { it[2] })
     UPDATE_SUBMISSION_STATUS_AFTER_RUN(RUN_DOCKER.output.map { it[0] }, "ACCEPTED")
     VALIDATE(RUN_DOCKER.output, UPDATE_SUBMISSION_STATUS_AFTER_RUN.output, params.validation_script)
     UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE(submission_ch, VALIDATE.output.map { it[2] })
