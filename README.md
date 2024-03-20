@@ -87,16 +87,18 @@ flowchart LR;
     B[UPDATE STATUS]-->E;
     C[CREATE FOLDERS]-->E;
     E-->G[UPDATE STATUS];
-    G-->H[VALIDATE];
-    H-->I[ANNOTATE];
-    H-->J[UPDATE STATUS];
-    I-->K[SCORE];
-    J-->K;
-    K-->L[ANNOTATE];
-    K-->M[UPDATE STATUS];
-    L-->N;
-    M-->N[SEND EMAIL];
-    N-->O[END];
+    E-->H[UPDATE FOLDERS];
+    G-->I[VALIDATE];
+    H-->I;
+    I-->J[UPDATE STATUS];
+    I-->K[ANNOTATE];
+    J-->L[SCORE];
+    K-->L;
+    L-->M[UPDATE STATUS];
+    L-->N[ANNOTATE];
+    M-->O;
+    N-->O[SEND EMAIL];
+    O-->P[END];
 ```
 
 

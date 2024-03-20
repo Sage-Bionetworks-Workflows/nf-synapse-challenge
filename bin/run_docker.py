@@ -9,12 +9,13 @@ https://github.com/Sage-Bionetworks-Challenges/model-to-data-challenge-workflow/
 
 import os
 import sys
+from glob import glob
 from typing import Optional, Union
 
 import docker
 import synapseclient
 
-from create_folders import create_folders
+import helpers
 
 
 def get_submission_image(syn: synapseclient.Synapse, submission_id: str) -> str:
@@ -108,24 +109,34 @@ def mount_volumes() -> dict:
     return volumes
 
 
-def run_docker(submission_id: str, log_file_name: str = "docker.log") -> None:
+def run_docker(
+    submission_id: str, log_file_name: str = "docker.log", rename_output: bool = True
+) -> None:
     """
     A function to run a Docker container with the specified image and handle any exceptions that may occur.
 
     This function will run a Docker container using the image specified by the
     ``submission_id`` argument, and will mount the input/ and output/ directories
     in the current working directory to the corresponding locations in the
-    container. If the container runs successfully, the function will copy any
-    generated predictions file in the /output directory to Synapse. If the
-    container fails, the function will store the error message in a log file on
-    Synapse.
+    container. If the container runs successfully, the function will store any
+    generated predictions file in the /output directory to Synapse, along with
+    any logs generated. If the container run fails, the function will store the
+    error message in a log file on Synapse.
 
     Args:
         submission_id: The ID of the submission to run.
         log_file_name: The name of the log file to create.
+        rename_output: If True, renames the output file to include the submission ID.
+                       For example, if the submission ID is '123' and the output file is 'predictions.csv',
+                       then the 'predictions.csv' file is renamed to '123_predictions.csv'.
 
     Returns:
         None
+
+    Raises:
+        ValueError: If the output directory does not exist, or if the predictions file is not found
+                    in the output directory after running the Docker container.
+
     """
     # Get the Synapse authentication token from the environment variable
     synapse_auth_token: str = os.environ["SYNAPSE_AUTH_TOKEN"]
@@ -179,6 +190,30 @@ def run_docker(submission_id: str, log_file_name: str = "docker.log") -> None:
     create_log_file(
         log_file_name=log_file_name, log_file_path=log_file_path, log_text=log_text
     )
+
+    # Rename the predictions file if requested
+    if rename_output:
+        # Get the output directory based on the mounted volumes dictionary used to run the container
+        output_dir = next(
+            (key for key in volumes.keys() if "output" in volumes[key]["bind"]), None
+        )
+        if not os.path.exists(output_dir):
+            raise ValueError("Output directory found in ``volumes`` does not exist.")
+
+        # Get the predictions file, assuming the file exists. Otherwise, ``predictions_file = None``
+        predictions_file = next(
+            (
+                file
+                for file in glob(os.path.join(output_dir, "predictions.*"))
+                if os.path.exists(file)
+            ),
+            None,
+        )
+        if predictions_file is None:
+            raise ValueError("No predictions file found in output directory.")
+
+        # Rename the predictions file to include the submission ID
+        helpers.rename_file(submission_id, predictions_file)
 
 
 if __name__ == "__main__":

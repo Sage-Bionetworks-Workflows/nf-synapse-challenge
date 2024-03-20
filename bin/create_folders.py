@@ -10,9 +10,9 @@ and ``run_docker.nf`` workflows. It provides the following functionality:
 import sys
 from typing import List, Union
 
-import helpers
-
 import synapseclient
+
+import helpers
 
 
 def create_folder(

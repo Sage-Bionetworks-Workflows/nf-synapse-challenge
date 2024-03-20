@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
 import sys
-import helpers
-import synapseclient
-
 from typing import List, NamedTuple
 
+import synapseclient
+
+import helpers
 
 class SubmissionAnnotations(NamedTuple):
     status: str

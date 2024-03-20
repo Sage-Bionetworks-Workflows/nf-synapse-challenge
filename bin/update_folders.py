@@ -12,10 +12,10 @@ def store_file(
     folder_name: str,
     input_file: str,
     submitter_id: str,
-    parent_id: Union[str, synapseclient.Entity]
+    parent_id: Union[str, synapseclient.Entity],
 ) -> synapseclient.File:
     """
-    Update subfolders based on the given predictions file, submitter ID, and parent ID, and returns the file entity.
+    Store a given input file in its correct location on Synapse, and returns the Synapse file entity.
 
     Arguments:
         syn: A Synapse Python client instance
@@ -26,6 +26,9 @@ def store_file(
 
     Returns:
         The Synapse File entity that was created
+
+    Raises:
+        ValueError: If the subfolder does not exist
 
     """
 
@@ -39,11 +42,40 @@ def store_file(
         )
 
     file_entity = syn.store(synapseclient.File(input_file, parentId=subfolder))
+
     return file_entity
 
 
-def update_folders(project_name, submission_id, folder_name, input_file, root_folder_name="Logs"):
-    # Log into the client 
+def update_folders(
+    project_name: str,
+    submission_id: str,
+    folder_name: str,
+    input_file: str,
+    root_folder_name: str = "Logs",
+) -> None:
+    """
+    This function can either create or re-create a root folder and set of subfolders to
+    store Challenge output files for Challenge participants and organizers.
+
+    The current Challenge Folder structure is as follows:
+
+    Root-Folder/
+    |--Level 1 Subfolder (Submitter-Folder)/
+    |  |--Level 2 Subfolder/
+    |  |  |-- ...
+
+    Arguments:
+        project_name: The name of the Project
+        submission_id: The Submission ID of the submission being processed
+        folder_name: The name of the subfolder that will house the ``input_file``
+        input_file: The name of the file to be uploaded into the subfolder
+        root_folder_name: The name of the root folder housing all the subfolders and File entities
+
+    Raises:
+        ValueError: If the root folder does not exist, or the file attempted to be uploaded is empty.
+
+    """
+    # Log into the client
     syn = synapseclient.login(silent=True)
 
     # Retrieving Synapse IDs that will be necessary later
@@ -54,7 +86,7 @@ def update_folders(project_name, submission_id, folder_name, input_file, root_fo
     root_folder_id = syn.findEntityId(name=root_folder_name, parent=project_id)
     if not root_folder_id:
         raise ValueError(
-            f"Could not find '{root_folder_name}' root folder on Synapse for project ID: {project_id}"
+            f"Could not find '{root_folder_name}' root folder on Synapse for project ID: {project_id}. Exiting."
         )
 
     # ``input_file`` must not be None or empty to proceed
@@ -75,7 +107,6 @@ def update_folders(project_name, submission_id, folder_name, input_file, root_fo
 
 
 if __name__ == "__main__":
-
     project_name = sys.argv[1]
     submission_id = sys.argv[2]
     folder_name = sys.argv[3]
