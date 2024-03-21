@@ -9,8 +9,8 @@ import synapseclient
 
 from typing import Tuple
 
+from helpers import get_participant_id
 from send_email import (
-    get_participant_id,
     get_score_dict,
     get_annotations,
 )
