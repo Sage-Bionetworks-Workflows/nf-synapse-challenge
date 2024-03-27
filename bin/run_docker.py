@@ -178,6 +178,17 @@ def run_docker(
 
         log_text = container
 
+        # Get the output directory based on the mounted volumes dictionary used to run the container
+        output_dir = next(
+            (key for key in volumes.keys() if "output" in volumes[key]["bind"]), None
+        )
+
+        # If no predictions file is generated, capture this in the logs and raise an error
+        if not os.path.exists(output_dir):
+            msg = "Output directory found in ``volumes`` does not exist."
+            log_text + "\n" + msg
+            raise ValueError(msg)
+
     except Exception as e:
         log_text = str(e).replace("\\n", "\n")
         create_log_file(
@@ -193,24 +204,13 @@ def run_docker(
 
     # Rename the predictions file if requested
     if rename_output:
-        # Get the output directory based on the mounted volumes dictionary used to run the container
-        output_dir = next(
-            (key for key in volumes.keys() if "output" in volumes[key]["bind"]), None
-        )
-        if not os.path.exists(output_dir):
-            raise ValueError("Output directory found in ``volumes`` does not exist.")
 
-        # Get the predictions file, assuming the file exists. Otherwise, ``predictions_file = None``
-        predictions_file = next(
-            (
-                file
-                for file in glob(os.path.join(output_dir, "predictions.*"))
-                if os.path.exists(file)
-            ),
-            None,
-        )
-        if predictions_file is None:
-            raise ValueError("No predictions file found in output directory.")
+        # Get the predictions file, assuming the file exists and there is only 1.
+        # Otherwise, raises an error.
+        file_glob = glob(os.path.join(output_dir, "predictions.*"))
+        if len(file_glob) != 1:
+            raise ValueError(f"Expected 1 predictions file in the output directory. Got {len(file_glob)}. Exiting.")
+        predictions_file = file_glob[0]
 
         # Rename the predictions file to include the submission ID
         helpers.rename_file(submission_id, predictions_file)
