@@ -42,6 +42,28 @@ def get_submission_image(syn: synapseclient.Synapse, submission_id: str) -> str:
     return image_id
 
 
+def check_for_outputs(volumes, log_file_name, log_file_path, log_text):
+    # Get the output directory based on the mounted volumes dictionary used to run the container
+    output_dir = next(
+        (key for key in volumes.keys() if "output" in volumes[key]["bind"]), None
+    )
+
+    # Glob any expected output files stored in the output_dir as a result of the container run
+    file_glob = glob(os.path.join(output_dir, "predictions.*"))
+
+    if len(file_glob) != 1:
+        msg = f"Expected 1 predictions file in the output directory. Got {len(file_glob)}. Exiting."
+        if isinstance(log_text, bytes):
+            log_text = log_text.decode("utf-8")
+        log_text = log_text + "\n" + msg
+
+        create_log_file(
+            log_file_name=log_file_name, log_file_path=log_file_path, log_text=log_text
+        )
+        raise ValueError(msg)
+    
+    return file_glob
+
 def create_log_file(
     log_file_name: str,
     log_file_path: Optional[Union[None, str]] = None,
@@ -178,17 +200,7 @@ def run_docker(
 
         log_text = container
 
-        # Get the output directory based on the mounted volumes dictionary used to run the container
-        output_dir = next(
-            (key for key in volumes.keys() if "output" in volumes[key]["bind"]), None
-        )
-
-        # If no predictions file is generated, capture this in the logs and raise an error
-        if not os.path.exists(output_dir):
-            msg = "Output directory found in ``volumes`` does not exist."
-            log_text + "\n" + msg
-            raise ValueError(msg)
-
+    # Capture any errors that may occur during the attempt to run the container
     except Exception as e:
         log_text = str(e).replace("\\n", "\n")
         create_log_file(
@@ -196,6 +208,14 @@ def run_docker(
         )
 
         raise
+    print("TEST")
+    print(log_text)
+    outputs = check_for_outputs(volumes,
+                                log_file_name=log_file_name,
+                                log_file_path=log_file_path,
+                                log_text=log_text)
+
+    predictions_file = outputs[0]
 
     # Create log file and store the log message (``log_text``) inside
     create_log_file(
@@ -203,17 +223,7 @@ def run_docker(
     )
 
     # Rename the predictions file if requested
-    if rename_output:
-
-        # Get the predictions file, assuming the file exists and there is only 1.
-        # Otherwise, raises an error.
-        file_glob = glob(os.path.join(output_dir, "predictions.*"))
-        if len(file_glob) != 1:
-            raise ValueError(f"Expected 1 predictions file in the output directory. Got {len(file_glob)}. Exiting.")
-        predictions_file = file_glob[0]
-
-        # Rename the predictions file to include the submission ID
-        helpers.rename_file(submission_id, predictions_file)
+    if rename_output: helpers.rename_file(submission_id, predictions_file)
 
 
 if __name__ == "__main__":
