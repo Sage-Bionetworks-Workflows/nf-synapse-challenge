@@ -208,8 +208,7 @@ def run_docker(
         )
 
         raise
-    print("TEST")
-    print(log_text)
+
     outputs = check_for_outputs(volumes,
                                 log_file_name=log_file_name,
                                 log_file_path=log_file_path,
