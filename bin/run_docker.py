@@ -52,7 +52,7 @@ def check_for_outputs(volumes, log_file_name, log_file_path, log_text):
     file_glob = glob(os.path.join(output_dir, "predictions.*"))
 
     if len(file_glob) != 1:
-        msg = f"Expected 1 predictions file in the output directory. Got {len(file_glob)}. Exiting."
+        msg = f"Expected 1 predictions file in the output directory. Got {len(file_glob)}. If multiple output files were generated, the first will be used for validation and scoring."
         if isinstance(log_text, bytes):
             log_text = log_text.decode("utf-8")
         log_text = log_text + "\n" + msg
@@ -60,7 +60,6 @@ def check_for_outputs(volumes, log_file_name, log_file_path, log_text):
         create_log_file(
             log_file_name=log_file_name, log_file_path=log_file_path, log_text=log_text
         )
-        raise ValueError(msg)
     
     return file_glob
 
