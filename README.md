@@ -128,6 +128,8 @@ The workflow requires the following inputs:
 1. `validation_script` (required): The string name of the validation script to use for the `VALIDATE` step of the workflow run. Defaults to `validate.py`
 1. `testing_data` (required): The Synapse ID for the folder holding the testing data for submissions.
 1. `email_with_score` (optional & case-sensitive): Choose whether or not the e-mail sent out to participants will include the evaluation score or not. Can either be "yes" or "no". Defaults to "yes".
+1. `send_email` (optional): If `true`, sends an e-mail to the submitter on the status of their submission. Default is `true`.
+1. `email_script` (required if `send_email` is `true`): If `send_email` is `true`, choose an e-mail template to send to submitters on the status of their submission. Default is a generic `send_email.py` template.
 
 
 Run the workflow locally with default inputs and a `submissions` string input:
