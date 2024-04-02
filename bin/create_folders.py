@@ -155,7 +155,7 @@ if __name__ == "__main__":
     submission_id = sys.argv[2]
     only_admins = sys.argv[3]
 
-    # Remove whitespace and split by comma to get a list
+    # Remove whitespace (if any) and split by comma to get a list
     # of folders that should only be available to Challenge admins
     only_admins = only_admins.strip(" ").split(",")
 
