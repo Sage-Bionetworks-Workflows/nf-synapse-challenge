@@ -152,5 +152,6 @@ def create_folders(
 if __name__ == "__main__":
     project_name = sys.argv[1]
     submission_id = sys.argv[2]
+    only_admins = sys.argv[3]
 
-    create_folders(project_name=project_name, submission_id=submission_id)
+    create_folders(project_name=project_name, submission_id=submission_id, only_admins=only_admins)

@@ -21,10 +21,12 @@ params.scoring_script = "model_to_data_score.py"
 params.validation_script = "validate.py"
 // Ensuring correct input parameter values
 assert params.email_with_score in ["yes", "no"], "Invalid value for ``email_with_score``. Can either be ''yes'' or ''no''."
-// toggle email notification
+// Toggle email notification
 params.send_email = true
-// set email script
+// Set email script
 params.email_script = "send_email.py"
+// The folder below will be private (available only to admins)
+params.only_admins = "predictions"
 
 // import modules
 include { CREATE_SUBMISSION_CHANNEL } from '../subworkflows/create_submission_channel.nf'
@@ -45,7 +47,7 @@ include { SEND_EMAIL } from '../modules/send_email.nf'
 workflow MODEL_TO_DATA {
     submission_ch = CREATE_SUBMISSION_CHANNEL()
     SYNAPSE_STAGE(params.input_id, "input")
-    CREATE_FOLDERS(submission_ch, "create", params.project_name)
+    CREATE_FOLDERS(submission_ch, params.project_name, params.only_admins)
     UPDATE_SUBMISSION_STATUS_BEFORE_RUN(submission_ch, "EVALUATION_IN_PROGRESS")
     RUN_DOCKER(submission_ch, SYNAPSE_STAGE.output, params.cpus, params.memory, CREATE_FOLDERS.output, UPDATE_SUBMISSION_STATUS_BEFORE_RUN.output)
     UPDATE_FOLDERS(submission_ch, params.project_name, RUN_DOCKER.output.map { it[1] }, RUN_DOCKER.output.map { it[2] })

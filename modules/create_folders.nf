@@ -11,14 +11,14 @@ process CREATE_FOLDERS {
 
     input:
     val submission_id
-    val create_or_update
     val project_name
+    val only_admins
 
     output:
     val "ready"
 
     script:
     """
-    create_folders.py '${project_name}' '${submission_id}' '${create_or_update}'
+    create_folders.py '${project_name}' '${submission_id}' '${only_admins}'
     """
 }
