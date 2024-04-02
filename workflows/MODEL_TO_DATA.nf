@@ -25,8 +25,8 @@ assert params.email_with_score in ["yes", "no"], "Invalid value for ``email_with
 params.send_email = true
 // Set email script
 params.email_script = "send_email.py"
-// The folder below will be private (available only to admins)
-params.only_admins = "predictions"
+// The folder(s) below will be private (available only to admins)
+params.only_admins = "docker_logs,predictions"
 
 // import modules
 include { CREATE_SUBMISSION_CHANNEL } from '../subworkflows/create_submission_channel.nf'

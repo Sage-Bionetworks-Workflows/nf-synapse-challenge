@@ -80,7 +80,7 @@ def create_folders(
     submission_id: str,
     syn: Union[None, synapseclient.Synapse] = None,
     subfolders: List[str] = ["docker_logs", "predictions"],
-    only_admins: str = "predictions",
+    only_admins: List[str] = ["predictions"],
     root_folder_name: str = "Logs",
 ) -> None:
     """
@@ -139,7 +139,7 @@ def create_folders(
         # The level 2 subfolders will inherit the permissions set on the level 1 subfolder above.
         # The subfolder denoted under ``only_admins`` will have its own ACL, and will be only accessed by
         # Project maintainers:
-        if level2_subfolder.name == only_admins:
+        if level2_subfolder.name in only_admins:
             update_permissions(
                 syn,
                 subfolder=level2_subfolder,
@@ -150,8 +150,14 @@ def create_folders(
 
 
 if __name__ == "__main__":
+    # Assigning variables to the command line args
     project_name = sys.argv[1]
     submission_id = sys.argv[2]
     only_admins = sys.argv[3]
 
+    # Remove whitespace and split by comma to get a list
+    # of folders that should only be available to Challenge admins
+    only_admins = only_admins.strip(" ").split(",")
+
+    # Create the folders
     create_folders(project_name=project_name, submission_id=submission_id, only_admins=only_admins)
