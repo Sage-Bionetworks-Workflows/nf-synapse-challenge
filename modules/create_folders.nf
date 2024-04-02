@@ -12,13 +12,13 @@ process CREATE_FOLDERS {
     input:
     val submission_id
     val project_name
-    val only_admins
+    val private_folders
 
     output:
     val "ready"
 
     script:
     """
-    create_folders.py '${project_name}' '${submission_id}' '${only_admins}'
+    create_folders.py '${project_name}' '${submission_id}' '${private_folders}'
     """
 }

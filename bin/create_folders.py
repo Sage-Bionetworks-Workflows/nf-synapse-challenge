@@ -80,7 +80,7 @@ def create_folders(
     submission_id: str,
     syn: Union[None, synapseclient.Synapse] = None,
     subfolders: List[str] = ["docker_logs", "predictions"],
-    only_admins: List[str] = ["predictions"],
+    private_folders: List[str] = ["predictions"],
     root_folder_name: str = "Logs",
 ) -> None:
     """
@@ -105,7 +105,7 @@ def create_folders(
         log_file: The name of the log file that the docker_logs folder should be
                   updated with.
         subfolders: The subfolders to be created under the parent folder.
-        only_admins: The name of the subfolder that will have local share settings
+        private_folders: The name of the subfolder that will have local share settings
                      differing from the other subfolders.
         root_folder_name: The name of the root folder under the Project. Default is ''Logs''.
 
@@ -137,9 +137,9 @@ def create_folders(
             syn, folder_name=level2_subfolder, parent=level1_subfolder
         )
         # The level 2 subfolders will inherit the permissions set on the level 1 subfolder above.
-        # The subfolder denoted under ``only_admins`` will have its own ACL, and will be only accessed by
+        # The subfolder denoted under ``private_folders`` will have its own ACL, and will be only accessed by
         # Project maintainers:
-        if level2_subfolder.name in only_admins:
+        if level2_subfolder.name in private_folders:
             update_permissions(
                 syn,
                 subfolder=level2_subfolder,
@@ -153,11 +153,11 @@ if __name__ == "__main__":
     # Assigning variables to the command line args
     project_name = sys.argv[1]
     submission_id = sys.argv[2]
-    only_admins = sys.argv[3]
+    private_folders = sys.argv[3]
 
     # Remove whitespace (if any) and split by comma to get a list
     # of folders that should only be available to Challenge admins
-    only_admins = only_admins.strip(" ").split(",")
+    private_folders = private_folders.strip().split(",")
 
     # Create the folders
-    create_folders(project_name=project_name, submission_id=submission_id, only_admins=only_admins)
+    create_folders(project_name=project_name, submission_id=submission_id, private_folders=private_folders)
