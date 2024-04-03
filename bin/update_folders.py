@@ -112,9 +112,11 @@ if __name__ == "__main__":
     folder_name = sys.argv[3]
     file_name = sys.argv[4]
 
-    update_folders(
-        project_name=project_name,
-        submission_id=submission_id,
-        folder_name=folder_name,
-        input_file=file_name
-    )
+    # Updating the subfolders with non-INVALID output files, and docker logs.
+    if "INVALID" not in file_name:
+        update_folders(
+            project_name=project_name,
+            submission_id=submission_id,
+            folder_name=folder_name,
+            input_file=file_name
+        )
