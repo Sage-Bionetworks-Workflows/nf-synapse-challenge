@@ -76,13 +76,13 @@ def handle_outputs(output_path: str, output_file_name: str, log_text: str):
 
     # Update the log file if there is a case where too many output files were generated, or none were generated
     if len(file_glob) != 1:
-        msg = f"Expected 1 predictions file in the output directory. Got {len(file_glob)}. If multiple output files were generated, the first will be used for validation and scoring."
+        no_output_msg = f"Expected 1 Docker container output file in the output directory. Got {len(file_glob)}. If multiple output files were generated, the first will be used for validation and scoring."
         if isinstance(log_text, bytes):
             log_text = log_text.decode("utf-8")
-        log_text = log_text + "\n" + msg
+        log_text = log_text + "\n" + no_output_msg
 
     # Return an output file if any were found. If more than one was found, the first one will be used.
-    output_file = file_glob[0] if len(file_glob) > 0 else make_invalid_output(file_name="predictions.csv", log_file_path=output_path, file_content=msg)
+    output_file = file_glob[0] if len(file_glob) > 0 else make_invalid_output(file_name="predictions.csv", log_file_path=output_path, file_content=no_output_msg)
 
     return output_file, log_text
 
