@@ -76,7 +76,7 @@ def handle_outputs(output_path: str, output_file_name: str, log_text: str):
 
     # Update the log file if there is a case where too many output files were generated, or none were generated
     if len(file_glob) != 1:
-        no_output_msg = f"Expected 1 Docker container output file in the output directory. Got {len(file_glob)}. If multiple output files were generated, the first will be used for validation and scoring."
+        no_output_msg = f"Expected 1 Docker container output file in the output directory. Got {len(file_glob)}. If multiple output files were generated, the first one retrieved will be used for validation and scoring."
         if isinstance(log_text, bytes):
             log_text = log_text.decode("utf-8")
         log_text = log_text + "\n" + no_output_msg
