@@ -97,7 +97,7 @@ def handle_outputs(output_path: str, output_file_name: str, log_text: str):
         else make_invalid_output(
             file_name=output_file_name + ".csv",
             log_file_path=output_path,
-            file_content=no_output_msg,
+            file_content=bad_output_msg,
         )
     )
 
