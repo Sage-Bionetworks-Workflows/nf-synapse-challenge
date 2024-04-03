@@ -42,14 +42,23 @@ def get_submission_image(syn: synapseclient.Synapse, submission_id: str) -> str:
     return image_id
 
 
-def make_invalid_output(file_name, log_file_path, file_content):
+def make_invalid_output(file_name: str, log_file_path: str, file_content: str) -> str:
+    """
+    Creates an invalid new output file, given the original file name, log file path, and file content, and returns the path of the new file.
+    Parameters:
+        file_name (str): The name of the original file.
+        log_file_path (str): The path where the new file will be created.
+        file_content (str): The content to be written to the new file.
+    Returns:
+        invalid_file: The path of the newly created file with the invalid data.
 
-    dummy_file_name = "INVALID_"+file_name
-    dummy_file = os.path.join(log_file_path, dummy_file_name)
-    with open(dummy_file, "w") as d:
+    """
+    invalid_file_name = "INVALID_" + file_name
+    invalid_file = os.path.join(log_file_path, invalid_file_name)
+    with open(invalid_file, "w") as d:
         d.write(file_content)
 
-    return dummy_file
+    return invalid_file
 
 
 def handle_outputs(output_path: str, output_file_name: str, log_text: str):
@@ -72,17 +81,25 @@ def handle_outputs(output_path: str, output_file_name: str, log_text: str):
 
     """
     # Glob any expected output files stored in the output_dir as a result of the container run
-    file_glob = glob(os.path.join(output_path, output_file_name+".*"))
+    file_glob = glob(os.path.join(output_path, output_file_name + ".*"))
 
     # Update the log file if there is a case where too many output files were generated, or none were generated
     if len(file_glob) != 1:
-        no_output_msg = f"Expected 1 Docker container output file in the output directory. Got {len(file_glob)}. If multiple output files were generated, the first one retrieved will be used for validation and scoring."
+        bad_output_msg = f"Expected 1 Docker container output file in the output directory. Got {len(file_glob)}. If multiple output files are generated, please zip them into a single file for processing."
         if isinstance(log_text, bytes):
             log_text = log_text.decode("utf-8")
-        log_text = log_text + "\n" + no_output_msg
+        log_text = log_text + "\n" + bad_output_msg
 
     # Return an output file if any were found. If more than one was found, the first one will be used.
-    output_file = file_glob[0] if len(file_glob) > 0 else make_invalid_output(file_name="predictions.csv", log_file_path=output_path, file_content=no_output_msg)
+    output_file = (
+        file_glob[0]
+        if len(file_glob) == 1
+        else make_invalid_output(
+            file_name=output_file_name + ".csv",
+            log_file_path=output_path,
+            file_content=no_output_msg,
+        )
+    )
 
     return output_file, log_text
 
@@ -202,7 +219,7 @@ def run_docker(
     docker_image = get_submission_image(syn, submission_id)
 
     # Assign the path to the log file
-    #log_file_path = os.path.join(os.getcwd(), "output")
+    # log_file_path = os.path.join(os.getcwd(), "output")
     # Get the output directory based on the mounted volumes dictionary used to run the container
     output_path = next(
         (key for key in volumes.keys() if "output" in volumes[key]["bind"]), None
@@ -234,9 +251,9 @@ def run_docker(
 
     # Handle any outputs from the container run in the ``output/`` directory.
     # This means: An expected output file, more than 1 output file, or no output file.
-    output_file, log_text = handle_outputs(output_path=output_path,
-                                           output_file_name="predictions",
-                                           log_text=log_text)
+    output_file, log_text = handle_outputs(
+        output_path=output_path, output_file_name="predictions", log_text=log_text
+    )
 
     # Create log file and store the log message (``log_text``) inside
     create_log_file(
@@ -244,7 +261,8 @@ def run_docker(
     )
 
     # Rename the predictions file if requested
-    if rename_output: helpers.rename_file(submission_id, output_file)
+    if rename_output:
+        helpers.rename_file(submission_id, output_file)
 
 
 if __name__ == "__main__":
