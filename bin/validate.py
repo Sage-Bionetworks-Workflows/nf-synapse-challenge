@@ -10,9 +10,9 @@ if __name__ == "__main__":
     submission_id = sys.argv[1]
     predictions_path = sys.argv[2]
     invalid_reasons = []
-    if predictions_path is None:
+    if "INVALID" in predictions_path:
         prediction_status = "INVALID"
-        invalid_reasons.append("Predictions file not found")
+        invalid_reasons.append("Predictions file(s) not generated from Docker container")
     else:
         # Unzipping the predictions and extracting the files in
         # the current working directory
@@ -31,7 +31,7 @@ if __name__ == "__main__":
         # Checking if there are any files
         if len(predictions_files) == 0:
             prediction_status = "INVALID"
-            invalid_reasons.append("No predictions files found")
+            invalid_reasons.append("Predictions file(s) not generated from Docker container")
 
         # Validating file contents
         for file in predictions_files:

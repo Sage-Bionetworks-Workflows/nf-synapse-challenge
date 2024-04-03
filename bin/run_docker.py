@@ -42,9 +42,9 @@ def get_submission_image(syn: synapseclient.Synapse, submission_id: str) -> str:
     return image_id
 
 
-def make_dummy_output(file_name, log_file_path, file_content):
+def make_invalid_output(file_name, log_file_path, file_content):
 
-    dummy_file_name = "dummy_"+file_name
+    dummy_file_name = "INVALID_"+file_name
     dummy_file = os.path.join(log_file_path, dummy_file_name)
     with open(dummy_file, "w") as d:
         d.write(file_content)
@@ -82,7 +82,7 @@ def handle_outputs(output_path: str, output_file_name: str, log_text: str):
         log_text = log_text + "\n" + msg
 
     # Return an output file if any were found. If more than one was found, the first one will be used.
-    output_file = file_glob[0] if len(file_glob) > 0 else make_dummy_output(file_name="predictions.csv", log_file_path=output_path, file_content=msg)
+    output_file = file_glob[0] if len(file_glob) > 0 else make_invalid_output(file_name="predictions.csv", log_file_path=output_path, file_content=msg)
 
     return output_file, log_text
 
