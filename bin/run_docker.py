@@ -178,10 +178,6 @@ def run_docker(
     Returns:
         None
 
-    Raises:
-        ValueError: If the output directory does not exist, or if the predictions file is not found
-                    in the output directory after running the Docker container.
-
     """
     # Get the Synapse authentication token from the environment variable
     synapse_auth_token: str = os.environ["SYNAPSE_AUTH_TOKEN"]
