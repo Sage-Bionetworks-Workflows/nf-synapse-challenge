@@ -12,7 +12,8 @@ if __name__ == "__main__":
     invalid_reasons = []
     if "INVALID" in predictions_path:
         prediction_status = "INVALID"
-        invalid_reasons.append("Predictions file(s) not generated from Docker container")
+        with open(predictions_path, "r") as file:
+            invalid_reasons.append(file.read())
     else:
         # Unzipping the predictions and extracting the files in
         # the current working directory
