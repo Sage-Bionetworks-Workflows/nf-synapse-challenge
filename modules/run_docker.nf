@@ -17,7 +17,7 @@ process RUN_DOCKER {
     val ready
 
     output:
-    tuple val(submission_id), path('output/*predictions.{csv,zip}'), path('output/*.log')
+    tuple val(submission_id), path('output/*_predictions.{csv,zip}'), path('output/*.log')
 
     script:
     """
