@@ -248,8 +248,6 @@ def run_docker(
             log_file_name=log_file_name, log_file_path=output_path, log_text=log_text
         )
 
-        raise
-
     # Handle any outputs from the container run in the ``output/`` directory.
     # This means: An expected output file, more than 1 output file, or no output file.
     output_file, log_text = handle_outputs(
