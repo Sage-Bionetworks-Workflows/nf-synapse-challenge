@@ -15,7 +15,7 @@ process UPDATE_FOLDERS {
 
     script:
     """
-    update_folders.py '${project_name}' '${submission_id}' 'predictions' '${predictions_file}'
+    [[ $(basename '${predictions_file}') == *'INVALID'* ]] || update_folders.py '${project_name}' '${submission_id}' 'predictions' '${predictions_file}'
     update_folders.py '${project_name}' '${submission_id}' 'docker_logs' '${docker_log_file}'
     """
 }
