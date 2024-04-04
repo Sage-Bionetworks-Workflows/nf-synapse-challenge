@@ -221,8 +221,6 @@ def run_docker(
     # Get the Docker image ID from the submission
     docker_image = get_submission_image(syn, submission_id)
 
-    # Assign the path to the log file
-    # log_file_path = os.path.join(os.getcwd(), "output")
     # Get the output directory based on the mounted volumes dictionary used to run the container
     output_path = next(
         (key for key in volumes.keys() if "output" in volumes[key]["bind"]), None
