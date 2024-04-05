@@ -88,7 +88,7 @@ def handle_outputs(output_path: str, output_file_name: str, log_text: str):
 
     # Update the log file if there is a case where too many output files were generated, or none were generated
     if len(file_glob) != 1:
-        bad_output_msg = f"Expected 1 Docker container output file with base name {output_file_name} in the output directory. Got {len(file_glob)}, or a file incorrectly named. If multiple output files are generated, please zip them into a single file for processing."
+        bad_output_msg = f"Expected 1 Docker container output file with base name '{output_file_name}' in the output directory. Got {len(file_glob)}, or a file incorrectly named. If multiple output files are generated, please zip them into a single file for processing."
         if isinstance(log_text, bytes):
             log_text = log_text.decode("utf-8")
         log_text = log_text + "\n" + bad_output_msg
