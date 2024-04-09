@@ -119,9 +119,9 @@ def create_log_file(
 
     Arguments:
         log_file_name: The name of the log file to create
+        log_max_size: The maximum size of the log file in kilobytes
         log_file_path: The path where the log file will be created.
                        If not specified, the current working directory will be used.
-        log_max_size: The maximum size of the log file in kilobytes
         log_text: The text to write to the log file
 
     """
