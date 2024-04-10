@@ -295,6 +295,7 @@ def run_docker(
 
 if __name__ == "__main__":
     submission_id = sys.argv[1]
+    log_max_size = int(sys.argv[2])
     log_file_name = f"{submission_id}_docker.log"
 
-    run_docker(submission_id, log_file_name=log_file_name)
+    run_docker(submission_id, log_file_name=log_file_name, log_max_size=log_max_size)

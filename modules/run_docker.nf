@@ -13,6 +13,7 @@ process RUN_DOCKER {
     path staged_path
     val cpus
     val memory
+    val log_max_size
     val ready
     val ready
 
@@ -21,6 +22,6 @@ process RUN_DOCKER {
 
     script:
     """
-    run_docker.py '${submission_id}'
+    run_docker.py '${submission_id}' '${log_max_size}'
     """
 }
