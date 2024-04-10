@@ -141,7 +141,6 @@ def create_log_file(
         print(f"Original log message exceeds {log_max_size} Kb. Truncating...")
         log_text = log_text[-(log_max_size * 1000) :]
 
-    # Write the log message to the log file, using ``ascii`` encoding for legibility
     with open(
         os.path.join(log_file_path, log_file_name),
         "w",
