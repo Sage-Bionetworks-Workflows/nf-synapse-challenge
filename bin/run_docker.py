@@ -145,7 +145,7 @@ def create_log_file(
     with open(
         os.path.join(log_file_path, log_file_name),
         "w",
-        encoding="ascii",
+        encoding="utf-8",
         errors="ignore",
     ) as log_file:
         log_file.write(log_text)
