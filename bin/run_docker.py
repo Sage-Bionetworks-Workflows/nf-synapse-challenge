@@ -128,13 +128,18 @@ def create_log_file(
     if log_file_path is None:
         log_file_path = os.getcwd()
 
-    if log_text is None:
-        log_text = "No Logs"
-    elif isinstance(log_text, bytes):
-        log_text = log_text.decode("utf-8")
+    # Get the size of the log text
+    log_text = log_text or "No Logs"
+    log_text_size = (
+        len(log_text)
+        if isinstance(log_text, bytes)
+        else len(str(log_text).encode("utf-8"))
+    )
 
-    # We need the size of the log message in bytes
-    log_text_size = len(log_text.encode("utf-8"))
+    # Decode the log text if it is bytes
+    log_text = (
+        log_text.decode("utf-8", "ignore") if isinstance(log_text, bytes) else log_text
+    )
 
     # Truncate the log message if it exceeds the maximum size
     if log_text_size > log_max_size * 1000:
