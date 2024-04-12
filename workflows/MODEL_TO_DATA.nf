@@ -27,7 +27,7 @@ params.send_email = true
 params.email_script = "send_email.py"
 // The folder(s) below will be private (available only to admins)
 params.private_folders = "predictions"
-// Set the maximum size (in Kb) of the submitted Docker container's execution log file
+// Set the maximum size (in KB) of the submitted Docker container's execution log file
 params.log_max_size = "50"
 
 // import modules
