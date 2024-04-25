@@ -118,7 +118,7 @@ def check_output_file_size(
 
     # Next, update the log_text and bad_output_msg inputs, if necessary
     if incorrect_size:
-        bad_output_msg = f"Could not evaluate because one or more output files are empty: {os.path.basename(file)}."
+        bad_output_msg = f"Could not evaluate because one or more output files are empty: {os.path.basename(file)}"
         if isinstance(log_text, bytes):
             log_text = log_text.decode("utf-8")
             log_text = log_text + "\n" + bad_output_msg
@@ -153,7 +153,7 @@ def handle_outputs(
 
     # First check if an incorrect number of output files were generated
     if len(file_glob) != 1:
-        bad_output_msg = f"Expected 1 Docker container output file with base name '{output_file_name}' in the output directory. Got {len(file_glob)}, or a file incorrectly named. If multiple output files are generated, please zip them into a single file for processing."
+        bad_output_msg = f"Expected 1 Docker container output file with base name '{output_file_name}' in the output directory. Got {len(file_glob)}, or a file incorrectly named. If multiple output files are generated, please zip them into a single file for processing"
         if isinstance(log_text, bytes):
             log_text = log_text.decode("utf-8")
         log_text = log_text + "\n" + bad_output_msg
