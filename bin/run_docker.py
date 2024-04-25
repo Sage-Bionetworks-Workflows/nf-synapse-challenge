@@ -104,7 +104,7 @@ def check_output_file_size(
 
     # Next, update the log_text and bad_output_msg inputs, if necessary
     if incorrect_size:
-        bad_output_msg = f"Could not evaluate because one or more output files are empty: '{file}'."
+        bad_output_msg = f"Could not evaluate because one or more output files are empty: {os.path.basename(file)}."
         if isinstance(log_text, bytes):
             log_text = log_text.decode("utf-8")
             log_text = log_text + "\n" + bad_output_msg
