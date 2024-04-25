@@ -101,7 +101,6 @@ def check_output_file_size(
     # Declaring variables
     # We would only run this function if there is only one output file in the list
     file = file_list[0]
-    incorrect_size = False
 
     # Check output files that are zipped into a single file
     if ".zip" in os.path.basename(file):
