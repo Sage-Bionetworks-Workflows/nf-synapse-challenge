@@ -3,7 +3,7 @@ process SCORE_MODEL_TO_DATA {
     tag "${submission_id}"
     
     secret "SYNAPSE_AUTH_TOKEN"
-    container "python:3.12.0rc1"
+    container params.scoring_container
 
     input:
     tuple val(submission_id), path(predictions), val(status), path(results)

@@ -4,7 +4,7 @@ process VALIDATE {
     label "flexible_compute"
     
     secret "SYNAPSE_AUTH_TOKEN"
-    container "sagebionetworks/synapsepythonclient:v4.0.0"
+    container params.validation_container
 
     input:
     tuple val(submission_id), path(predictions)
