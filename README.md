@@ -55,8 +55,6 @@ In order to use this workflow, you must already have completed the following ste
 
 The workflow takes the following inputs:
 
-***Note:*** You must provide one of `submissions` or `manifest`. If you provide both, `submissions` will take precedence. Generally, `submissions` should be used for testing and `manifest` for automation.
-
 1. `submissions` (required if `manifest` is not provided): A comma separated list of submission IDs to evaluate.
 1. `manifest` (required if `submissions` is not provided): A path to a submission manifest containing submissions IDs to evaluate.
 1. `project_name` (required & case-sensitive): The name of your Project the Challenge is running in. Please replace placeholder value.
@@ -73,6 +71,11 @@ The workflow takes the following inputs:
 1. `email_script` (required if `send_email` is `true`): If `send_email` is `true`, choose an e-mail template to send to submitters on the status of their submission. Default is a generic `send_email.py` template.
 1. `private_folders` (optional & case-sensitive): Choose which folder(s), if any, should be set to private (i.e. only available to Challenge organizers). Must be a comma-separated string of folder names, e.g. "predictions,docker_logs"
 1. `log_max_size` (optional): The maximum size of the Docker execution log (in kilobytes). Defaults to 50 kb.
+
+> [!warning]
+> Before modifying the input parameters, there are some things to consider...
+> You must provide one of `submissions` or `manifest`. If you provide both, `submissions` will take precedence. Generally, `submissions` should be used for testing and `manifest` for automation.
+> Your input scoring and validation scripts will be called upon in the following format: `[python_script_name] [predictions_file] [gold_standard_file] [output_file]`. As an example: `validate.py predictions.csv gold_standard_validate.csv results.json`. Ensure that your script can be called in this way without issue.
 
 Run the workflow locally with default inputs and a `submissions` string input:
 ```
