@@ -51,7 +51,7 @@ In order to use this workflow, you must already have completed the following ste
 1. Created a submission view that includes the `id` and `status` columns.
 1. Added the input data for evaluating submissions to a folder within your Synapse project.
 
-### Running the workflow
+### Configuring the workflow
 
 The workflow takes the following inputs:
 
@@ -72,10 +72,21 @@ The workflow takes the following inputs:
 1. `private_folders` (optional & case-sensitive): Choose which folder(s), if any, should be set to private (i.e. only available to Challenge organizers). Must be a comma-separated string of folder names, e.g. "predictions,docker_logs"
 1. `log_max_size` (optional): The maximum size of the Docker execution log (in kilobytes). Defaults to 50 kb.
 
+
 > [!warning]
 > Before modifying the input parameters, there are some things to consider...
-> You must provide one of `submissions` or `manifest`. If you provide both, `submissions` will take precedence. Generally, `submissions` should be used for testing and `manifest` for automation.
-> Your input scoring and validation scripts will be called upon in the following format: `[python_script_name] [predictions_file] [gold_standard_file] [output_file]`. As an example: `validate.py predictions.csv gold_standard_validate.csv results.json`. Ensure that your script can be called in this way without issue.
+> * You must provide one of `submissions` or `manifest`. If you provide both, `submissions` will take precedence. Generally, `submissions` should be used for testing and `manifest` for automation.
+> * Your input scoring and validation scripts should be named `score.py` and `validate.py`, respectively, and will be called upon in the following format:
+> ```
+> [python_script_name] [predictions_file] [gold_standard_file] [output_file]`
+> ```
+> Example:
+> ```
+> validate.py predictions.csv gold_standard_validate.csv results.json
+> ```
+> Ensure that your script can be called in this way without issue.
+
+### Running the workflow
 
 Run the workflow locally with default inputs and a `submissions` string input:
 ```
@@ -121,7 +132,7 @@ In order to use this workflow, you must already have completed the following ste
 1. One or more data files have already been submitted to your evaluation queue.
 1. Created a submission view that includes the `id` and `status` columns.
 
-### Running the workflow
+### Configuring the workflow
 
 The workflow requires the following inputs:
 
@@ -137,6 +148,7 @@ The workflow requires the following inputs:
 1. `send_email` (optional): If `true`, sends an e-mail to the submitter on the status of their submission. Default is `true`.
 1. `email_script` (required if `send_email` is `true`): If `send_email` is `true`, choose an e-mail template to send to submitters on the status of their submission. Default is a generic `send_email.py` template.
 
+### Running the workflow
 
 Run the workflow locally with default inputs and a `submissions` string input:
 ```
