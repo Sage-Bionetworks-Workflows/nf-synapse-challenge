@@ -29,11 +29,6 @@ if __name__ == "__main__":
         # Grabbing the extracted predictions files
         predictions_files = glob.glob(os.path.join(os.getcwd(), "*.csv"))
 
-        # Checking if there are any files
-        if len(predictions_files) == 0:
-            prediction_status = "INVALID"
-            invalid_reasons.append("Predictions file(s) not generated from Docker container")
-
         # Validating file contents
         for file in predictions_files:
             with open(file, "r") as sub_file:

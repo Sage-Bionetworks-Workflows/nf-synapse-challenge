@@ -17,6 +17,6 @@ process SCORE_MODEL_TO_DATA {
 
     script:
     """
-    python status=\$(${scoring_script} '${predictions}' '${goldstandard}' '${results}' '${status}')
+    python status=\$(${scoring_script} '${predictions}' '${goldstandard}' '${results}')
     """
 }
