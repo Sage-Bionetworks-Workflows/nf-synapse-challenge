@@ -7,8 +7,10 @@ import sys
 import zipfile
 
 if __name__ == "__main__":
-    submission_id = sys.argv[1]
-    predictions_path = sys.argv[2]
+    predictions_path = sys.argv[1]
+    goldstandard_path = sys.argv[2]
+    results = sys.argv[3]
+
     invalid_reasons = []
     if "INVALID" in predictions_path:
         prediction_status = "INVALID"

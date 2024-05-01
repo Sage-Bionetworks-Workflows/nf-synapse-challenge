@@ -12,7 +12,7 @@ INVALID = "INVALID"
 SCORED = "SCORED"
 
 
-def score_submission(predictions_path: str, status: str) -> typing.Tuple[str, dict]:
+def score_submission(predictions_path: str, results_path: str) -> typing.Tuple[str, dict]:
     """Determine the score of a submission. This is a placeholder function.
 
     Args:
@@ -22,6 +22,11 @@ def score_submission(predictions_path: str, status: str) -> typing.Tuple[str, di
     Returns:
         result (dict): dictionary containing score, status and errors
     """
+
+    with open(results_path, 'r') as r:
+        data = json.load(r)
+        status = data["validation_status"]
+
     if status == INVALID:
         score_status = INVALID
         score1, score2, score3 = None, None, None
@@ -41,13 +46,7 @@ def score_submission(predictions_path: str, status: str) -> typing.Tuple[str, di
         # Grabbing the extracted predictions files
         predictions_files = glob.glob(os.path.join(os.getcwd(), "*.csv"))
 
-        # Checking if there are any files
-        if len(predictions_files) == 0:
-            score_status = INVALID
-            message = "No predictions files found"
-            score1, score2, score3 = None, None, None
-
-        # placeholder file reading
+        # placeholder file readings
         for file in predictions_files:
             with open(file, "r") as sub_file:
                 predictions_contents = sub_file.read()
@@ -90,8 +89,9 @@ def update_json(results_path: str, result: dict) -> None:
 
 if __name__ == "__main__":
     predictions_path = sys.argv[1]
-    results_path = sys.argv[2]
-    status = sys.argv[3]
-    score_status, result = score_submission(predictions_path, status)
+    goldstandard_path = sys.argv[2]
+    results_path = sys.argv[3]
+
+    score_status, result = score_submission(predictions_path, results_path)
     update_json(results_path, result)
     print(score_status)
