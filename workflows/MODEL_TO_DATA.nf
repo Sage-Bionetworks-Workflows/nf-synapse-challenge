@@ -22,15 +22,15 @@ params.memory = "16.GB"
 // Scoring Container
 params.scoring_container = "python:3.12.0rc1"
 // Scoring Script
-params.scoring_script = "model_to_data_score.py"
+params.scoring_script = "bin/model_to_data_score.py"
 // Validation Container
 params.validation_container = "sagebionetworks/synapsepythonclient:v4.0.0"
 // Validation Script
-params.validation_script = "validate.py"
+params.validation_script = "bin/validate.py"
 // Toggle email notification
 params.send_email = true
 // Set email script
-params.email_script = "send_email.py"
+params.email_script = "bin/send_email.py"
 // The folder(s) below will be private (available only to admins)
 params.private_folders = "predictions"
 // Set the maximum size (in KB) of the submitted Docker container's execution log file
