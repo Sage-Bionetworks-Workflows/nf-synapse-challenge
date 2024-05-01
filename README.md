@@ -73,6 +73,7 @@ The workflow takes the following inputs:
 1. `private_folders` (optional & case-sensitive): Choose which folder(s), if any, should be set to private (i.e. only available to Challenge organizers). Must be a comma-separated string of folder names, e.g. "predictions,docker_logs".
 1. `log_max_size` (optional): The maximum size of the Docker execution log (in kilobytes). Defaults to 50 kb.
 
+If you are new to containerization, [see here](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry) for how to create and publish your own container on the GitHub container registry.
 
 > [!warning]
 > Before modifying the input parameters, there are some things to consider...
