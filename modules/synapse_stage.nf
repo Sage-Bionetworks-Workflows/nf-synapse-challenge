@@ -11,7 +11,7 @@ process SYNAPSE_STAGE {
     val input_folder_name
 
     output:
-    path "${input_folder_name.contains('goldstandard') ? "${input_folder_name}/*" : "${input_folder_name}/"}"
+    path "${input_folder_name}/"
 
     script:
     """
