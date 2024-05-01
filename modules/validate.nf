@@ -8,7 +8,7 @@ process VALIDATE {
 
     input:
     tuple val(submission_id), path(predictions)
-    path goldstandard from "${goldstandard_path}/*"
+    path goldstandard
     val ready
     val validation_script
 
