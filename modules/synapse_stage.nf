@@ -1,4 +1,4 @@
-// downloads synapse folder given Synapse ID and stages to /input
+// recursively downloads synapse folder given Synapse ID and stages to /input_folder_name
 process SYNAPSE_STAGE {
     label "flexible_compute"
 
@@ -14,7 +14,7 @@ process SYNAPSE_STAGE {
     path "${input_folder_name}/"
 
     script:
-    """    
+    """
     synapse get -r --downloadLocation \$PWD/${input_folder_name} ${input_id}
     """
 }

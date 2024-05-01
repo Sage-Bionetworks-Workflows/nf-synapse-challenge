@@ -8,6 +8,7 @@ process VALIDATE {
 
     input:
     tuple val(submission_id), path(predictions)
+    path goldstandard_path
     val ready
     val validation_script
 
@@ -16,6 +17,6 @@ process VALIDATE {
 
     script:
     """
-    status=\$(${validation_script} '${submission_id}' '${predictions}')
+    python status=\$(${validation_script} '${predictions}' '${goldstandard_path}' 'results.json')
     """
 }
