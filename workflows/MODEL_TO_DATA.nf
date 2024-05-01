@@ -38,8 +38,8 @@ params.log_max_size = "50"
 
 // import modules
 include { CREATE_SUBMISSION_CHANNEL } from '../subworkflows/create_submission_channel.nf'
-include { SYNAPSE_STAGE_DATA } from '../modules/synapse_stage.nf'
-include { SYNAPSE_STAGE_GOLDSTANDARD } from '../modules/synapse_stage.nf'
+include { SYNAPSE_STAGE as SYNAPSE_STAGE_DATA } from '../modules/synapse_stage.nf'
+include { SYNAPSE_STAGE as SYNAPSE_STAGE_GOLDSTANDARD } from '../modules/synapse_stage.nf'
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_BEFORE_RUN } from '../modules/update_submission_status.nf'
 include { CREATE_FOLDERS } from '../modules/create_folders.nf'
 include { UPDATE_FOLDERS } from '../modules/update_folders.nf'
@@ -65,7 +65,7 @@ workflow MODEL_TO_DATA {
     VALIDATE(RUN_DOCKER.output, SYNAPSE_STAGE_GOLDSTANDARD.output, UPDATE_SUBMISSION_STATUS_AFTER_RUN.output, params.validation_script)
     UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE(submission_ch, VALIDATE.output.map { it[2] })
     ANNOTATE_SUBMISSION_AFTER_VALIDATE(VALIDATE.output)
-    SCORE(VALIDATE.output, UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE.output, ANNOTATE_SUBMISSION_AFTER_VALIDATE.output, params.scoring_script)
+    SCORE(VALIDATE.output, SYNAPSE_STAGE_GOLDSTANDARD.output, UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE.output, ANNOTATE_SUBMISSION_AFTER_VALIDATE.output, params.scoring_script)
     UPDATE_SUBMISSION_STATUS_AFTER_SCORE(submission_ch, SCORE.output.map { it[2] })
     ANNOTATE_SUBMISSION_AFTER_SCORE(SCORE.output)
     if (params.send_email) {
