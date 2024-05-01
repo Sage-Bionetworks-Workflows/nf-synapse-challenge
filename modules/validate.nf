@@ -17,6 +17,6 @@ process VALIDATE {
 
     script:
     """
-    python status=\$(${validation_script} '${predictions}' '${goldstandard}' 'results.json')
+    python3 status=\$(${validation_script} '${predictions}' '${goldstandard}' 'results.json')
     """
 }
