@@ -15,6 +15,6 @@ process SYNAPSE_STAGE {
 
     script:
     """
-    synapse_stage.py \$PWD${input_folder_name} ${input_id}
+    synapse_stage.py \$PWD/${input_folder_name} ${input_id}
     """
 }
