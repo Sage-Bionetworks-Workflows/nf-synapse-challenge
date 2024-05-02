@@ -1,4 +1,4 @@
-// validate submission results
+// validate submission results for model-to-data submissions
 process VALIDATE {
     tag "${submission_id}"
     label "flexible_compute"
