@@ -255,7 +255,7 @@ def mount_volumes() -> dict:
     output_dir = os.path.join(os.getcwd(), "output")
     input_dir = os.path.join(os.getcwd(), "input")
 
-    print(glob.glob(os.path.join(os.getcwd(), "*")))
+    print(glob(os.path.join(os.getcwd(), "*")))
 
     mounted_volumes = {
         output_dir: {"bind": "/output", "mode": "rw"},
