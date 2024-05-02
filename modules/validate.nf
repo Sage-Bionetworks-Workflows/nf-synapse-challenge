@@ -8,7 +8,7 @@ process VALIDATE {
 
     input:
     tuple val(submission_id), path(predictions)
-    path goldstandard
+    val goldstandard from staged_data_channel
     val ready
     val validation_script
 

@@ -11,7 +11,7 @@ process SYNAPSE_STAGE {
     val input_folder_name
 
     output:
-    val stdout
+    stdout into staged_data_channel
 
     script:
     """
