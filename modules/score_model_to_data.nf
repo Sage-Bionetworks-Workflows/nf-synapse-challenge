@@ -17,6 +17,6 @@ process SCORE_MODEL_TO_DATA {
 
     script:
     """
-    status=\$(${scoring_script} '${predictions}' '${goldstandard.trim()}/\$GS_FILE' '${results}')
+    status=\$(${scoring_script} '${predictions}' '${goldstandard.trim()}' '${results}')
     """
 }
