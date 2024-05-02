@@ -55,7 +55,7 @@ include { SEND_EMAIL } from '../modules/send_email.nf'
 
 workflow MODEL_TO_DATA {
     submission_ch = CREATE_SUBMISSION_CHANNEL()
-    staged_data = SYNAPSE_STAGE_DATA(params.data_folder_id, "data_folder_${params.data_folder_id}")
+    staged_data = SYNAPSE_STAGE_DATA(params.data_folder_id, "input")
     staged_gs = SYNAPSE_STAGE_GOLDSTANDARD(params.goldstandard_id, "goldstandard_${params.goldstandard_id}")
     CREATE_FOLDERS(submission_ch, params.project_name, params.private_folders)
     UPDATE_SUBMISSION_STATUS_BEFORE_RUN(submission_ch, "EVALUATION_IN_PROGRESS")
