@@ -62,7 +62,7 @@ def synapse_stage(entity_id: str, download_path: str):
 
     # If it's a folder, print the folder path and begin the recursive download
     elif isinstance(entity, Folder):
-        print(download_path)
+        print("/input")
         download_files_recursively(syn, entity_id, download_path)
 
 
