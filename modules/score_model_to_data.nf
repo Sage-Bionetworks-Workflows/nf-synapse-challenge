@@ -7,7 +7,7 @@ process SCORE_MODEL_TO_DATA {
 
     input:
     tuple val(submission_id), path(predictions), val(status), path(results)
-    val goldstandard
+    path goldstandard
     val status_ready
     val annotate_ready
     val scoring_script
@@ -17,6 +17,6 @@ process SCORE_MODEL_TO_DATA {
 
     script:
     """
-    status=\$(${scoring_script} '${predictions}' '${goldstandard.trim()}' '${results}')
+    status=\$(${scoring_script} '${predictions}' '${goldstandard}' '${results}')
     """
 }

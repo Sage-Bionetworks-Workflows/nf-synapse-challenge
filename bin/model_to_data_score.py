@@ -46,6 +46,14 @@ def score_submission(predictions_path: str, results_path: str) -> typing.Tuple[s
         # Grabbing the extracted predictions files
         predictions_files = glob.glob(os.path.join(os.getcwd(), "*.csv"))
 
+        # Grabbing the gold standard file
+        gs_file = glob.glob(os.path.join(goldstandard_path, "*"))[0]
+
+        # Validating file contents
+        with open(gs_file, "r") as sub_file:
+            message = sub_file.read()
+            print("Gold standard file has been read")
+
         # placeholder file readings
         for file in predictions_files:
             with open(file, "r") as sub_file:

@@ -11,10 +11,10 @@ process SYNAPSE_STAGE {
     val input_folder_name
 
     output:
-    stdout emit: staged_output
+    path "${input_folder_name}/"
 
     script:
     """
-    synapse_stage.py \$PWD/${input_folder_name} ${input_id}
+    synapse get -r --downloadLocation \$PWD/${input_folder_name} ${input_id}
     """
 }
