@@ -17,16 +17,12 @@ process SCORE_MODEL_TO_DATA {
 
     script:
     """
-    # Find the first file in the directory, assuming it's there is only 1 (the gold standard file)
-    FILE=$(find ${goldstandard} -type f | head -n 1)
-    
-    # Count the number of files in the directory to ensure only 1
-    FILE_COUNT=$(find ${goldstandard} -type f | wc -l)
+    GS_FILE=\$(ls -1 ${goldstandard} | head -n 1)
 
-    # Validate only if there is exactly 1 file
-    if [[ "$FILE_COUNT" == "1" ]]; then
-        echo "Processing gold standard file: $FILE"
-        status=\$(${scoring_script} '${predictions}' '${goldstandard}' '${results}')
+    if [ -f "${input_folder_name}/\$GS_FILE" ]; then
+        status=\$(${scoring_script} '${predictions}' '${goldstandard}/\$GS_FILE' '${results}')
+    else
+        echo "No file to process or the file is not a regular file."
     fi
     """
 }
