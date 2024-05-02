@@ -143,8 +143,8 @@ The workflow requires the following inputs:
 1. `submissions` (required if `manifest` is not provided): A comma separated lis tof submission IDs to evaluate.
 1. `manifest` (required if `submissions` is not provided): A path to a submission manifest containing submissions IDs to evaluate.
 1. `view_id` (required): The Synapse ID for your submission view.
-1. `scoring_script` (required): The string name of the scoring script to use for the `SCORE` step of the workflow run. Defaults to `data_to_model_score.py`.
-1. `validation_script` (required): The string name of the validation script to use for the `VALIDATE` step of the workflow run. Defaults to `validate.py`.
+1. `scoring_script` (required): The PATH to the scoring script to use for the `SCORE` step of the workflow run. E.g. `'path/to/my_score_script.py'`. Defaults to `data_to_model_score.py`.
+1. `validation_script` (required): The PATH to the validation script to use for the `VALIDATE` step of the workflow run. E.g. `'path/to/my_validate_script.py'`.Defaults to `validate.py`.
 1. `testing_data` (required): The Synapse ID for the folder holding the testing data for submissions.
 1. `email_with_score` (optional & case-sensitive): Choose whether or not the e-mail sent out to participants will include the evaluation score or not. Can either be "yes" or "no". Defaults to "yes".
 1. `send_email` (optional): If `true`, sends an e-mail to the submitter on the status of their submission. Default is `true`.
