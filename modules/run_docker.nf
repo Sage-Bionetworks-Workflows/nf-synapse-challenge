@@ -10,7 +10,7 @@ process RUN_DOCKER {
 
     input:
     val submission_id
-    val staged_path
+    path staged_path
     val cpus
     val memory
     val log_max_size
