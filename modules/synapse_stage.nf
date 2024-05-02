@@ -1,4 +1,4 @@
-// recursively downloads synapse folder given Synapse ID and stages to /input_folder_name
+// recursively downloads synapse entity given Synapse ID and stages to /input_folder_name
 process SYNAPSE_STAGE {
     label "flexible_compute"
 
