@@ -17,12 +17,6 @@ process SCORE_MODEL_TO_DATA {
 
     script:
     """
-    GS_FILE=\$(ls -1 ${goldstandard} | head -n 1)
-
-    if [ -f "${input_folder_name}/\$GS_FILE" ]; then
-        status=\$(${scoring_script} '${predictions}' '${goldstandard}/\$GS_FILE' '${results}')
-    else
-        echo "No file to process or the file is not a regular file."
-    fi
+    status=\$(${scoring_script} '${predictions}' '${goldstandard.trim()}/\$GS_FILE' '${results}')
     """
 }
