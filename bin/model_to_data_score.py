@@ -52,7 +52,6 @@ def score_submission(predictions_path: str, results_path: str) -> typing.Tuple[s
         # Validating file contents
         with open(gs_file, "r") as sub_file:
             message = sub_file.read()
-            print("Gold standard file has been read")
 
         # placeholder file readings
         for file in predictions_files:

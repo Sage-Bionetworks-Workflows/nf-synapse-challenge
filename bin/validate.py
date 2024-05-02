@@ -37,7 +37,6 @@ if __name__ == "__main__":
         # Validating file contents
         with open(gs_file, "r") as sub_file:
             message = sub_file.read()
-            print("Gold standard file has been read")
 
         # Validating file contents
         for file in predictions_files:
