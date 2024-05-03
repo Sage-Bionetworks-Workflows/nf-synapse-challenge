@@ -64,9 +64,8 @@ The workflow takes the following inputs:
 1. `email_with_score` (optional & case-sensitive): Choose whether or not the e-mail sent out to participants will include the evaluation score or not. Can either be "yes" or "no". Defaults to "yes".
 1. `cpus` (optional): Number of CPUs to dedicate to the `RUN_DOCKER` process i.e. the challenge executions. Defaults to `4`.
 1. `memory` (optional): Amount of memory to dedicate to the `RUN_DOCKER` process i.e. the challenge executions. Defaults to `16.GB`.
-1. `scoring_container` (optional): The name of the container that the scoring script will be executed in.
+1. `challenge_container` (optional): The name of the container that the scoring and validation scripts are housed in, and will be executed in, during the validation and scoring steps of the workflow. Defaults to `sagebionetworks/synapsepythonclient:v4.0.0`
 1. `scoring_script` (optional): The path to the scoring script used for the `SCORE` step of the workflow run. E.g. `path/to/score.py`. If the file is in the base directory of your container, just use the file name. Defaults to `model_to_data_score.py`.
-1. `validation_container` (optional): The name of the container that the validation script will be executed in.
 1. `validation_script` (optional): The path to the validation script used for the `VALIDATE` step of the workflow run. E.g. `path/to/validate.py`. If the file is in the base directory of your container, just use the file name. Defaults to `validate.py`.
 1. `send_email` (optional): If `true`, sends an e-mail to the submitter on the status of their submission. Default is `true`.
 1. `email_script` (required if `send_email` is `true`): If `send_email` is `true`, choose an e-mail template to send to submitters on the status of their submission. Default is a generic `send_email.py` template.
