@@ -4,7 +4,7 @@ process VALIDATE {
     label "flexible_compute"
     
     secret "SYNAPSE_AUTH_TOKEN"
-    container params.validation_container
+    container params.challenge_container
 
     input:
     tuple val(submission_id), path(predictions)

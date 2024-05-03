@@ -19,12 +19,10 @@ assert params.email_with_score in ["yes", "no"], "Invalid value for ``email_with
 params.cpus = "4"
 // Default Memory to dedicate to RUN_DOCKER
 params.memory = "16.GB"
-// Scoring Container
-params.scoring_container = "python:3.12.0rc1"
+// The container that houses the scoring and validation scripts
+params.challenge_container = "sagebionetworks/synapsepythonclient:v4.0.0"
 // Scoring Script
 params.scoring_script = "model_to_data_score.py"
-// Validation Container
-params.validation_container = "sagebionetworks/synapsepythonclient:v4.0.0"
 // Validation Script
 params.validation_script = "validate.py"
 // Toggle email notification
