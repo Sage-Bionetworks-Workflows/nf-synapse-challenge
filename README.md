@@ -64,7 +64,7 @@ The workflow takes the following inputs:
 1. `email_with_score` (optional & case-sensitive): Choose whether or not the e-mail sent out to participants will include the evaluation score or not. Can either be "yes" or "no". Defaults to "yes".
 1. `cpus` (optional): Number of CPUs to dedicate to the `RUN_DOCKER` process i.e. the challenge executions. Defaults to `4`.
 1. `memory` (optional): Amount of memory to dedicate to the `RUN_DOCKER` process i.e. the challenge executions. Defaults to `16.GB`.
-1. `challenge_container` (optional): The name of the container that the scoring and validation scripts are housed in, and will be executed in, during the validation and scoring steps of the workflow. Defaults to `sagebionetworks/synapsepythonclient:v4.0.0`
+1. `challenge_container` (optional): The name of the container that the scoring and validation scripts are housed in, and will be executed in, during the validation and scoring steps of the workflow. Defaults to `sagebionetworks/synapsepythonclient:v4.0.0`.
 1. `scoring_script` (optional): The path to the scoring script used for the `SCORE` step of the workflow run. E.g. `path/to/score.py`. If the file is in the base directory of your container, just use the file name. Defaults to `model_to_data_score.py`.
 1. `validation_script` (optional): The path to the validation script used for the `VALIDATE` step of the workflow run. E.g. `path/to/validate.py`. If the file is in the base directory of your container, just use the file name. Defaults to `validate.py`.
 1. `send_email` (optional): If `true`, sends an e-mail to the submitter on the status of their submission. Default is `true`.
@@ -142,8 +142,8 @@ The workflow requires the following inputs:
 1. `submissions` (required if `manifest` is not provided): A comma separated lis tof submission IDs to evaluate.
 1. `manifest` (required if `submissions` is not provided): A path to a submission manifest containing submissions IDs to evaluate.
 1. `view_id` (required): The Synapse ID for your submission view.
-1. `scoring_script` (required): The string name of the scoring script to use for the scoring step of the workflow run. Defaults to `data_to_model_score.py`
-1. `validation_script` (required): The string name of the validation script to use for the validation step of the workflow run. Defaults to `data_to_model_score.py`
+1. `scoring_script` (required): The string name of the scoring script to use for the `SCORE` step of the workflow run. Defaults to `data_to_model_score.py`.
+1. `validation_script` (required): The string name of the validation script to use for the `VALIDATE` step of the workflow run. Defaults to `data_to_model_score.py`.
 1. `testing_data` (required): The Synapse ID for the folder holding the testing data for submissions.
 1. `email_with_score` (optional & case-sensitive): Choose whether or not the e-mail sent out to participants will include the evaluation score or not. Can either be "yes" or "no". Defaults to "yes".
 1. `send_email` (optional): If `true`, sends an e-mail to the submitter on the status of their submission. Default is `true`.
