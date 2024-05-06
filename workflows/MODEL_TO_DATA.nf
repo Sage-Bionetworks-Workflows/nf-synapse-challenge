@@ -20,7 +20,7 @@ params.cpus = "4"
 // Default Memory to dedicate to RUN_DOCKER
 params.memory = "16.GB"
 // The container that houses the scoring and validation scripts
-params.challenge_container = "sagebionetworks/synapsepythonclient:v4.0.0"
+params.challenge_container = "ghcr.io/jaymedina/test_model2data:latest"
 // The command used to execute the Challenge scoring script in the base directory of the challenge_container: e.g. `python3 path/to/score.py`
 params.execute_scoring = "python3 /usr/local/bin/score.py"
 // The command used to execute the Challenge validation script in the base directory of the challenge_container: e.g. `python3 path/to/validate.py`
