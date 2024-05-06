@@ -10,13 +10,13 @@ process SCORE_MODEL_TO_DATA {
     path goldstandard
     val status_ready
     val annotate_ready
-    val scoring_script
+    val execute_scoring
 
     output:
     tuple val(submission_id), path(predictions), env(status), path("results.json")
 
     script:
     """
-    status=\$(python3 ${scoring_script} '${predictions}' '${goldstandard}' '${results}')
+    status=\$(${execute_scoring} '${predictions}' '${goldstandard}' '${results}')
     """
 }

@@ -10,13 +10,13 @@ process VALIDATE {
     tuple val(submission_id), path(predictions)
     path goldstandard
     val ready
-    val validation_script
+    val execute_validation
 
     output:
     tuple val(submission_id), path(predictions), env(status), path("results.json")
 
     script:
     """
-    status=\$(python3 ${validation_script} '${predictions}' '${goldstandard}' 'results.json')
+    status=\$(${execute_validation} '${predictions}' '${goldstandard}' 'results.json')
     """
 }
