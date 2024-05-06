@@ -27,7 +27,7 @@ include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_BEFORE_EVALUATION
 include { DOWNLOAD_SUBMISSION } from '../modules/download_submission.nf'
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE } from '../modules/update_submission_status.nf'
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_AFTER_SCORE } from '../modules/update_submission_status.nf'
-include { VALIDATE } from '../modules/validate.nf'
+include { VALIDATE } from '../modules/validate_data_to_model.nf'
 include { SCORE_DATA_TO_MODEL as SCORE } from '../modules/score_data_to_model.nf'
 include { ANNOTATE_SUBMISSION as ANNOTATE_SUBMISSION_AFTER_VALIDATE } from '../modules/annotate_submission.nf'
 include { ANNOTATE_SUBMISSION as ANNOTATE_SUBMISSION_AFTER_SCORE } from '../modules/annotate_submission.nf'
