@@ -1,7 +1,7 @@
 // runs docker containers
 process RUN_DOCKER {
     tag "${submission_id}"
-    
+
     secret "SYNAPSE_AUTH_TOKEN"
     cpus "${cpus}"
     memory "${memory}"
@@ -10,6 +10,8 @@ process RUN_DOCKER {
 
     input:
     val submission_id
+    val container_timeout
+    val poll_interval
     path staged_path
     val cpus
     val memory
@@ -22,6 +24,6 @@ process RUN_DOCKER {
 
     script:
     """
-    run_docker.py '${submission_id}' '${log_max_size}'
+    run_docker.py '${submission_id}' '${container_timeout}' '${poll_interval}' '${log_max_size}'
     """
 }

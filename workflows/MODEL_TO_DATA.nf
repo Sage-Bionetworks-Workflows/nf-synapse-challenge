@@ -19,6 +19,10 @@ assert params.email_with_score in ["yes", "no"], "Invalid value for ``email_with
 params.cpus = "4"
 // Default Memory to dedicate to RUN_DOCKER
 params.memory = "16.GB"
+// Maximum time (in minutes) to wait for Docker submission container run to complete
+params.container_timeout = "180"
+// Time (in minutes) between status checks during container monitoring
+params.poll_interval = "10"
 // The container that houses the scoring and validation scripts
 params.challenge_container = "ghcr.io/jaymedina/test_model2data:latest"
 // The command used to execute the Challenge scoring script in the base directory of the challenge_container: e.g. `python3 path/to/score.py`
@@ -57,7 +61,7 @@ workflow MODEL_TO_DATA {
     SYNAPSE_STAGE_GOLDSTANDARD(params.goldstandard_id, "goldstandard_${params.goldstandard_id}")
     CREATE_FOLDERS(submission_ch, params.project_name, params.private_folders)
     UPDATE_SUBMISSION_STATUS_BEFORE_RUN(submission_ch, "EVALUATION_IN_PROGRESS")
-    RUN_DOCKER(submission_ch, SYNAPSE_STAGE_DATA.output, params.cpus, params.memory, params.log_max_size, CREATE_FOLDERS.output, UPDATE_SUBMISSION_STATUS_BEFORE_RUN.output)
+    RUN_DOCKER(submission_ch, params.container_timeout, params.poll_interval, SYNAPSE_STAGE_DATA.output, params.cpus, params.memory, params.log_max_size, CREATE_FOLDERS.output, UPDATE_SUBMISSION_STATUS_BEFORE_RUN.output)
     UPDATE_FOLDERS(submission_ch, params.project_name, RUN_DOCKER.output.map { it[1] }, RUN_DOCKER.output.map { it[2] })
     UPDATE_SUBMISSION_STATUS_AFTER_RUN(RUN_DOCKER.output.map { it[0] }, "ACCEPTED")
     VALIDATE(RUN_DOCKER.output, SYNAPSE_STAGE_GOLDSTANDARD.output, UPDATE_SUBMISSION_STATUS_AFTER_RUN.output, params.execute_validation)

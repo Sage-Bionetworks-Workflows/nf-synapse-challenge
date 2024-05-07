@@ -14,6 +14,7 @@ https://github.com/Sage-Bionetworks-Challenges/model-to-data-challenge-workflow/
 import os
 import sys
 import json
+import time
 from glob import glob
 from typing import (
     Optional,
@@ -52,8 +53,8 @@ def get_entity_type(syn: synapseclient.Synapse, submission_id: str) -> str:
 
     """
     file_handle = syn.getSubmission(submission_id)
-    entity_bundle = json.loads(file_handle.get('entityBundleJSON'))
-    entity_type = entity_bundle.get('entityType')
+    entity_bundle = json.loads(file_handle.get("entityBundleJSON"))
+    entity_type = entity_bundle.get("entityType")
 
     return entity_type
 
@@ -78,9 +79,7 @@ def get_submission_image(syn: synapseclient.Synapse, submission_id: str) -> str:
     if not docker_digest or not docker_repository:
 
         entity_type = get_entity_type(syn, submission_id)
-        input_error = (
-            f"InputError: Submission {submission_id} should be a Docker image, not {entity_type}"
-        )
+        input_error = f"InputError: Submission {submission_id} should be a Docker image, not {entity_type}"
         print(input_error)
         return input_error
     image_id = f"{docker_repository}@{docker_digest}"
@@ -336,8 +335,85 @@ def validate_submission(
     return "VALID"
 
 
+def get_poll_interval(
+    elapsed_time: Union[int, float],
+    poll_interval: Union[int, float],
+    timeout: Union[int, float],
+) -> Union[int, float]:
+    """
+    Return the time to wait (poll interval) between status checks. If the
+    elapsed time is greater than the timeout, the poll interval is the difference between
+    the timeout and the elapsed time. Otherwise, the poll interval remains unchanged.
+
+    Arguments:
+        elapsed_time: The elapsed time already spent monitoring (in minutes).
+        poll_interval: Time to wait between status checks (in minutes).
+        timeout: Maximum duration to monitor the container (in minutes).
+
+    Returns:
+        The modified or unmodified poll interval.
+
+    """
+    if (elapsed_time + poll_interval) > timeout:
+        return timeout - elapsed_time
+    else:
+        return poll_interval
+
+
+def monitor_container(
+    container: docker.models.containers.Container,
+    timeout: Union[int, float],
+    poll_interval: Union[int, float],
+    elapsed_time: Union[int, float] = 0,
+):
+    """
+    Recursively monitor the status of a Docker container until it finishes,
+    or the timeout is reached, at which point the container is killed.
+
+    Arguments:
+        container: The Docker container subject to monitor.
+        timeout: Maximum duration to monitor the container (in minutes) before forced shutdown.
+        poll_interval: Time to wait between status checks (in minutes).
+        elapsed_time: The elapsed time already spent monitoring (in minutes).
+    """
+
+    # Refresh container status
+    container.reload()
+
+    # If the container has exited, stop monitoring
+    if container.status == "exited":
+        return ""
+
+    # Check if the elapsed time has reached or exceeded the timeout
+    if elapsed_time >= timeout:
+        print("Timeout reached. Stopping container.")
+        container.stop(timeout=10)
+        return f"Container exceeded execution time limit of {timeout} minutes. Unable to process."
+
+    # Wait before the next check
+    poll_interval = get_poll_interval(elapsed_time, poll_interval, timeout)
+    print(
+        "Container still running. Checking again in " + str(poll_interval) + " minutes."
+    )
+    time.sleep(poll_interval * 60)
+
+    # Increment the elapsed time
+    elapsed_time += poll_interval
+
+    # Notify the backend when elapsed time is 3/4 of the way to timeout
+    if elapsed_time >= timeout * 0.75:
+        print(f"Time spent monitoring container (minutes): {elapsed_time}")
+        print(f"Container run will shut down after {timeout} minute(s).")
+
+    # Recursively call the function to continue monitoring
+    if container.status != "exited" or elapsed_time < timeout:
+        return monitor_container(container, timeout, poll_interval, elapsed_time)
+
+
 def run_docker(
     submission_id: str,
+    container_timeout: Union[int, float],
+    poll_interval: Union[int, float] = 1,
     log_file_name: str = "docker.log",
     log_max_size: int = 50,
     rename_output: bool = True,
@@ -355,6 +431,8 @@ def run_docker(
 
     Args:
         submission_id: The ID of the submission to run.
+        container_timeout: The maximum duration to monitor the container (in minutes).
+        poll_interval: The time to wait between status checks during container monitoring (in minutes).
         log_file_name: The name of the log file to create.
         log_max_size: The maximum size of the log file that will be written, in kilobytes
         rename_output: If True, renames the output file to include the submission ID.
@@ -399,20 +477,26 @@ def run_docker(
     if validation_result == "INVALID":
         return
 
-    # Run the docker image using the client:
-    # We use ``detach=False`` and ``stderr=True``
-    # to catch for and log possible errors in the logfile.
+    # Run the docker image using the client. We detach so that we can monitor the container.
+    print(f"Running container... {docker_image}")
     try:
         container = client.containers.run(
             docker_image,
-            detach=False,
+            detach=True,
             volumes=volumes,
             network_disabled=True,
             mem_limit="6g",
-            stderr=True,
         )
 
-        log_text = container
+        timeout_msg = monitor_container(
+            container, timeout=container_timeout, poll_interval=poll_interval
+        )
+
+        # Capture and save the container logs (stdout and stderr)
+        log_text = container.logs(stdout=True, stderr=True).decode("utf-8")
+
+        # Update the log text with the timeout error message, if it exists
+        log_text = log_text + "\n\n" + timeout_msg
 
     # Capture any errors that may occur during the attempt to run the container
     except Exception as e:
@@ -427,28 +511,47 @@ def run_docker(
             log_text=log_text,
         )
 
-    # Handle any outputs from the container run in the ``output/`` directory, and its contents.
-    # This means: An expected output file, more than 1 output file, no output file, or an empty output file.
-    outputs_handled = handle_outputs(
-        output_path=output_path, output_file_name=output_file_name, log_text=log_text
-    )
+    if len(timeout_msg) > 0:
+        # If the container times out, make an invalid output file to propagate the error message to Synapse
+        # and to the user...
+        output_file = make_invalid_output(
+            "predictions.csv", log_file_path=output_path, file_content=timeout_msg
+        )
+
+    else:
+        # If the container run was successful, handle any outputs in the ``output/`` directory, and its contents.
+        # This means: An expected output file, more than 1 output file, no output file, or an empty output file.
+        outputs_handled = handle_outputs(
+            output_path=output_path, output_file_name="predictions", log_text=log_text
+        )
+        log_text = outputs_handled.log_text
+        output_file = outputs_handled.output_file
 
     # Create log file and store the log message (``log_text``) inside
     create_log_file(
         log_file_name=log_file_name,
         log_max_size=log_max_size,
         log_file_path=output_path,
-        log_text=outputs_handled.log_text,
+        log_text=log_text,
     )
 
     # Rename the predictions file if requested
     if rename_output:
-        helpers.rename_file(submission_id, outputs_handled.output_file)
+        helpers.rename_file(submission_id, output_file)
 
 
 if __name__ == "__main__":
     submission_id = sys.argv[1]
-    log_max_size = int(sys.argv[2])
+    container_timeout = float(sys.argv[2])
+    poll_interval = float(sys.argv[3])
+    log_max_size = int(sys.argv[4])
+
     log_file_name = f"{submission_id}_docker.log"
 
-    run_docker(submission_id, log_file_name=log_file_name, log_max_size=log_max_size)
+    run_docker(
+        submission_id,
+        container_timeout,
+        poll_interval,
+        log_file_name=log_file_name,
+        log_max_size=log_max_size,
+    )
