@@ -81,9 +81,13 @@ If you are new to containerization, [see here](https://docs.github.com/en/packag
 > ```
 > [interpreter] [script_name] -p [predictions_file] -g [gold_standard_folder] -o [output_file]
 > ```
-> Example:
+> Python Example:
 > ```
-> python3 validate.py -p predictions.csv -g gold_standard_folder/ -o results.json
+> python3 validate.py -p "predictions.csv" -g "gold_standard_folder/" -o "results.json"
+> ```
+> R Example:
+> ```
+> Rscript validate.R -p "predictions.csv" -g "gold_standard_folder/" -o "results.json"
 > ```
 > Ensure that your scripts can be called in this way without issue.
 
