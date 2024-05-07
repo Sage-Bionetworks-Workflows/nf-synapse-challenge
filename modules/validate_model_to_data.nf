@@ -17,6 +17,6 @@ process VALIDATE {
 
     script:
     """
-    status=\$(${execute_validation} '${predictions}' '${goldstandard}' 'results.json')
+    status=\$(${execute_validation} -p '${predictions}' -g '${goldstandard}' -o 'results.json')
     """
 }

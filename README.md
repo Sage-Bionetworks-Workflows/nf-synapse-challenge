@@ -77,15 +77,15 @@ If you are new to containerization, [see here](https://docs.github.com/en/packag
 > [!warning]
 > Before modifying the input parameters, there are some things to consider...
 > * You must provide one of `submissions` or `manifest`. If you provide both, `submissions` will take precedence. Generally, `submissions` should be used for testing and `manifest` for automation.
-> * Your input scoring and validation scripts should be named `score.py` and `validate.py`, respectively, and will be called upon in the following format:
+> * Your input scoring and validation scripts should each take in 3 arguments: the predictions file, the gold standard file, and the output file name. The scripts will be called upon in the following format:
 > ```
-> [python_script_name] [predictions_file] [gold_standard_file] [output_file]`
+> [interpreter] [script_name] -p [predictions_file] -g [gold_standard_folder] -o [output_file]
 > ```
 > Example:
 > ```
-> validate.py predictions.csv gold_standard_validate.csv results.json
+> python3 validate.py -p predictions.csv -g gold_standard_folder/ -o results.json
 > ```
-> Ensure that your script can be called in this way without issue.
+> Ensure that your scripts can be called in this way without issue.
 
 ### Running the workflow
 
