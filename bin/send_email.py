@@ -63,7 +63,7 @@ def email_template(
         ): f"Evaluation failed for Submission {submission_id}."
         + "\n"
         + f"Reason: '{reason}'."
-        + "\n"
+        + "\n\n"
         + f"View your submissions here: https://www.synapse.org/#!Synapse:{view_id}/tables/, and contact the organizers for more information.",
         (
             "INVALID",
