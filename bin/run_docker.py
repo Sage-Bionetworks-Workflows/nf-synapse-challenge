@@ -326,6 +326,11 @@ def run_docker(
     # If the submission is not a Docker image, create an invalid output file
     # store the error message in a log file, and end the script call
     if "Input Error" in docker_image:
+
+        # Make the output directory since it wouldnt' exist without running the container
+        os.makedirs(output_path)
+
+        # Create an invalid output file
         make_invalid_output(file_name="predictions.csv",
                             log_file_path=output_path,
                             file_content=docker_image)
