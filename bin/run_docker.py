@@ -51,7 +51,7 @@ def get_submission_image(syn: synapseclient.Synapse, submission_id: str) -> str:
     docker_repository = submission.get("dockerRepositoryName", None)
     docker_digest = submission.get("dockerDigest", None)
     if not docker_digest or not docker_repository:
-        raise ValueError(f"Submission {submission_id} has no associated Docker image.")
+        return f"Input Error: Submission {submission_id} has no associated Docker image."
     image_id = f"{docker_repository}@{docker_digest}"
 
     return image_id
@@ -322,6 +322,22 @@ def run_docker(
     output_path = next(
         (key for key in volumes.keys() if "output" in volumes[key]["bind"]), None
     )
+
+    # If the submission is not a Docker image, create an invalid output file
+    # store the error message in a log file, and end the script call
+    if "Input Error" in docker_image:
+        make_invalid_output(file_name="predictions.csv",
+                            log_file_path=output_path,
+                            file_content=docker_image)
+
+        create_log_file(
+            log_file_name=log_file_name,
+            log_max_size=log_max_size,
+            log_file_path=output_path,
+            log_text=docker_image,
+        )
+
+        return
 
     # Run the docker image using the client:
     # We use ``detach=False`` and ``stderr=True``
