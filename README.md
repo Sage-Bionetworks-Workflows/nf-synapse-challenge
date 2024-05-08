@@ -41,6 +41,42 @@ Example:
 
 ## Model-to-Data Challenges
 
+### TLDR
+
+The `MODEL_TO_DATA.nf` workflow works with all model-to-data medical Challenges hosted at Sage, but its parameters need to be customized in order to work with your particular Challenge. Please use the following steps to get started:
+
+1. Complete the pre-requesites listed under [Prerequisites](#prerequisites).
+2. Create a pull request with your Challenge profile added to `nextflow.config` (see [Configuring the Workflow](#configuring-the-workflow) for further instructions).
+3. The maintainers of this repository will work with you to ensure your container is integrated with the model-to-data workflow and the parameters provided in step 2 are valid.
+4. Test the profile by making a submission to the evaluation queue represented by the given `params.view_id`. The reviewer will manually run the model-to-data workflow to ensure this new submission is picked up and processed appropriately.
+5. If the workflow is successful, the pull request can be merged and automation will be configured in the backend.
+ 
+### Introduction
+
+The `MODEL_TO_DATA.nf` workflow is designed to handle model-to-data Challenge formats by asynchronously running containers for Docker image submissions, evaluating the results using the provided scoring and validation scripts, updating the Synapse project with output files, and sharing the evaluation results with users via e-mail and submissions annotations. This repository can work in conjunction with [orca-recipes](https://github.com/Sage-Bionetworks-Workflows/orca-recipes) to enable scheduled workflow execution according to your desired cadence. Please see below for a DAG outlining the processes executed in the `MODEL_TO_DATA.nf` workflow, pre-requisites for running the workflow, and how you can tailor this workflow to your specific model-to-data Challenge requirements using by adding your own config profile(s) in `nextflow.config`.
+
+### Workflow DAG
+
+```mermaid
+flowchart LR;
+    A[SYNAPSE STAGE]-->E[RUN DOCKER];
+    B[UPDATE STATUS]-->E;
+    C[CREATE FOLDERS]-->E;
+    E-->G[UPDATE STATUS];
+    E-->H[UPDATE FOLDERS];
+    G-->I[VALIDATE];
+    H-->I;
+    I-->J[UPDATE STATUS];
+    I-->K[ANNOTATE];
+    J-->L[SCORE];
+    K-->L;
+    L-->M[UPDATE STATUS];
+    L-->N[ANNOTATE];
+    M-->O;
+    N-->O[SEND EMAIL];
+    O-->P[END];
+```
+
 ### Prerequisites
 
 In order to use this workflow, you must already have completed the following steps:
@@ -50,10 +86,26 @@ In order to use this workflow, you must already have completed the following ste
 1. One or more Docker images have already been submitted to your evaluation queue.
 1. Created a submission view that includes the `id` and `status` columns.
 1. Added the input data for evaluating submissions to a folder within your Synapse project.
+1. Added the goldstandard file to your Synapse project.
+1. Created a repository, based off [this template repository](https://github.com/Sage-Bionetworks-Challenges/orca-evaluation-templates), that houses the validation and scoring scripts to be used for evaluation.
+1. Published said repository to the GitHub Container Registry (GHCR) and ensured it is visible to the public.
+
+If you are new to containerization and/or the GHCR, [see here](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry) for how to create and publish your own container on the GHCR.
 
 ### Configuring the workflow
 
-The workflow takes the following inputs:
+Before the model-to-data workflow can run, it must be configured for a given Challenge. Challenge organizers are required to update the `nextflow.config` file with a config profile for their custom parameters to be picked up in the workflow run. [See here](https://www.nextflow.io/docs/latest/config.html#config-profiles) for more information on Nextflow config profiles and their uses. The requested profile should use the following format:
+
+```
+my_challenge {
+    params.view_id = "syn123"
+    params.data_folder_id = "syn456"
+    params.project_name = "My Project (Write it as it appears on Synapse!)"
+    params.goldstandard_id = "syn789"
+  }
+```
+
+Where the parameters are denoted by `params.[parameter_name]`. Below is the list of available parameters for configuring the `MODEL_TO_DATA.nf` workflow to a particular model-to-data Challenge. Keep in mind that most are optional, but some are required, and the workflow will not be able to run until they are provided:
 
 1. `submissions` (required if `manifest` is not provided): A comma separated list of submission IDs to evaluate.
 1. `manifest` (required if `submissions` is not provided): A path to a submission manifest containing submissions IDs to evaluate.
@@ -71,8 +123,6 @@ The workflow takes the following inputs:
 1. `email_script` (required if `send_email` is `true`): If `send_email` is `true`, choose an e-mail template to send to submitters on the status of their submission. Default is a generic `send_email.py` template.
 1. `private_folders` (optional & case-sensitive): Choose which folder(s), if any, should be set to private (i.e. only available to Challenge organizers). Must be a comma-separated string of folder names, e.g. "predictions,docker_logs".
 1. `log_max_size` (optional): The maximum size of the Docker execution log (in kilobytes). Defaults to 50 kb.
-
-If you are new to containerization, [see here](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry) for how to create and publish your own container on the GitHub container registry.
 
 > [!warning]
 > Before modifying the input parameters, there are some things to consider...
@@ -101,28 +151,6 @@ nextflow run main.nf -entry MODEL_TO_DATA_CHALLENGE -profile local --submissions
 With a `manifest` input:
 ```
 nextflow run main.nf -entry DATA_TO_MODEL_CHALLENGE -profile local --manifest assets/model_to_data_submission_manifest.csv
-```
-
-### Workflow DAG
-
-```mermaid
-flowchart LR;
-    A[SYNAPSE STAGE]-->E[RUN DOCKER];
-    B[UPDATE STATUS]-->E;
-    C[CREATE FOLDERS]-->E;
-    E-->G[UPDATE STATUS];
-    E-->H[UPDATE FOLDERS];
-    G-->I[VALIDATE];
-    H-->I;
-    I-->J[UPDATE STATUS];
-    I-->K[ANNOTATE];
-    J-->L[SCORE];
-    K-->L;
-    L-->M[UPDATE STATUS];
-    L-->N[ANNOTATE];
-    M-->O;
-    N-->O[SEND EMAIL];
-    O-->P[END];
 ```
 
 
