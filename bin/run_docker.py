@@ -51,7 +51,10 @@ def get_submission_image(syn: synapseclient.Synapse, submission_id: str) -> str:
     docker_repository = submission.get("dockerRepositoryName", None)
     docker_digest = submission.get("dockerDigest", None)
     if not docker_digest or not docker_repository:
-        return f"Input Error: Submission {submission_id} has no associated Docker image."
+
+        input_error = f"Input Error: Submission {submission_id} has no associated Docker image."
+        print(input_error)
+        return input_error
     image_id = f"{docker_repository}@{docker_digest}"
 
     return image_id
