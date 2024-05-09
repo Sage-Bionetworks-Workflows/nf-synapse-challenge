@@ -13,8 +13,14 @@ https://github.com/Sage-Bionetworks-Challenges/model-to-data-challenge-workflow/
 
 import os
 import sys
+import json
 from glob import glob
-from typing import Optional, Union, List, NamedTuple
+from typing import (
+    Optional,
+    Union,
+    List,
+    NamedTuple,
+)
 from zipfile import ZipFile
 
 import docker
@@ -31,6 +37,25 @@ class UpdatedMessages(NamedTuple):
 class OutputsHandled(NamedTuple):
     output_file: str
     log_text: str
+
+
+def get_entity_type(syn: synapseclient.Synapse, submission_id: str) -> str:
+    """
+    Retrieves entity type from submission
+
+    Arguments:
+        syn: Synapse connection
+        submission_id: Submission ID to be queried
+
+    Returns:
+        Entity type of the submission
+
+    """
+    file_handle = syn.getSubmission(submission_id)
+    entity_bundle = json.loads(file_handle.get('entityBundleJSON'))
+    entity_type = entity_bundle.get('entityType')
+
+    return entity_type
 
 
 def get_submission_image(syn: synapseclient.Synapse, submission_id: str) -> str:
@@ -52,8 +77,9 @@ def get_submission_image(syn: synapseclient.Synapse, submission_id: str) -> str:
     docker_digest = submission.get("dockerDigest", None)
     if not docker_digest or not docker_repository:
 
+        entity_type = get_entity_type(syn, submission_id)
         input_error = (
-            f"InputError: Submission {submission_id} has no associated Docker image"
+            f"InputError: Submission {submission_id} should be a Docker image, not {entity_type}"
         )
         print(input_error)
         return input_error
