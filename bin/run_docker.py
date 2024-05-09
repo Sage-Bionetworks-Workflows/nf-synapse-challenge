@@ -52,7 +52,9 @@ def get_submission_image(syn: synapseclient.Synapse, submission_id: str) -> str:
     docker_digest = submission.get("dockerDigest", None)
     if not docker_digest or not docker_repository:
 
-        input_error = f"InputError: Submission {submission_id} has no associated Docker image"
+        input_error = (
+            f"InputError: Submission {submission_id} has no associated Docker image"
+        )
         print(input_error)
         return input_error
     image_id = f"{docker_repository}@{docker_digest}"
@@ -270,7 +272,9 @@ def mount_volumes() -> dict:
     return volumes
 
 
-def validate_submission(docker_image: str, output_path: str, output_file_name: str) -> None:
+def validate_submission(
+    docker_image: str, output_path: str, output_file_name: str
+) -> None:
     """
     Validates the Docker image for the submission
 
@@ -288,9 +292,11 @@ def validate_submission(docker_image: str, output_path: str, output_file_name: s
         os.makedirs(output_path)
 
         # Create an invalid output file
-        make_invalid_output(file_name=output_file_name + ".csv",
-                            log_file_path=output_path,
-                            file_content=docker_image)
+        make_invalid_output(
+            file_name=output_file_name + ".csv",
+            log_file_path=output_path,
+            file_content=docker_image,
+        )
 
         create_log_file(
             log_file_name=log_file_name,
@@ -302,6 +308,7 @@ def validate_submission(docker_image: str, output_path: str, output_file_name: s
         return "INVALID"
 
     return "VALID"
+
 
 def run_docker(
     submission_id: str,
