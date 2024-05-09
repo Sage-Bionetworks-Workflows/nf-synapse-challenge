@@ -270,6 +270,39 @@ def mount_volumes() -> dict:
     return volumes
 
 
+def validate_submission(docker_image: str, output_path: str, output_file_name: str) -> None:
+    """
+    Validates the Docker image for the submission
+
+    Arguments:
+        docker_image: Docker image identifier in the format: '<image_name>@<sha_code>'
+        output_path: Path to the output directory that houses the output file and log file
+        output_file_name: Name of the output file generated from the container
+
+    """
+    # If the submission is not a Docker image, create an invalid output file
+    # store the error message in a log file, and end the script call
+    if "InputError" in docker_image:
+
+        # Make the output directory since it wouldnt' exist without running the container
+        os.makedirs(output_path)
+
+        # Create an invalid output file
+        make_invalid_output(file_name=output_file_name + ".csv",
+                            log_file_path=output_path,
+                            file_content=docker_image)
+
+        create_log_file(
+            log_file_name=log_file_name,
+            log_max_size=log_max_size,
+            log_file_path=output_path,
+            log_text=docker_image,
+        )
+
+        return "INVALID"
+
+    return "VALID"
+
 def run_docker(
     submission_id: str,
     log_file_name: str = "docker.log",
@@ -326,25 +359,11 @@ def run_docker(
         (key for key in volumes.keys() if "output" in volumes[key]["bind"]), None
     )
 
-    # If the submission is not a Docker image, create an invalid output file
-    # store the error message in a log file, and end the script call
-    if "InputError" in docker_image:
+    output_file_name = "predictions"
 
-        # Make the output directory since it wouldnt' exist without running the container
-        os.makedirs(output_path)
-
-        # Create an invalid output file
-        make_invalid_output(file_name="predictions.csv",
-                            log_file_path=output_path,
-                            file_content=docker_image)
-
-        create_log_file(
-            log_file_name=log_file_name,
-            log_max_size=log_max_size,
-            log_file_path=output_path,
-            log_text=docker_image,
-        )
-
+    # Ensure the submission is a valid Docker image
+    validation_result = validate_submission(docker_image, output_path, output_file_name)
+    if validation_result == "INVALID":
         return
 
     # Run the docker image using the client:
@@ -378,7 +397,7 @@ def run_docker(
     # Handle any outputs from the container run in the ``output/`` directory, and its contents.
     # This means: An expected output file, more than 1 output file, no output file, or an empty output file.
     outputs_handled = handle_outputs(
-        output_path=output_path, output_file_name="predictions", log_text=log_text
+        output_path=output_path, output_file_name=output_file_name, log_text=log_text
     )
 
     # Create log file and store the log message (``log_text``) inside
