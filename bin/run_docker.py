@@ -52,7 +52,7 @@ def get_submission_image(syn: synapseclient.Synapse, submission_id: str) -> str:
     docker_digest = submission.get("dockerDigest", None)
     if not docker_digest or not docker_repository:
 
-        input_error = f"Submission {submission_id} has no associated Docker image"
+        input_error = f"InputError: Submission {submission_id} has no associated Docker image"
         print(input_error)
         return input_error
     image_id = f"{docker_repository}@{docker_digest}"
@@ -328,7 +328,7 @@ def run_docker(
 
     # If the submission is not a Docker image, create an invalid output file
     # store the error message in a log file, and end the script call
-    if "Input Error" in docker_image:
+    if "InputError" in docker_image:
 
         # Make the output directory since it wouldnt' exist without running the container
         os.makedirs(output_path)
