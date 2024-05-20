@@ -237,18 +237,6 @@ nextflow run main.nf -entry DATA_TO_MODEL_CHALLENGE -profile local --manifest as
     J-->K[END];
 ```
 
-## Profiles
-
-### General Settings
-1. `local`:  Sets `cpus` = `4` and `memory` = `16.GB` for the `RUN_DOCKER` step of Model-to-Data challenges. 
-1. `tower`: Sets `cpus` = `8` and `memory` = `32.GB` for the `RUN_DOCKER` step of Model-to-Data challenges. Also includes settings for processes in need of flexible resource allocation.
-1. 'test': Sets `params.send_email` to `false`. To be used specifically for stress-testing.
-
-### Challenge-specific Settings
-1. `dynamic_challenge`: Includes Python script and Synapse Entity configuration for the AI Institute in Dynamic Systems Challenge.
-1. `pegs_challenge`: Includes Python script and Synapse Entity configuration for the PEGS Challenge.
-
-
 ## Adding Support for New Challenge Types
 
 ### Adding a New Subworkflow
