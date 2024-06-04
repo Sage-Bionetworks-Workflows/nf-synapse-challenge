@@ -53,6 +53,7 @@ include { VALIDATE } from '../modules/validate_model_to_data.nf'
 include { SCORE_MODEL_TO_DATA as SCORE } from '../modules/score_model_to_data.nf'
 include { ANNOTATE_SUBMISSION as ANNOTATE_SUBMISSION_AFTER_VALIDATE } from '../modules/annotate_submission.nf'
 include { ANNOTATE_SUBMISSION as ANNOTATE_SUBMISSION_AFTER_SCORE } from '../modules/annotate_submission.nf'
+include { ANNOTATE_SUBMISSION as ANNOTATE_SUBMISSION_AFTER_UPDATE_FOLDERS } from '../modules/annotate_submission.nf'
 include { SEND_EMAIL } from '../modules/send_email.nf'
 
 workflow MODEL_TO_DATA {
@@ -63,13 +64,14 @@ workflow MODEL_TO_DATA {
     UPDATE_SUBMISSION_STATUS_BEFORE_RUN(submission_ch, "EVALUATION_IN_PROGRESS")
     RUN_DOCKER(submission_ch, params.container_timeout, params.poll_interval, SYNAPSE_STAGE_DATA.output, params.cpus, params.memory, params.log_max_size, CREATE_FOLDERS.output, UPDATE_SUBMISSION_STATUS_BEFORE_RUN.output)
     UPDATE_FOLDERS(submission_ch, params.project_name, RUN_DOCKER.output.map { it[1] }, RUN_DOCKER.output.map { it[2] })
+    ANNOTATE_SUBMISSION_AFTER_UPDATE_FOLDERS(submission_ch, UPDATE_FOLDERS.output)
     UPDATE_SUBMISSION_STATUS_AFTER_RUN(RUN_DOCKER.output.map { it[0] }, "ACCEPTED")
     VALIDATE(RUN_DOCKER.output, SYNAPSE_STAGE_GOLDSTANDARD.output, UPDATE_SUBMISSION_STATUS_AFTER_RUN.output, params.execute_validation)
     UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE(submission_ch, VALIDATE.output.map { it[2] })
-    ANNOTATE_SUBMISSION_AFTER_VALIDATE(VALIDATE.output)
+    ANNOTATE_SUBMISSION_AFTER_VALIDATE(submission_ch, VALIDATE.output.map { it[3] })
     SCORE(VALIDATE.output, SYNAPSE_STAGE_GOLDSTANDARD.output, UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE.output, ANNOTATE_SUBMISSION_AFTER_VALIDATE.output, params.execute_scoring)
     UPDATE_SUBMISSION_STATUS_AFTER_SCORE(submission_ch, SCORE.output.map { it[2] })
-    ANNOTATE_SUBMISSION_AFTER_SCORE(SCORE.output)
+    ANNOTATE_SUBMISSION_AFTER_SCORE(submission_ch, SCORE.output.map { it[3] })
     if (params.send_email) {
         SEND_EMAIL(params.email_script, params.view_id, submission_ch, "AFTER", params.email_with_score, ANNOTATE_SUBMISSION_AFTER_SCORE.output)
     }
