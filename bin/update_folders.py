@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import json
 import os
 import sys
 from typing import Union
@@ -92,7 +93,7 @@ def update_folders(
     # ``input_file`` must not be None or empty to proceed
     # with the upload to Synapse
     if input_file and os.path.getsize(input_file) > 0:
-        store_file(
+        file_entity = store_file(
             syn,
             folder_name=folder_name,
             input_file=input_file,
@@ -104,6 +105,13 @@ def update_folders(
         raise ValueError(
             f"Non-empty prediction and log files must be provided to update folders for submission {submission_id}. Exiting."
         )
+
+    # Make a record of the file entity's Synapse ID so it can be stored as an annotation for the given submission
+    file_synid = file_entity.id
+    output_annotation = {f"{folder_name}_id": file_synid}
+
+    with open("output_annotation.json", "w") as o:
+        o.write(json.dumps(output_annotation))
 
 
 if __name__ == "__main__":

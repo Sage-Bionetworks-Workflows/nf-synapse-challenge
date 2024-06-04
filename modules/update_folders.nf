@@ -11,7 +11,7 @@ process UPDATE_FOLDERS {
     path docker_log_file
 
     output:
-    val "ready"
+    path "output_annotation.json"
 
     script:
     """
