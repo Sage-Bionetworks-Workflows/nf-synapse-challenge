@@ -134,7 +134,7 @@ def update_folders(
     existing_annotation.update(output_annotation)
 
     with open(output_annotation_filename, "w") as file:
-        file.write(json.dumps(output_annotation))
+        file.write(json.dumps(existing_annotation))
 
 
 if __name__ == "__main__":
