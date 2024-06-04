@@ -3,7 +3,7 @@
 import json
 import os
 import sys
-from typing import Union
+from typing import Union, Dict
 import synapseclient
 import helpers
 
@@ -45,6 +45,23 @@ def store_file(
     file_entity = syn.store(synapseclient.File(input_file, parentId=subfolder))
 
     return file_entity
+
+
+def load_data(filepath: str) -> Dict:
+    """
+    Load and return data from a JSON file if it exists. If it does not, return an empty dictionary.
+
+    Arguments:
+        filepath: The path to the JSON file.
+
+    Returns:
+        dict: The loaded data from the JSON file. If the file is not found, an empty dictionary is returned.
+    """
+    try:
+        with open(filepath, "r") as file:
+            return json.load(file)
+    except FileNotFoundError:
+        return {}
 
 
 def update_folders(
@@ -109,9 +126,15 @@ def update_folders(
     # Make a record of the file entity's Synapse ID so it can be stored as an annotation for the given submission
     file_synid = file_entity.id
     output_annotation = {f"{folder_name}_id": file_synid}
+    output_annotation_filename = "output_annotation.json"
 
-    with open("output_annotation.json", "w") as o:
-        o.write(json.dumps(output_annotation))
+    # Read existing data if file exists, otherwise `existing_annotation` is an empty dictionary
+    existing_annotation = load_data(output_annotation_filename)
+
+    existing_annotation.update(output_annotation)
+
+    with open(output_annotation_filename, "w") as file:
+        file.write(json.dumps(output_annotation))
 
 
 if __name__ == "__main__":
