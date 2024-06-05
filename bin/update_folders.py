@@ -127,6 +127,8 @@ def update_folders(
     file_synid = file_entity.id
     output_annotation = {f"{folder_name}_id": file_synid}
     output_annotation_filename = "output_annotation.json"
+    print(f"New annotation will be added for submission: {submission_id}")
+    print(f"Synapse ID for {folder_name} is {file_synid}")
 
     # Read existing data if file exists, otherwise `existing_annotation` is an empty dictionary
     existing_annotation = load_data(output_annotation_filename)
