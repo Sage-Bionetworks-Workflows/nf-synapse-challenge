@@ -6,8 +6,7 @@ process ANNOTATE_SUBMISSION {
     container "sagebionetworks/challengeutils:v4.2.1"
 
     input:
-    val submission_id
-    path annotation_json
+    tuple val(submission_id), path(predictions), val(status), path(annotation_json)
 
     output:
     val "ready"
