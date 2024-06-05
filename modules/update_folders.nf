@@ -11,7 +11,7 @@ process UPDATE_FOLDERS {
     path docker_log_file
 
     output:
-    tuple val(submission_id), path(predictions_file), "status", path("output_annotation.json")
+    tuple val(submission_id), path(predictions_file), val("status"), path("output_annotation.json")
 
     script:
     """
