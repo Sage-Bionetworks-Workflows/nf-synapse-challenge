@@ -110,6 +110,7 @@ def update_folders(
     # ``input_file`` must not be None or empty to proceed
     # with the upload to Synapse
     if input_file and os.path.getsize(input_file) > 0:
+        print(f"Storing {input_file} for submission {submission_id}...")
         file_entity = store_file(
             syn,
             folder_name=folder_name,
