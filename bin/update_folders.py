@@ -3,7 +3,7 @@
 import json
 import os
 import sys
-from typing import Union, Dict
+from typing import Union, Dict, Any
 import synapseclient
 import helpers
 
@@ -47,7 +47,7 @@ def store_file(
     return file_entity
 
 
-def load_data(filepath: str) -> Dict:
+def load_data(filepath: str) -> Dict[str, Any]:
     """
     Load and return data from a JSON file if it exists. If it does not, return an empty dictionary.
 
