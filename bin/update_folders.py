@@ -126,7 +126,7 @@ def update_folders(
     # Make a record of the file entity's Synapse ID so it can be stored as an annotation for the given submission
     file_synid = file_entity.id
     output_annotation = {f"{folder_name}_id": file_synid}
-    output_annotation_filename = "output_annotation.json"
+    output_annotation_filename = f"output_annotation_{submission_id}.json"
     print(f"New annotation will be added for submission: {submission_id}")
     print(f"Synapse ID for {folder_name} is {file_synid}")
 
