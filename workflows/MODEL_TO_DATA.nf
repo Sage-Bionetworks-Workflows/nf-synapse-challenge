@@ -57,29 +57,45 @@ include { ANNOTATE_SUBMISSION as ANNOTATE_SUBMISSION_AFTER_UPDATE_FOLDERS } from
 include { SEND_EMAIL } from '../modules/send_email.nf'
 
 workflow MODEL_TO_DATA {
+
+    // Phase 0: Each submission is evaluated in its own separate channel
     submission_ch = CREATE_SUBMISSION_CHANNEL()
+
+    // Phase 1: Prepare the data for scoring and create output folders on Synapse
     SYNAPSE_STAGE_DATA(params.data_folder_id, "input")
     SYNAPSE_STAGE_GOLDSTANDARD(params.goldstandard_id, "goldstandard_${params.goldstandard_id}")
     CREATE_FOLDERS(submission_ch, params.project_name, params.private_folders)
     UPDATE_SUBMISSION_STATUS_BEFORE_RUN(submission_ch, "EVALUATION_IN_PROGRESS")
+
+    // Phase 2: Running the Docker submission (runs after Phase 1 data staging)
     run_docker_outputs = RUN_DOCKER(submission_ch, params.container_timeout, params.poll_interval, SYNAPSE_STAGE_DATA.output, params.cpus, params.memory, params.log_max_size, CREATE_FOLDERS.output, UPDATE_SUBMISSION_STATUS_BEFORE_RUN.output)
-
-    // Explicit output handling
-    run_docker_files = run_docker_outputs.map { submission_id, predictions, logs ->
-        tuple(predictions, logs)
-    }
-    submission_id = run_docker_outputs.map { submission_id, predictions, logs -> submission_id }
-
-    UPDATE_SUBMISSION_STATUS_AFTER_RUN(submission_id, "ACCEPTED")
-    UPDATE_FOLDERS(submission_id, params.project_name, run_docker_files)
+    //// Explicit output handling
+    run_docker_submission = run_docker_outputs.map { submission_id, predictions, logs -> submission_id }
+    run_docker_files = run_docker_outputs.map { submission_id, predictions, logs -> tuple(predictions, logs) }
+    //// Updating the status, annotations, and output folders
+    UPDATE_SUBMISSION_STATUS_AFTER_RUN(run_docker_submission, "ACCEPTED")
+    UPDATE_FOLDERS(run_docker_submission, params.project_name, run_docker_files)
     ANNOTATE_SUBMISSION_AFTER_UPDATE_FOLDERS(UPDATE_FOLDERS.output)
-    VALIDATE(run_docker_outputs, SYNAPSE_STAGE_GOLDSTANDARD.output, UPDATE_SUBMISSION_STATUS_AFTER_RUN.output, params.execute_validation)
-    UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE(submission_id, VALIDATE.output.map { it[2] })
-    ANNOTATE_SUBMISSION_AFTER_VALIDATE(VALIDATE.output)
-    SCORE(VALIDATE.output, SYNAPSE_STAGE_GOLDSTANDARD.output, UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE.output, ANNOTATE_SUBMISSION_AFTER_VALIDATE.output, params.execute_scoring)
-    UPDATE_SUBMISSION_STATUS_AFTER_SCORE(submission_id, SCORE.output.map { it[2] })
-    ANNOTATE_SUBMISSION_AFTER_SCORE(SCORE.output)
+
+    // Phase 3: Validation of Docker submission results
+    validate_outputs = VALIDATE(run_docker_outputs, SYNAPSE_STAGE_GOLDSTANDARD.output, UPDATE_SUBMISSION_STATUS_AFTER_RUN.output, params.execute_validation)
+    //// Explicit output handling
+    validate_submission = validate_outputs.map { submission_id, predictions, status, results -> submission_id }
+    validate_status = validate_outputs.map { submission_id, predictions, status, results -> status }
+    //// Updating the status and annotations
+    UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE(validate_submission, validate_status)
+    ANNOTATE_SUBMISSION_AFTER_VALIDATE(validate_outputs)
+
+    // Phase 4: Scoring the submission + send email
+    score_outputs = SCORE(validate_outputs, SYNAPSE_STAGE_GOLDSTANDARD.output, UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE.output, ANNOTATE_SUBMISSION_AFTER_VALIDATE.output, params.execute_scoring)
+    //// Explicit output handling
+    score_submission = score_outputs.map { submission_id, predictions, status, results -> submission_id }
+    score_status = validate_outputs.map { submission_id, predictions, status, results -> status }
+    //// Updating the status and annotations
+    UPDATE_SUBMISSION_STATUS_AFTER_SCORE(score_submission, score_status)
+    ANNOTATE_SUBMISSION_AFTER_SCORE(score_outputs)
+    //// Send email
     if (params.send_email) {
-        SEND_EMAIL(params.email_script, params.view_id, submission_ch, "AFTER", params.email_with_score, ANNOTATE_SUBMISSION_AFTER_SCORE.output)
+        SEND_EMAIL(params.email_script, params.view_id, SCORE.output.map{ it[0] }, "AFTER", params.email_with_score, ANNOTATE_SUBMISSION_AFTER_SCORE.output)
     }
 }
