@@ -64,13 +64,14 @@ workflow MODEL_TO_DATA {
     UPDATE_SUBMISSION_STATUS_BEFORE_RUN(submission_ch, "EVALUATION_IN_PROGRESS")
     run_docker_outputs = RUN_DOCKER(submission_ch, params.container_timeout, params.poll_interval, SYNAPSE_STAGE_DATA.output, params.cpus, params.memory, params.log_max_size, CREATE_FOLDERS.output, UPDATE_SUBMISSION_STATUS_BEFORE_RUN.output)
 
-    // Mapping to extract only the prediction and log file paths
+    // Explicit output handling
     run_docker_files = run_docker_outputs.map { submission_id, predictions, logs ->
         tuple(predictions, logs)
     }
+    submission_id = run_docker_outputs.map { submission_id, predictions, logs -> submission_id }
 
-    UPDATE_SUBMISSION_STATUS_AFTER_RUN(submission_ch, "ACCEPTED")
-    UPDATE_FOLDERS(submission_ch, params.project_name, run_docker_files)
+    UPDATE_SUBMISSION_STATUS_AFTER_RUN(submission_id, "ACCEPTED")
+    UPDATE_FOLDERS(submission_id, params.project_name, run_docker_files)
     ANNOTATE_SUBMISSION_AFTER_UPDATE_FOLDERS(UPDATE_FOLDERS.output)
     VALIDATE(run_docker_outputs, SYNAPSE_STAGE_GOLDSTANDARD.output, UPDATE_SUBMISSION_STATUS_AFTER_RUN.output, params.execute_validation)
     UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE(submission_ch, VALIDATE.output.map { it[2] })
