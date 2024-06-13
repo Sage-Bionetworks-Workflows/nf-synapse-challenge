@@ -20,7 +20,7 @@ process RUN_DOCKER {
     val ready
 
     output:
-    tuple val(submission_id), path('output/*_predictions.{csv,zip}'), path('output/*.log') into run_docker_output
+    tuple val(submission_id), path('output/*_predictions.{csv,zip}'), path('output/*.log')
 
     script:
     """
