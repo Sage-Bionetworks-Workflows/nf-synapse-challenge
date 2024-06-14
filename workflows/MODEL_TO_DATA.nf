@@ -96,6 +96,6 @@ workflow MODEL_TO_DATA {
     ANNOTATE_SUBMISSION_AFTER_SCORE(score_outputs)
     //// Send email
     if (params.send_email) {
-        SEND_EMAIL(params.email_script, params.view_id, SCORE.output.map{ it[0] }, "AFTER", params.email_with_score, ANNOTATE_SUBMISSION_AFTER_SCORE.output)
+        SEND_EMAIL(params.email_script, params.view_id, score_submission, "AFTER", params.email_with_score, ANNOTATE_SUBMISSION_AFTER_SCORE.output)
     }
 }
