@@ -90,7 +90,7 @@ workflow MODEL_TO_DATA {
     score_outputs = SCORE(validate_outputs, SYNAPSE_STAGE_GOLDSTANDARD.output, UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE.output, ANNOTATE_SUBMISSION_AFTER_VALIDATE.output, params.execute_scoring)
     //// Explicit output handling
     score_submission = score_outputs.map { submission_id, predictions, status, results -> submission_id }
-    score_status = validate_outputs.map { submission_id, predictions, status, results -> status }
+    score_status = score_outputs.map { submission_id, predictions, status, results -> status }
     //// Updating the status and annotations
     UPDATE_SUBMISSION_STATUS_AFTER_SCORE(score_submission, score_status)
     ANNOTATE_SUBMISSION_AFTER_SCORE(score_outputs)
