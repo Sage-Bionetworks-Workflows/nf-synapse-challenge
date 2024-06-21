@@ -364,7 +364,6 @@ def calculate_all_scores(
                     scores = house_zero_score(truth, pred)
 
                 for key, index in zip(score_keys, score_indices):
-                    # set the score to 0 if negative
                     score_result[f"{system}_{key}"] = scores[index]
 
     return score_result
