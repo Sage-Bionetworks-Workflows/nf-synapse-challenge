@@ -279,19 +279,18 @@ def reconstruction(truth: np.ndarray, prediction: np.ndarray) -> float:
 
 def house_zero_score(truth: np.ndarray, prediction: np.ndarray) -> Tuple[float, float, float]:
     '''Produce errors for the HouseZero model.'''
-    # error for room temperature
-    E1 = 100 * \
+    error_room_temp = 100 * \
         (1 - np.linalg.norm((prediction[:, 1] -
          truth[:, 1])**2)/np.linalg.norm(truth[:, 1]**2))
-    # error for slab temperature
-    E2 = 100 * \
+
+    error_slab_temp = 100 * \
         (1 - np.linalg.norm((prediction[:, 2] -
          truth[:, 2])**2)/np.linalg.norm(truth[:, 2]**2))
-    # error for co2
-    E3 = 100 * \
+
+    error_co2 = 100 * \
         (1 - np.linalg.norm((prediction[:, 0] -
          truth[:, 0])**2)/np.linalg.norm(truth[:, 0]**2))
-    return E1, E2, E3
+    return error_room_temp, error_slab_temp, error_co2
 
 
 def calculate_all_scores(
