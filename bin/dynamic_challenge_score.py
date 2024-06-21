@@ -277,7 +277,7 @@ def reconstruction(truth: np.ndarray, prediction: np.ndarray) -> float:
     return e1
 
 
-def HouseZeroScore(truth: np.ndarray, prediction: np.ndarray) -> Tuple[float]:
+def house_zero_score(truth: np.ndarray, prediction: np.ndarray) -> Tuple[float]:
     '''Produce errors for the HouseZero model.'''
     # error for room temperature
     E1 = 100 * \
@@ -362,7 +362,7 @@ def calculate_all_scores(
                 elif score_metric == "reconstruction":
                     scores = (reconstruction(truth, pred),)
                 else:
-                    scores = HouseZeroScore(truth, pred)
+                    scores = house_zero_score(truth, pred)
 
                 for key, index in zip(score_keys, score_indices):
                     # set the score to 0 if negative
