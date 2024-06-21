@@ -99,15 +99,18 @@ def ode_forecast(
 
     norm_yhistxt = np.linalg.norm(yhistxt, 2)
     eltx = (
-        np.linalg.norm(yhistxt - yhistxp, 2) / norm_yhistxt if norm_yhistxt > 0 else 0
+        np.linalg.norm(yhistxt - yhistxp, 2) /
+        norm_yhistxt if norm_yhistxt > 0 else 0
     )
     norm_yhistyt = np.linalg.norm(yhistyt, 2)
     elty = (
-        np.linalg.norm(yhistyt - yhistyp, 2) / norm_yhistyt if norm_yhistyt > 0 else 0
+        np.linalg.norm(yhistyt - yhistyp, 2) /
+        norm_yhistyt if norm_yhistyt > 0 else 0
     )
     norm_yhistzt = np.linalg.norm(yhistzt, 2)
     eltz = (
-        np.linalg.norm(yhistzt - yhistzp, 2) / norm_yhistzt if norm_yhistzt > 0 else 0
+        np.linalg.norm(yhistzt - yhistzp, 2) /
+        norm_yhistzt if norm_yhistzt > 0 else 0
     )
 
     elt = (eltx + elty + eltz) / 3
@@ -144,7 +147,8 @@ def pde_forecast(
     # LONG TIME:  Compute least-square fit to power spectra
     for j in range(1, k + 1):
         p_truth = np.multiply(
-            np.abs(np.fft.fft(truth[:, n - j])), np.abs(np.fft.fft(truth[:, n - j]))
+            np.abs(np.fft.fft(truth[:, n - j])
+                   ), np.abs(np.fft.fft(truth[:, n - j]))
         )
         p_prediction = np.multiply(
             np.abs(np.fft.fft(prediction[:, n - j])),
@@ -152,9 +156,9 @@ def pde_forecast(
         )
         pt3 = np.fft.fftshift(p_truth)
         pp3 = np.fft.fftshift(p_prediction)
-        ptnew = pt3[int(m / 2) - modes : int(m / 2) + modes + 1]
+        ptnew = pt3[int(m / 2) - modes: int(m / 2) + modes + 1]
         ppnew = pp3[
-            int(m / 2) - modes : int(m / 2) + modes + 1
+            int(m / 2) - modes: int(m / 2) + modes + 1
         ]  # Fixed the variable name
 
         pt = np.column_stack((pt, np.log(ptnew)))
@@ -194,7 +198,8 @@ def pde_forecast_2d(
 
     # LONG TIME:  Compute least-square fit to power spectra
     for j in range(1, k + 1):
-        truth_fft = np.abs(np.fft.fft2(truth[:, n - j].reshape((nf, nf), order="F")))
+        truth_fft = np.abs(np.fft.fft2(
+            truth[:, n - j].reshape((nf, nf), order="F")))
         prediction_fft = np.abs(
             np.fft.fft2(prediction[:, n - j].reshape((nf, nf), order="F"))
         )
@@ -205,9 +210,9 @@ def pde_forecast_2d(
         pt3 = np.fft.fftshift(p_truth[:, int(nf / 2) + 1])
         pp3 = np.fft.fftshift(p_prediction[:, int(nf / 2) + 1])
 
-        ptnew = pt3[int(nf / 2) - modes : int(nf / 2) + modes + 1]
+        ptnew = pt3[int(nf / 2) - modes: int(nf / 2) + modes + 1]
         # Fixed the variable name
-        ppnew = pp3[int(nf / 2) - modes : int(nf / 2) + modes + 1]
+        ppnew = pp3[int(nf / 2) - modes: int(nf / 2) + modes + 1]
 
         pt = np.column_stack((pt, np.log(ptnew)))
         pp = np.column_stack((pp, np.log(ppnew)))
@@ -272,7 +277,23 @@ def reconstruction(truth: np.ndarray, prediction: np.ndarray) -> float:
     return e1
 
 
-# TODO: Not final, update once organizers confirm all inputs and metrics
+def HouseZeroScore(truth: np.ndarray, prediction: np.ndarray) -> Tuple[float]:
+    '''Produce errors for the HouseZero model.'''
+    # error for room temperature
+    E1 = 100 * \
+        (1 - np.linalg.norm(prediction[:, 1] -
+         truth[:, 1])/np.linalg.norm(truth[:, 1]))
+    # error for slab temperature
+    E2 = 100 * \
+        (1 - np.linalg.norm(prediction[:, 2] -
+         truth[:, 2])/np.linalg.norm(truth[:, 2]))
+    # error for co2
+    E3 = 100 * \
+        (1 - np.linalg.norm(prediction[:, 0] -
+         truth[:, 0])/np.linalg.norm(truth[:, 0]))
+    return E1, E2, E3
+
+
 def calculate_all_scores(
     groundtruth_path: str, predictions_path: str, evaluation_id: str
 ) -> dict:
@@ -301,6 +322,12 @@ def calculate_all_scores(
             ("X8", "reconstruction", ["recon_E11"], [0]),
             ("X9", "reconstruction", ["recon_E12"], [0]),
         ],
+        "9615601": [  # Task5
+            ("X21", "HouseZeroScore", [
+             "rt_E21", "st_E21", "co2_E21"], [0, 1, 2]),
+            ("X74", "HouseZeroScore", [
+             "rt_E74", "st_E74", "co2_E74"], [0, 1, 2]),
+        ]
     }
 
     # get mapping of inputs and outs for specific task
@@ -309,14 +336,11 @@ def calculate_all_scores(
     # get unique systems
     pred_files = os.listdir(predictions_path)
     pred_systems = list(set(f.split("_")[0] for f in pred_files))
-    true_systems = [
-        "doublependulum",
-        "Lorenz",
-        "Rossler",
-        "Lorenz96",
-        "KS",
-        "Kolmogorov",
-    ]
+    if evaluation_id == "9615601":
+        true_systems = ["HouseZero"]
+    else:
+        true_systems = ["doublependulum", "Lorenz",
+                        "Rossler", "Lorenz96", "KS", "Kolmogorov"]
     unique_systems = list(set(true_systems) & set(pred_systems))
 
     for system in unique_systems:
@@ -335,8 +359,10 @@ def calculate_all_scores(
 
                 if score_metric == "forecast":
                     scores = forecast(truth, pred, system)
-                else:
+                elif score_metric == "reconstruction":
                     scores = (reconstruction(truth, pred),)
+                else:
+                    scores = HouseZeroScore(truth, pred)
 
                 for key, index in zip(score_keys, score_indices):
                     # set the score to 0 if negative
@@ -452,3 +478,4 @@ if __name__ == "__main__":
 
     # print the status - captured by the workflow outputs
     print(score_status)
+    

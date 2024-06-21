@@ -129,6 +129,7 @@ def get_target_link(synapse_client: synapseclient.Synapse, eval_id: str) -> str:
         "9615532": "https://www.synapse.org/#!Synapse:syn52052735/wiki/626203",
         "9615534": "https://www.synapse.org/#!Synapse:syn52052735/wiki/626211",
         "9615535": "https://www.synapse.org/#!Synapse:syn52052735/wiki/626216",
+        "9615601": "https://www.synapse.org/#!Synapse:syn52052735/wiki/628761",
     }
     link = EVAL_TO_LINK.get(eval_id, None)
     if link:
@@ -153,7 +154,8 @@ def send_email(
       ValueError: if an incorrect type is provided for notification_type
     """
     if notification_type not in [BEFORE, AFTER]:
-        raise ValueError(f"Invalid notification_type. Must be '{BEFORE}' or '{AFTER}'")
+        raise ValueError(
+            f"Invalid notification_type. Must be '{BEFORE}' or '{AFTER}'")
     # Initiate connection to Synapse
     syn = synapseclient.login()
 
@@ -192,7 +194,8 @@ def send_email(
         )
 
     # Sends an e-mail notifying participant(s) that the evaluation succeeded or failed
-    syn.sendMessage(userIds=ids_to_notify, messageSubject=subject, messageBody=body)
+    syn.sendMessage(userIds=ids_to_notify,
+                    messageSubject=subject, messageBody=body)
 
 
 if __name__ == "__main__":

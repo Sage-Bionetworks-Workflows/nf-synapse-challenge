@@ -52,6 +52,7 @@ def get_expected_filenames(eval_id: str) -> List[str]:
         "9615532": ["X2", "X3", "X4", "X5"],  # Task2
         "9615534": ["X6"],  # Task3
         "9615535": ["X7", "X8", "X9"],  # Task4
+        '9615601': ["X21", "X74"],  # Task5
     }
     expected_patterns = []
     for file_prefix in task_mapping[eval_id]:
