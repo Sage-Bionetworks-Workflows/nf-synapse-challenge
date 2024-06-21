@@ -281,16 +281,16 @@ def HouseZeroScore(truth: np.ndarray, prediction: np.ndarray) -> Tuple[float]:
     '''Produce errors for the HouseZero model.'''
     # error for room temperature
     E1 = 100 * \
-        (1 - np.linalg.norm(prediction[:, 1] -
-         truth[:, 1])/np.linalg.norm(truth[:, 1]))
+        (1 - np.linalg.norm((prediction[:, 1] -
+         truth[:, 1])**2)/np.linalg.norm(truth[:, 1]**2))
     # error for slab temperature
     E2 = 100 * \
-        (1 - np.linalg.norm(prediction[:, 2] -
-         truth[:, 2])/np.linalg.norm(truth[:, 2]))
+        (1 - np.linalg.norm((prediction[:, 2] -
+         truth[:, 2])**2)/np.linalg.norm(truth[:, 2]**2))
     # error for co2
     E3 = 100 * \
-        (1 - np.linalg.norm(prediction[:, 0] -
-         truth[:, 0])/np.linalg.norm(truth[:, 0]))
+        (1 - np.linalg.norm((prediction[:, 0] -
+         truth[:, 0])**2)/np.linalg.norm(truth[:, 0]**2))
     return E1, E2, E3
 
 
@@ -366,7 +366,7 @@ def calculate_all_scores(
 
                 for key, index in zip(score_keys, score_indices):
                     # set the score to 0 if negative
-                    score_result[f"{system}_{key}"] = max(scores[index], 0)
+                    score_result[f"{system}_{key}"] = scores[index]
 
     return score_result
 
@@ -478,4 +478,3 @@ if __name__ == "__main__":
 
     # print the status - captured by the workflow outputs
     print(score_status)
-    
