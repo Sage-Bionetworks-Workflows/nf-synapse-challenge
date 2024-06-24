@@ -22,7 +22,7 @@ params.memory = "16.GB"
 // Maximum time (in minutes) to wait for Docker submission container run to complete
 params.container_timeout = "180"
 // Time (in minutes) between status checks during container monitoring
-params.poll_interval = "10"
+params.poll_interval = "1"
 // The container that houses the scoring and validation scripts
 params.challenge_container = "ghcr.io/jaymedina/test_model2data:latest"
 // The command used to execute the Challenge scoring script in the base directory of the challenge_container: e.g. `python3 path/to/score.py`
