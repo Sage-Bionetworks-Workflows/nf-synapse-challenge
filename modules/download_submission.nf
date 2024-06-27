@@ -1,5 +1,6 @@
 // download submission file(s) for Data to Model Challenges
 process DOWNLOAD_SUBMISSION {
+    debug true
     tag "${submission_id}"
     label "flexible_compute"
     
