@@ -16,5 +16,7 @@ process DOWNLOAD_SUBMISSION {
     script:
     """
     challengeutils download-submission ${submission_id}
+    ls -A
     """
+    // if [ -z "\$(ls -A)" ]; then touch dummy.txt; fi
 }
