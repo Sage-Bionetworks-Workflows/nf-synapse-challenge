@@ -16,8 +16,12 @@ process DOWNLOAD_SUBMISSION {
 
     script:
     """
-    challengeutils download-submission ${submission_id}
-    ls -A
+    download_output=\$(challengeutils download-submission ${submission_id})
+
+    if [[ ! ${download_output} == *"org.sagebionetworks.repo.model.FileEntity"* ]];
+    then
+        echo "download failed"
+        echo "${download_output}"
+        touch dummy.txt
     """
-    // if [ -z "\$(ls -A)" ]; then touch dummy.txt; fi
 }
