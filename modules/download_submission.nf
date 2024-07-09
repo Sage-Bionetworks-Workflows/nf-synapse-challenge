@@ -5,23 +5,17 @@ process DOWNLOAD_SUBMISSION {
     label "flexible_compute"
     
     secret "SYNAPSE_AUTH_TOKEN"
-    container "sagebionetworks/challengeutils:v4.2.0"
+    container "sagebionetworks/synapsepythonclient:v4.0.0"
 
     input:
     val submission_id
     val ready
 
     output:
-    tuple val(submission_id), path('*')
+    tuple val(submission_id), path('*'), env(entity_type)
 
     script:
     """
-    download_output=\$(challengeutils download-submission ${submission_id})
-
-    if [[ ! ${download_output} == *"org.sagebionetworks.repo.model.FileEntity"* ]];
-    then
-        echo "download failed"
-        echo "${download_output}"
-        touch dummy.txt
+    entity_type=\$(download_submission.py '${submission_id}')
     """
 }

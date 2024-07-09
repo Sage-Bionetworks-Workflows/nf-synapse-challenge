@@ -7,7 +7,7 @@ process VALIDATE {
     container "sagebionetworks/synapsepythonclient:v4.0.0"
 
     input:
-    tuple val(submission_id), path(predictions)
+    tuple val(submission_id), path(predictions), val(entity_type)
     val ready
     val validation_script
 
@@ -16,6 +16,6 @@ process VALIDATE {
 
     script:
     """
-    status=\$(${validation_script} '${submission_id}' '${predictions}')
+    status=\$(${validation_script} '${submission_id}' '${entity_type}' '${predictions}')
     """
 }

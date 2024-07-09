@@ -20,6 +20,9 @@ def get_args():
         "predictions_path", type=str, help="The path to the predictions folder"
     )
     parser.add_argument(
+        "entity_type", type=str, help="The entity type of the submission"
+    )
+    parser.add_argument(
         "output",
         type=str,
         nargs="?",
@@ -102,6 +105,7 @@ if __name__ == "__main__":
     args = get_args()
     sub_id = args.submission_id
     predictions_path = args.predictions_path
+    entity_type = args.entity_type
     results_path = args.output
 
     # login to synapase
@@ -113,7 +117,12 @@ if __name__ == "__main__":
 
     invalid_reasons = []
 
-    if predictions_path is None or os.path.basename(predictions_path) != 'predictions.tar':
+    if entity_type != "org.sagebionetworks.repo.model.File":
+        prediction_status = INVALID
+        invalid_reasons.append(
+            f"Submission Entities must be of type 'org.sagebionetworks.repo.model.File', submitted Entity is {entity_type}"
+        )
+    elif predictions_path is None or os.path.basename(predictions_path) != 'predictions.tar':
         prediction_status = INVALID
         invalid_reasons.append('Error:  No "predictions.tar" found')
     else:
