@@ -17,10 +17,10 @@ def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("submission_id", type=str, help="The ID of submission")
     parser.add_argument(
-        "predictions_path", type=str, help="The path to the predictions folder"
+        "entity_type", type=str, help="The entity type of the submission"
     )
     parser.add_argument(
-        "entity_type", type=str, help="The entity type of the submission"
+        "predictions_path", type=str, help="The path to the predictions folder"
     )
     parser.add_argument(
         "output",
