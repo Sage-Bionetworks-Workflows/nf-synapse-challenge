@@ -117,10 +117,10 @@ if __name__ == "__main__":
 
     invalid_reasons = []
 
-    if entity_type != "org.sagebionetworks.repo.model.File":
+    if entity_type != "org.sagebionetworks.repo.model.FileEntity":
         prediction_status = INVALID
         invalid_reasons.append(
-            f"Submission Entities must be of type 'org.sagebionetworks.repo.model.File', submitted Entity is '{entity_type}'."
+            f"Submission Entities must be of type 'org.sagebionetworks.repo.model.FileEntity', submitted Entity is '{entity_type}'."
         )
     elif predictions_path is None or os.path.basename(predictions_path) != 'predictions.tar':
         prediction_status = INVALID
