@@ -11,7 +11,7 @@ syn.login(silent=True)
 
 submission = syn.getSubmission(submission_id)
 entity_type = submission["entity"].concreteType
-if entity_type != "org.sagebionetworks.repo.model.File":
+if entity_type != "org.sagebionetworks.repo.model.FileEntity":
     open("dummy.txt", 'w').close()
 
 print(entity_type)
