@@ -1,17 +1,27 @@
 #!/usr/bin/env python3
 
+import argparse
 import sys
 
 import synapseclient
 
-submission_id = sys.argv[1]
+def get_args():
+    """Set up command-line interface and get arguments without any flags."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument("submission_id", type=str, help="The ID of submission")
 
-syn = synapseclient.Synapse()
-syn.login(silent=True)
+    return parser.parse_args()
 
-submission = syn.getSubmission(submission_id, downloadLocation=".")
-entity_type = submission["entity"].concreteType
-if entity_type != "org.sagebionetworks.repo.model.FileEntity":
-    open("dummy.txt", 'w').close()
+if __name__ == "__main__":
+    args = get_args()
+    submission_id = args.submission_id
 
-print(entity_type)
+    syn = synapseclient.Synapse()
+    syn.login(silent=True)
+
+    submission = syn.getSubmission(submission_id, downloadLocation=".")
+    entity_type = submission["entity"].concreteType
+    if entity_type != "org.sagebionetworks.repo.model.FileEntity":
+        open("dummy.txt", 'w').close()
+
+    print(entity_type)
