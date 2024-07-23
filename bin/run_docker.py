@@ -484,8 +484,7 @@ def run_docker(
             docker_image,
             detach=True,
             volumes=volumes,
-            network_disabled=True,
-            mem_limit="6g",
+            network_disabled=True
         )
 
         timeout_msg = monitor_container(
