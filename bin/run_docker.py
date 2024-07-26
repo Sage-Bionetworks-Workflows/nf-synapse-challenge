@@ -478,6 +478,7 @@ def run_docker(
         return
 
     # Run the docker image using the client. We detach so that we can monitor the container.
+    timeout_msg = ""
     print(f"Running container... {docker_image}")
     try:
         container = client.containers.run(
