@@ -6,7 +6,7 @@ params.submissions = ""
 // Synapse ID for Submission View
 params.view_id = "syn52576179"
 // The container that houses the scoring and validation scripts
-params.challenge_container = "ghcr.io/jaymedina/test_model2data:latest"
+params.challenge_container = "ghcr.io/jaymedina/jenny-test-evaluation:latest"
 // The command used to execute the Challenge scoring script in the base directory of the challenge_container: e.g. `python3 path/to/score.py`
 params.execute_scoring = "python3 /usr/local/bin/score.py"
 // The command used to execute the Challenge validation script in the base directory of the challenge_container: e.g. `python3 path/to/validate.py`
