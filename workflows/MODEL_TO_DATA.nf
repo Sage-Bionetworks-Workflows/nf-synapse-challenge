@@ -9,8 +9,8 @@ params.project_name = "DPE-testing"
 params.view_id = "syn53770151"
 // Synapse ID for Input Data folder
 params.data_folder_id = "syn51390589"
-// Synapse ID for the Gold Standard file
-params.goldstandard_id = "syn51390590"
+// Synapse ID for the Groundtruth file
+params.groundtruth_id = "syn51390590"
 // E-mail template (case-sensitive. "no" to send e-mail without score update, "yes" to send an e-mail with)
 params.email_with_score = "yes"
 // Ensuring correct input parameter values
@@ -41,7 +41,7 @@ params.log_max_size = "50"
 // import modules
 include { CREATE_SUBMISSION_CHANNEL } from '../subworkflows/create_submission_channel.nf'
 include { SYNAPSE_STAGE as SYNAPSE_STAGE_DATA } from '../modules/synapse_stage.nf'
-include { SYNAPSE_STAGE as SYNAPSE_STAGE_GOLDSTANDARD } from '../modules/synapse_stage.nf'
+include { SYNAPSE_STAGE as SYNAPSE_STAGE_GROUNDTRUTH } from '../modules/synapse_stage.nf'
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_BEFORE_RUN } from '../modules/update_submission_status.nf'
 include { CREATE_FOLDERS } from '../modules/create_folders.nf'
 include { UPDATE_FOLDERS } from '../modules/update_folders.nf'
@@ -63,7 +63,7 @@ workflow MODEL_TO_DATA {
 
     // Phase 1: Prepare the data for scoring and create output folders on Synapse
     SYNAPSE_STAGE_DATA(params.data_folder_id, "input")
-    SYNAPSE_STAGE_GOLDSTANDARD(params.goldstandard_id, "goldstandard_${params.goldstandard_id}")
+    SYNAPSE_STAGE_GROUNDTRUTH(params.groundtruth_id, "groundtruth_${params.groundtruth_id}")
     CREATE_FOLDERS(submission_ch, params.project_name, params.private_folders)
     UPDATE_SUBMISSION_STATUS_BEFORE_RUN(submission_ch, "EVALUATION_IN_PROGRESS")
 
@@ -78,7 +78,7 @@ workflow MODEL_TO_DATA {
     ANNOTATE_SUBMISSION_AFTER_UPDATE_FOLDERS(UPDATE_FOLDERS.output)
 
     // Phase 3: Validation of Docker submission results
-    validate_outputs = VALIDATE(run_docker_outputs, SYNAPSE_STAGE_GOLDSTANDARD.output, UPDATE_SUBMISSION_STATUS_AFTER_RUN.output, params.execute_validation)
+    validate_outputs = VALIDATE(run_docker_outputs, SYNAPSE_STAGE_GROUNDTRUTH.output, UPDATE_SUBMISSION_STATUS_AFTER_RUN.output, params.execute_validation)
     //// Explicit output handling
     validate_submission = validate_outputs.map { submission_id, predictions, status, results -> submission_id }
     validate_status = validate_outputs.map { submission_id, predictions, status, results -> status }
@@ -87,7 +87,7 @@ workflow MODEL_TO_DATA {
     ANNOTATE_SUBMISSION_AFTER_VALIDATE(validate_outputs)
 
     // Phase 4: Scoring the submission + send email
-    score_outputs = SCORE(validate_outputs, SYNAPSE_STAGE_GOLDSTANDARD.output, UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE.output, ANNOTATE_SUBMISSION_AFTER_VALIDATE.output, params.execute_scoring)
+    score_outputs = SCORE(validate_outputs, SYNAPSE_STAGE_GROUNDTRUTH.output, UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE.output, ANNOTATE_SUBMISSION_AFTER_VALIDATE.output, params.execute_scoring)
     //// Explicit output handling
     score_submission = score_outputs.map { submission_id, predictions, status, results -> submission_id }
     score_status = score_outputs.map { submission_id, predictions, status, results -> status }

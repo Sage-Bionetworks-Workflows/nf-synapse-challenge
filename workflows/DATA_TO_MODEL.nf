@@ -11,7 +11,7 @@ params.challenge_container = "ghcr.io/jaymedina/test_model2data:latest"
 params.execute_scoring = "python3 /usr/local/bin/score.py"
 // The command used to execute the Challenge validation script in the base directory of the challenge_container: e.g. `python3 path/to/validate.py`
 params.execute_validation = "python3 /usr/local/bin/validate.py"
-// Synapse ID for the Gold Standard file
+// Synapse ID for the Groundtruth file
 params.groundtruth_id = "syn51390589"
 // E-mail template (case-sensitive. "no" to send e-mail without score update, "yes" to send an e-mail with)
 params.email_with_score = "yes"
