@@ -1,7 +1,6 @@
 // validate submission results for model-to-data submissions
 process VALIDATE {
     tag "${submission_id}"
-    label "flexible_compute"
     
     secret "SYNAPSE_AUTH_TOKEN"
     container params.challenge_container
