@@ -12,7 +12,7 @@ params.execute_scoring = "python3 /usr/local/bin/score.py"
 // The command used to execute the Challenge validation script in the base directory of the challenge_container: e.g. `python3 path/to/validate.py`
 params.execute_validation = "python3 /usr/local/bin/validate.py"
 // Synapse ID for the Gold Standard file
-params.goldstandard_id = "syn51390589"
+params.groundtruth_id = "syn51390589"
 // E-mail template (case-sensitive. "no" to send e-mail without score update, "yes" to send an e-mail with)
 params.email_with_score = "yes"
 // Ensuring correct input parameter values
@@ -24,7 +24,7 @@ params.email_script = "send_email.py"
 
 // import modules
 include { CREATE_SUBMISSION_CHANNEL } from '../subworkflows/create_submission_channel.nf'
-include { SYNAPSE_STAGE as SYNAPSE_STAGE_GOLDSTANDARD} from '../modules/synapse_stage.nf'
+include { SYNAPSE_STAGE as SYNAPSE_STAGE_GROUNDTRUTH} from '../modules/synapse_stage.nf'
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_BEFORE_EVALUATION } from '../modules/update_submission_status.nf'
 include { DOWNLOAD_SUBMISSION } from '../modules/download_submission.nf'
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE } from '../modules/update_submission_status.nf'
@@ -46,18 +46,18 @@ workflow DATA_TO_MODEL {
         SEND_EMAIL_BEFORE(params.email_script, params.view_id, submission_ch, "BEFORE", params.email_with_score, "ready")
     }
 
-    // Phase 2: Prepare the data: Download the submission and stage the goldstandard data on S3
-    SYNAPSE_STAGE_GOLDSTANDARD(params.goldstandard_id, "goldstandard_${params.goldstandard_id}")
+    // Phase 2: Prepare the data: Download the submission and stage the groundtruth data on S3
+    SYNAPSE_STAGE_GROUNDTRUTH(params.groundtruth_id, "groundtruth_${params.groundtruth_id}")
     DOWNLOAD_SUBMISSION(submission_ch, UPDATE_SUBMISSION_STATUS_BEFORE_EVALUATION.output)
     UPDATE_SUBMISSION_STATUS_BEFORE_EVALUATION(submission_ch, "EVALUATION_IN_PROGRESS")
 
     // Phase 3: Validation of the submission
-    VALIDATE(DOWNLOAD_SUBMISSION.output, SYNAPSE_STAGE_GOLDSTANDARD.output, "ready", params.execute_validation)
+    VALIDATE(DOWNLOAD_SUBMISSION.output, SYNAPSE_STAGE_GROUNDTRUTH.output, "ready", params.execute_validation)
     UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE(submission_ch, VALIDATE.output.map { it[2] })
     ANNOTATE_SUBMISSION_AFTER_VALIDATE(VALIDATE.output)
 
     // Phase 4: Scoring of the submission + send email
-    SCORE(VALIDATE.output, SYNAPSE_STAGE_GOLDSTANDARD.output, UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE.output, ANNOTATE_SUBMISSION_AFTER_VALIDATE.output, params.execute_scoring)
+    SCORE(VALIDATE.output, SYNAPSE_STAGE_GROUNDTRUTH.output, UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE.output, ANNOTATE_SUBMISSION_AFTER_VALIDATE.output, params.execute_scoring)
     UPDATE_SUBMISSION_STATUS_AFTER_SCORE(submission_ch, SCORE.output.map { it[2] })
     ANNOTATE_SUBMISSION_AFTER_SCORE(SCORE.output)
     if (params.send_email) {
