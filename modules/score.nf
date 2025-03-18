@@ -7,7 +7,7 @@ process SCORE {
 
     input:
     tuple val(submission_id), path(predictions), val(status), path(results)
-    path goldstandard
+    path groundtruth
     val status_ready
     val annotate_ready
     val execute_scoring
@@ -17,6 +17,6 @@ process SCORE {
 
     script:
     """
-    status=\$(${execute_scoring} -p '${predictions}' -g '${goldstandard}' -o '${results}')
+    status=\$(${execute_scoring} -p '${predictions}' -g '${groundtruth}' -o '${results}')
     """
 }
