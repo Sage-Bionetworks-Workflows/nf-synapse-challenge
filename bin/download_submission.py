@@ -27,6 +27,6 @@ if __name__ == "__main__":
     if entity_type != "org.sagebionetworks.repo.model.FileEntity":
         invalid_file = "INVALID_predictions.csv"
         with open(invalid_file, "w") as d:
-            d.write("Submission Entities must be of type 'org.sagebionetworks.repo.model.FileEntity', submitted Entity is '{entity_type}'")
+            d.write(f"Submission Entities must be of type 'org.sagebionetworks.repo.model.FileEntity', submitted Entity is '{entity_type}'")
 
-    print("Submission Entities must be of type 'org.sagebionetworks.repo.model.FileEntity', submitted Entity is '{entity_type}'")
+    print(f"Submission Entities must be of type 'org.sagebionetworks.repo.model.FileEntity', submitted Entity is '{entity_type}'")
