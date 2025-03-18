@@ -42,6 +42,7 @@ workflow DATA_TO_MODEL {
     submission_ch = CREATE_SUBMISSION_CHANNEL()
 
     // Phase 1: Notify users that evaluation of their submission has begun
+    UPDATE_SUBMISSION_STATUS_BEFORE_EVALUATION(submission_ch, "EVALUATION_IN_PROGRESS")
     if (params.send_email) {
         SEND_EMAIL_BEFORE(params.email_script, params.view_id, submission_ch, "BEFORE", params.email_with_score, "ready")
     }
@@ -49,7 +50,6 @@ workflow DATA_TO_MODEL {
     // Phase 2: Prepare the data: Download the submission and stage the groundtruth data on S3
     SYNAPSE_STAGE_GROUNDTRUTH(params.groundtruth_id, "groundtruth_${params.groundtruth_id}")
     DOWNLOAD_SUBMISSION(submission_ch, UPDATE_SUBMISSION_STATUS_BEFORE_EVALUATION.output)
-    UPDATE_SUBMISSION_STATUS_BEFORE_EVALUATION(submission_ch, "EVALUATION_IN_PROGRESS")
 
     // Phase 3: Validation of the submission
     VALIDATE(DOWNLOAD_SUBMISSION.output, SYNAPSE_STAGE_GROUNDTRUTH.output, "ready", params.execute_validation)
