@@ -1,5 +1,5 @@
 // score submission results for model to data challenges
-process SCORE_MODEL_TO_DATA {
+process SCORE {
     tag "${submission_id}"
     
     secret "SYNAPSE_AUTH_TOKEN"

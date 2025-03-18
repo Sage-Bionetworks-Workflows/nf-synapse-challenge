@@ -11,7 +11,7 @@ process SCORE_DATA_TO_MODEL {
     path staged_path
     val status_ready
     val annotate_ready
-    val scoring_script
+    val execute_scoring
 
     output:
     tuple val(submission_id), path(predictions), env(status), path("results.json")

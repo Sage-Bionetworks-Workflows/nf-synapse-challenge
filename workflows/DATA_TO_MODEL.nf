@@ -11,8 +11,8 @@ params.challenge_container = "ghcr.io/jaymedina/test_model2data:latest"
 params.execute_scoring = "python3 /usr/local/bin/score.py"
 // The command used to execute the Challenge validation script in the base directory of the challenge_container: e.g. `python3 path/to/validate.py`
 params.execute_validation = "python3 /usr/local/bin/validate.py"
-// Testing Data
-params.testing_data = "syn51390589"
+// Synapse ID for the Gold Standard file
+params.goldstandard_id = "syn51390589"
 // E-mail template (case-sensitive. "no" to send e-mail without score update, "yes" to send an e-mail with)
 params.email_with_score = "yes"
 // Ensuring correct input parameter values
@@ -24,30 +24,40 @@ params.email_script = "send_email.py"
 
 // import modules
 include { CREATE_SUBMISSION_CHANNEL } from '../subworkflows/create_submission_channel.nf'
-include { SYNAPSE_STAGE } from '../modules/synapse_stage.nf'
+include { SYNAPSE_STAGE as SYNAPSE_STAGE_GOLDSTANDARD} from '../modules/synapse_stage.nf'
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_BEFORE_EVALUATION } from '../modules/update_submission_status.nf'
 include { DOWNLOAD_SUBMISSION } from '../modules/download_submission.nf'
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE } from '../modules/update_submission_status.nf'
 include { UPDATE_SUBMISSION_STATUS as UPDATE_SUBMISSION_STATUS_AFTER_SCORE } from '../modules/update_submission_status.nf'
-include { VALIDATE } from '../modules/validate_data_to_model.nf'
-include { SCORE_DATA_TO_MODEL as SCORE } from '../modules/score_data_to_model.nf'
+include { VALIDATE } from '../modules/validate.nf'
+include { SCORE } from '../modules/score.nf'
 include { ANNOTATE_SUBMISSION as ANNOTATE_SUBMISSION_AFTER_VALIDATE } from '../modules/annotate_submission.nf'
 include { ANNOTATE_SUBMISSION as ANNOTATE_SUBMISSION_AFTER_SCORE } from '../modules/annotate_submission.nf'
 include { SEND_EMAIL as SEND_EMAIL_BEFORE } from '../modules/send_email.nf'
 include { SEND_EMAIL as SEND_EMAIL_AFTER } from '../modules/send_email.nf'
 
 workflow DATA_TO_MODEL {
+
+    // Phase 0: Each submission is evaluated in its own separate channel
     submission_ch = CREATE_SUBMISSION_CHANNEL()
+
+    // Phase 1: Notify users that evaluation of their submission has begun
     if (params.send_email) {
         SEND_EMAIL_BEFORE(params.email_script, params.view_id, submission_ch, "BEFORE", params.email_with_score, "ready")
     }
-    SYNAPSE_STAGE(params.testing_data, "testing_data")
-    UPDATE_SUBMISSION_STATUS_BEFORE_EVALUATION(submission_ch, "EVALUATION_IN_PROGRESS")
+
+    // Phase 2: Prepare the data: Download the submission and stage the goldstandard data on S3
+    SYNAPSE_STAGE_GOLDSTANDARD(params.goldstandard_id, "goldstandard_${params.goldstandard_id}")
     DOWNLOAD_SUBMISSION(submission_ch, UPDATE_SUBMISSION_STATUS_BEFORE_EVALUATION.output)
-    VALIDATE(DOWNLOAD_SUBMISSION.output, TODO:goldstandard_output, "ready", params.execute_validation)
+    UPDATE_SUBMISSION_STATUS_BEFORE_EVALUATION(submission_ch, "EVALUATION_IN_PROGRESS")
+
+    // Phase 3: Validation of the submission
+    VALIDATE(DOWNLOAD_SUBMISSION.output, SYNAPSE_STAGE_GOLDSTANDARD.output, "ready", params.execute_validation)
     UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE(submission_ch, VALIDATE.output.map { it[2] })
     ANNOTATE_SUBMISSION_AFTER_VALIDATE(VALIDATE.output)
-    SCORE(VALIDATE.output, SYNAPSE_STAGE.output, UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE.output, ANNOTATE_SUBMISSION_AFTER_VALIDATE.output, params.scoring_script)
+
+    // Phase 4: Scoring of the submission + send email
+    SCORE(VALIDATE.output, SYNAPSE_STAGE_GOLDSTANDARD.output, UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE.output, ANNOTATE_SUBMISSION_AFTER_VALIDATE.output, params.execute_scoring)
     UPDATE_SUBMISSION_STATUS_AFTER_SCORE(submission_ch, SCORE.output.map { it[2] })
     ANNOTATE_SUBMISSION_AFTER_SCORE(SCORE.output)
     if (params.send_email) {
