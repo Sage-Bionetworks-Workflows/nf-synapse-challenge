@@ -11,7 +11,7 @@ process DOWNLOAD_SUBMISSION {
     val ready
 
     output:
-    tuple val(submission_id), path('*'), env(entity_type)
+    tuple val(submission_id), path('*')
 
     script:
     """

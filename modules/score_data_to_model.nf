@@ -4,7 +4,7 @@ process SCORE_DATA_TO_MODEL {
     label "flexible_compute"
     
     secret "SYNAPSE_AUTH_TOKEN"
-    container "sagebionetworks/synapsepythonclient:v4.0.0"
+    container params.challenge_container
 
     input:
     tuple val(submission_id), path(predictions), val(status), path(results)

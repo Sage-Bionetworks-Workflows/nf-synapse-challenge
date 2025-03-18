@@ -21,7 +21,12 @@ if __name__ == "__main__":
 
     submission = syn.getSubmission(submission_id, downloadLocation=".")
     entity_type = submission["entity"].concreteType
+    
+    # TODO: Eventually we want to abstract this logic into the `make_invalid_file` function
+    # in model-to-data's `run_docker.py`, and move that out somewhere else.
     if entity_type != "org.sagebionetworks.repo.model.FileEntity":
-        open("dummy.txt", 'w').close()
+        invalid_file = "INVALID_predictions.csv"
+        with open(invalid_file, "w") as d:
+            d.write("Submission Entities must be of type 'org.sagebionetworks.repo.model.FileEntity', submitted Entity is '{entity_type}'")
 
-    print(entity_type)
+    print("Submission Entities must be of type 'org.sagebionetworks.repo.model.FileEntity', submitted Entity is '{entity_type}'")
