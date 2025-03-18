@@ -44,7 +44,7 @@ workflow DATA_TO_MODEL {
     SYNAPSE_STAGE(params.testing_data, "testing_data")
     UPDATE_SUBMISSION_STATUS_BEFORE_EVALUATION(submission_ch, "EVALUATION_IN_PROGRESS")
     DOWNLOAD_SUBMISSION(submission_ch, UPDATE_SUBMISSION_STATUS_BEFORE_EVALUATION.output)
-    VALIDATE(DOWNLOAD_SUBMISSION.output, "ready", params.validation_script)
+    VALIDATE(DOWNLOAD_SUBMISSION.output, TODO:goldstandard_output, "ready", params.execute_validation)
     UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE(submission_ch, VALIDATE.output.map { it[2] })
     ANNOTATE_SUBMISSION_AFTER_VALIDATE(VALIDATE.output)
     SCORE(VALIDATE.output, SYNAPSE_STAGE.output, UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE.output, ANNOTATE_SUBMISSION_AFTER_VALIDATE.output, params.scoring_script)
