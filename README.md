@@ -211,8 +211,9 @@ Where the parameters are denoted by `params.[parameter_name]`. Below is the list
 
 1. `submissions` (required if `manifest` is not provided): A comma separated lis tof submission IDs to evaluate.
 1. `manifest` (required if `submissions` is not provided): A path to a submission manifest containing submissions IDs to evaluate.
-1. `view_id` (required): The Synapse ID for your submission view.
-1. `challenge_container` (optional): The name of the container that the scoring and validation scripts are housed in, and will be executed in, during the validation and scoring steps of the workflow. Defaults to `ghcr.io/jaymedina/test_model2data:latest`.
+1. `file_type`: The expected file type of the submissions. Defaults to `csv`.
+1. `view_id` (required): The Synapse ID for your submission view. Please replace placeholder value.
+1. `challenge_container` (optional): The name of the container that the scoring and validation scripts are housed in, and will be executed in, during the validation and scoring steps of the workflow. Please replace placeholder value.
 1. `execute_scoring` (optional): This string should be `[interpreter] [path to script]` e.g. `python3 path/to/score.py`. This is the command that will be used to execute the scoring script for the `SCORE` step of the workflow run (without the arguments, which are appended later). Keep in mind this will execute in the location that you specified as `WORKDIR` for your container. Defaults to `python3 /home/user/score.py`.
 1. `execute_validation` (optional): This string should be `[interpreter] [path to script]` e.g. `python3 path/to/validate.py`. This is the command that will be used to execute the validation script for the `VALIDATE` step of the workflow run (without the arguments, which are appended later). Keep in mind this will execute in the location that you specified as `WORKDIR` for your container. Defaults to `python3 /home/user/validate.py`.
 1. `groundtruth_id` (required): The Synapse ID for the folder holding the ground truth file for submissions. Please replace placeholder value.
