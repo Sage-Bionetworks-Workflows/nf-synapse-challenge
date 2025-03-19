@@ -12,7 +12,7 @@ process DOWNLOAD_SUBMISSION {
     val ready
 
     output:
-    tuple val(submission_id), path('*')
+    tuple val(submission_id), path("*.${file_type}")
 
     script:
     """
