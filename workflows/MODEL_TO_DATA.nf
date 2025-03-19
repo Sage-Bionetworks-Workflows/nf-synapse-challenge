@@ -3,14 +3,6 @@
 nextflow.enable.dsl = 2
 // Empty string default to avoid warning
 params.submissions = ""
-// Project Name (case-sensitive)
-params.project_name = "DPE-testing"
-// Synapse ID for Submission View
-params.view_id = "syn53770151"
-// Synapse ID for Input Data folder
-params.data_folder_id = "syn51390589"
-// Synapse ID for the Groundtruth file
-params.groundtruth_id = "syn51390590"
 // E-mail template (case-sensitive. "no" to send e-mail without score update, "yes" to send an e-mail with)
 params.email_with_score = "yes"
 // Ensuring correct input parameter values
@@ -23,8 +15,6 @@ params.memory = "16.GB"
 params.container_timeout = "180"
 // Time (in minutes) between status checks during container monitoring
 params.poll_interval = "1"
-// The container that houses the scoring and validation scripts
-params.challenge_container = "ghcr.io/jaymedina/test_model2data:latest"
 // The command used to execute the Challenge scoring script in the base directory of the challenge_container: e.g. `python3 path/to/score.py`
 params.execute_scoring = "python3 /usr/local/bin/score.py"
 // The command used to execute the Challenge validation script in the base directory of the challenge_container: e.g. `python3 path/to/validate.py`
