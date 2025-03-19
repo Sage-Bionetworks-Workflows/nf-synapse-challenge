@@ -129,7 +129,7 @@ Where the parameters are denoted by `params.[parameter_name]`. Below is the list
 1. `project_name` (required & case-sensitive): The name of your Project the Challenge is running in. Please replace placeholder value.
 1. `view_id` (required): The Synapse ID for your submission view. Please replace placeholder value.
 1. `data_folder_id` (required): The Synapse ID for the folder holding the testing or validation data for submissions. Please replace placeholder value.
-1. `goldstandard_id` (required): The Synapse ID for the gold standard file that will be used for evaluating the submissions. Please replace placeholder value.
+1. `groundtruth_id` (required): The Synapse ID for the folder holding the ground truth file for submissions. Please replace placeholder value.
 1. `email_with_score` (optional & case-sensitive): Choose whether or not the e-mail sent out to participants will include the evaluation score or not. Can either be "yes" or "no". Defaults to "yes".
 1. `cpus` (optional): Number of CPU cores to dedicate to the workflow processes (except `RUN_DOCKER` which is fixed at 8 CPU cores when using the `tower` config profile). Defaults to `4` cores.
 1. `memory` (optional): Amount of memory (RAM) to dedicate to the workflow processes (except `RUN_DOCKER` which is fixed at 32 GB when using the `tower` config profile). Defaults to `16.` GB of RAM.
@@ -194,14 +194,28 @@ Where the parameters are denoted by `params.[parameter_name]`. Below is the list
 
 > [!warning]
 > Before modifying the input parameters, there are some things to consider... <br>
-> You must provide one of `submissions` or `manifest`. If you provide both, `submissions` will take precedence. Generally, `submissions` should be used for testing and `manifest` for automation.
+> * You must provide one of `submissions` or `manifest`. If you provide both, `submissions` will take precedence. Generally, `submissions` should be used for testing and `manifest` for automation.
+> * Your input scoring and validation scripts should each take in 3 arguments: the predictions file, the gold standard file, and the output file name. The scripts will be called upon in the following format:
+> ```
+> [interpreter] [script_name] -p [predictions_file] -g [gold_standard_folder] -o [output_file]
+> ```
+> Python Example:
+> ```
+> python3 validate.py -p "predictions.csv" -g "gold_standard_folder/" -o "results.json"
+> ```
+> R Example:
+> ```
+> Rscript validate.R -p "predictions.csv" -g "gold_standard_folder/" -o "results.json"
+> ```
+> Ensure that your scripts can be called in this way without issue.
 
 1. `submissions` (required if `manifest` is not provided): A comma separated lis tof submission IDs to evaluate.
 1. `manifest` (required if `submissions` is not provided): A path to a submission manifest containing submissions IDs to evaluate.
 1. `view_id` (required): The Synapse ID for your submission view.
-1. `scoring_script` (required): The string name of the scoring script to use for the `SCORE` step of the workflow run. Defaults to `data_to_model_score.py`.
-1. `validation_script` (required): The string name of the validation script to use for the `VALIDATE` step of the workflow run. Defaults to `validate.py`.
-1. `testing_data` (required): The Synapse ID for the folder holding the testing data for submissions.
+1. `challenge_container` (optional): The name of the container that the scoring and validation scripts are housed in, and will be executed in, during the validation and scoring steps of the workflow. Defaults to `ghcr.io/jaymedina/test_model2data:latest`.
+1. `execute_scoring` (optional): This string should be `[interpreter] [path to script]` e.g. `python3 path/to/score.py`. This is the command that will be used to execute the scoring script for the `SCORE` step of the workflow run (without the arguments, which are appended later). Keep in mind this will execute at the base of your repository, so if the file is in the base directory, just use the file name. Defaults to `python3 score.py`.
+1. `execute_validation` (optional): This string should be `[interpreter] [path to script]` e.g. `python3 path/to/validate.py`. This is the command that will be used to execute the validation script for the `VALIDATE` step of the workflow run (without the arguments, which are appended later). Keep in mind this will execute at the base of your repository, so if the file is in the base directory, just use the file name. Defaults to `python3 validate.py`.
+1. `groundtruth_id` (required): The Synapse ID for the folder holding the ground truth file for submissions. Please replace placeholder value.
 1. `email_with_score` (optional & case-sensitive): Choose whether or not the e-mail sent out to participants will include the evaluation score or not. Can either be "yes" or "no". Defaults to "yes".
 1. `send_email` (optional): If `true`, sends an e-mail to the submitter on the status of their submission. Default is `true`.
 1. `email_script` (required if `send_email` is `true`): If `send_email` is `true`, choose an e-mail template to send to submitters on the status of their submission. Default is a generic `send_email.py` template.
