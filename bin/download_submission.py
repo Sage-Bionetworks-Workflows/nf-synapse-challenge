@@ -8,7 +8,8 @@ import synapseclient
 def get_args():
     """Set up command-line interface and get arguments without any flags."""
     parser = argparse.ArgumentParser()
-    parser.add_argument("submission_id", type=str, help="The ID of submission")
+    parser.add_argument("--submission-id", "-s", type=str, required=True, help="The ID of submission")
+    parser.add_argument("--file-type", "-f", type=str, required=True, help="The type of file the submission should be")
 
     return parser.parse_args()
 
