@@ -18,6 +18,7 @@ params.groundtruth_id = "syn65491926"
 // E-mail template (case-sensitive. "no" to send e-mail without score update, "yes" to send an e-mail with)
 params.email_with_score = "yes"
 // Ensuring correct input parameter values
+params.file_type = params.file_type?.toLowerCase()
 assert params.email_with_score in ["yes", "no"], "Invalid value for ``email_with_score``. Can either be ''yes'' or ''no''."
 // toggle email notification
 params.send_email = true

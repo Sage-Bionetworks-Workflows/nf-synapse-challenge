@@ -34,7 +34,7 @@ if __name__ == "__main__":
         error_msg = (
             f"Only Files should be submitted. Submission {submission_id} type is: {entity_type}"
         )
-    elif not submission["filePath"].upper().endswith(file_type.upper()):
+    elif not submission["filePath"].lower().endswith(file_type):
         error_msg = f"Incorrect file type. File type should be {file_type.upper()}"
 
     if error_msg:
