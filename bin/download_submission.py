@@ -41,3 +41,4 @@ if __name__ == "__main__":
         error_msg = f"Incorrect file type. File type should be {file_type.upper()}"
         with open(invalid_file, "w") as d:
             d.write(error_msg)
+        print(error_msg)
