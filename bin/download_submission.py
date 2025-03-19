@@ -28,16 +28,16 @@ if __name__ == "__main__":
     # TODO: Eventually we want to abstract this logic into the `make_invalid_file` function
     # in model-to-data's `run_docker.py`, and move that out somewhere else.
     invalid_file = f"INVALID_predictions.{file_type}"
+    error_msg = None
 
     if entity_type != "org.sagebionetworks.repo.model.FileEntity":
         error_msg = (
             f"Only Files should be submitted. Submission {submission_id} type is: {entity_type}"
         )
-        with open(invalid_file, "w") as d:
-            d.write(error_msg)
-        print(error_msg)
     elif not submission["filePath"].upper().endswith(file_type.upper()):
         error_msg = f"Incorrect file type. File type should be {file_type.upper()}"
+
+    if error_msg:
         with open(invalid_file, "w") as d:
             d.write(error_msg)
         print(error_msg)
