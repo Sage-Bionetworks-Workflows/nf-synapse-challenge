@@ -49,8 +49,8 @@ workflow DATA_TO_MODEL {
     SYNAPSE_STAGE_GROUNDTRUTH(params.groundtruth_id, "groundtruth_${params.groundtruth_id}")
     download_submission_outputs = DOWNLOAD_SUBMISSION(submission_ch, params.file_type, UPDATE_SUBMISSION_STATUS_BEFORE_EVALUATION.output)
     //// Explicit output handling
-    download_submission_id = run_docker_outputs.map { submission_id, predictions -> submission_id }
-    download_submission_predictions = run_docker_outputs.map { submission_id, predictions -> predictions }
+    download_submission_id = download_submission_outputs.map { submission_id, predictions -> submission_id }
+    download_submission_predictions = download_submission_outputs.map { submission_id, predictions -> predictions }
 
     // Phase 3: Validating the submission
     validate_outputs = VALIDATE(DOWNLOAD_SUBMISSION.output, SYNAPSE_STAGE_GROUNDTRUTH.output, "ready", params.execute_validation)
