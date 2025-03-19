@@ -8,6 +8,7 @@ process DOWNLOAD_SUBMISSION {
 
     input:
     val submission_id
+    val file_type
     val ready
 
     output:
@@ -15,6 +16,6 @@ process DOWNLOAD_SUBMISSION {
 
     script:
     """
-    entity_type=\$(download_submission.py '${submission_id}')
+    entity_type=\$(download_submission.py -s '${submission_id}' -f '${file_type}')
     """
 }

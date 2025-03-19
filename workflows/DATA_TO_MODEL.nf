@@ -3,6 +3,8 @@
 nextflow.enable.dsl = 2
 // Empty string default to avoid warning
 params.submissions = ""
+// The expected file type for the submissions
+params.file_type = "csv"
 // Synapse ID for Submission View
 params.view_id = "syn52576179"
 // The container that houses the scoring and validation scripts
@@ -49,7 +51,7 @@ workflow DATA_TO_MODEL {
 
     // Phase 2: Prepare the data: Download the submission and stage the groundtruth data on S3
     SYNAPSE_STAGE_GROUNDTRUTH(params.groundtruth_id, "groundtruth_${params.groundtruth_id}")
-    DOWNLOAD_SUBMISSION(submission_ch, UPDATE_SUBMISSION_STATUS_BEFORE_EVALUATION.output)
+    DOWNLOAD_SUBMISSION(submission_ch, params.file_type, UPDATE_SUBMISSION_STATUS_BEFORE_EVALUATION.output)
 
     // Phase 3: Validation of the submission
     VALIDATE(DOWNLOAD_SUBMISSION.output, SYNAPSE_STAGE_GROUNDTRUTH.output, "ready", params.execute_validation)

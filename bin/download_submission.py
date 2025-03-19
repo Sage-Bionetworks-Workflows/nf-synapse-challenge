@@ -16,18 +16,28 @@ def get_args():
 if __name__ == "__main__":
     args = get_args()
     submission_id = args.submission_id
+    file_type = args.file_type
 
     syn = synapseclient.Synapse()
     syn.login(silent=True)
 
     submission = syn.getSubmission(submission_id, downloadLocation=".")
     entity_type = submission["entity"].concreteType
+    file_path = submission["filePath"]
     
     # TODO: Eventually we want to abstract this logic into the `make_invalid_file` function
     # in model-to-data's `run_docker.py`, and move that out somewhere else.
-    if entity_type != "org.sagebionetworks.repo.model.FileEntity":
-        invalid_file = "INVALID_predictions.csv"
-        with open(invalid_file, "w") as d:
-            d.write(f"Submission Entities must be of type 'org.sagebionetworks.repo.model.FileEntity', submitted Entity is '{entity_type}'")
+    invalid_file = f"INVALID_predictions.{file_type}"
 
-    print(f"Submission Entities must be of type 'org.sagebionetworks.repo.model.FileEntity', submitted Entity is '{entity_type}'")
+    if entity_type != "org.sagebionetworks.repo.model.FileEntity":
+        error_msg = (
+            f"Submission Entities must be of type 'org.sagebionetworks.repo.model.FileEntity', "
+            f"submitted Entity is '{entity_type}'"
+        )
+        with open(invalid_file, "w") as d:
+            d.write(error_msg)
+        print(error_msg)
+    elif not submission["filePath"].upper().endswith(file_type.upper()):
+        error_msg = f"Incorrect file type. File type should be {file_type.upper()}"
+        with open(invalid_file, "w") as d:
+            d.write(error_msg)
