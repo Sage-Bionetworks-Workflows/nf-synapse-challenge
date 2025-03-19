@@ -31,8 +31,7 @@ if __name__ == "__main__":
 
     if entity_type != "org.sagebionetworks.repo.model.FileEntity":
         error_msg = (
-            f"Submission Entities must be of type 'org.sagebionetworks.repo.model.FileEntity', "
-            f"submitted Entity is '{entity_type}'"
+            f"Only Files should be submitted. Submission {submission_id} type is: {entity_type}"
         )
         with open(invalid_file, "w") as d:
             d.write(error_msg)
