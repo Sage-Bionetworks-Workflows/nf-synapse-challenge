@@ -47,17 +47,29 @@ workflow DATA_TO_MODEL {
 
     // Phase 2: Prepare the data: Download the submission and stage the groundtruth data on S3
     SYNAPSE_STAGE_GROUNDTRUTH(params.groundtruth_id, "groundtruth_${params.groundtruth_id}")
-    DOWNLOAD_SUBMISSION(submission_ch, params.file_type, UPDATE_SUBMISSION_STATUS_BEFORE_EVALUATION.output)
+    download_submission_outputs = DOWNLOAD_SUBMISSION(submission_ch, params.file_type, UPDATE_SUBMISSION_STATUS_BEFORE_EVALUATION.output)
+    //// Explicit output handling
+    download_submission_id = run_docker_outputs.map { submission_id, predictions -> submission_id }
+    download_submission_predictions = run_docker_outputs.map { submission_id, predictions -> predictions }
 
-    // Phase 3: Validation of the submission
-    VALIDATE(DOWNLOAD_SUBMISSION.output, SYNAPSE_STAGE_GROUNDTRUTH.output, "ready", params.execute_validation)
-    UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE(submission_ch, VALIDATE.output.map { it[2] })
-    ANNOTATE_SUBMISSION_AFTER_VALIDATE(VALIDATE.output)
+    // Phase 3: Validating the submission
+    validate_outputs = VALIDATE(DOWNLOAD_SUBMISSION.output, SYNAPSE_STAGE_GROUNDTRUTH.output, "ready", params.execute_validation)
+    //// Explicit output handling
+    validate_submission = validate_outputs.map { submission_id, predictions, status, results -> submission_id }
+    validate_status = validate_outputs.map { submission_id, predictions, status, results -> status }
+    //// Updating the status and annotations
+    UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE(validate_submission, validate_status)
+    ANNOTATE_SUBMISSION_AFTER_VALIDATE(validate_outputs)
 
-    // Phase 4: Scoring of the submission + send email
-    SCORE(VALIDATE.output, SYNAPSE_STAGE_GROUNDTRUTH.output, UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE.output, ANNOTATE_SUBMISSION_AFTER_VALIDATE.output, params.execute_scoring)
-    UPDATE_SUBMISSION_STATUS_AFTER_SCORE(submission_ch, SCORE.output.map { it[2] })
-    ANNOTATE_SUBMISSION_AFTER_SCORE(SCORE.output)
+    // Phase 4: Scoring the submission + send email
+    score_outputs = SCORE(VALIDATE.output, SYNAPSE_STAGE_GROUNDTRUTH.output, UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE.output, ANNOTATE_SUBMISSION_AFTER_VALIDATE.output, params.execute_scoring)
+    //// Explicit output handling
+    score_submission = score_outputs.map { submission_id, predictions, status, results -> submission_id }
+    score_status = score_outputs.map { submission_id, predictions, status, results -> status }
+    //// Updating the status and annotations
+    UPDATE_SUBMISSION_STATUS_AFTER_SCORE(score_submission, score_status)
+    ANNOTATE_SUBMISSION_AFTER_SCORE(score_outputs)
+    //// Send email
     if (params.send_email) {
         SEND_EMAIL_AFTER(params.email_script, params.view_id, submission_ch, "AFTER", params.email_with_score, ANNOTATE_SUBMISSION_AFTER_SCORE.output)
     }
