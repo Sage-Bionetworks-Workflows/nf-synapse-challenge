@@ -16,6 +16,6 @@ process DOWNLOAD_SUBMISSION {
 
     script:
     """
-    entity_type=\$(download_submission.py -s '${submission_id}' -f '${file_type_lower}')
+    download_submission.py -s '${submission_id}' -f '${file_type_lower}'
     """
 }
