@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
 import argparse
-import sys
-
 import synapseclient
+
+from synapseclient.core.constants import concrete_types
 
 def get_args():
     """Set up command-line interface and get arguments without any flags."""
@@ -30,7 +30,7 @@ if __name__ == "__main__":
     invalid_file = f"INVALID_predictions.{file_type}"
     error_msg = None
 
-    if entity_type != "org.sagebionetworks.repo.model.FileEntity":
+    if entity_type != concrete_types.FILE_ENTITY:
         error_msg = (
             f"Only Files should be submitted. Submission {submission_id} type is: {entity_type}"
         )
