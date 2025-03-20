@@ -17,7 +17,7 @@ params.send_email = true
 params.email_script = "send_email.py"
 
 // Ensuring correct input parameter values
-params.file_type = params.file_type?.toLowerCase()
+params.file_type_lower = params.file_type?.toLowerCase()
 assert params.email_with_score in ["yes", "no"], "Invalid value for ``email_with_score``. Can either be ''yes'' or ''no''."
 
 // import modules
@@ -47,7 +47,7 @@ workflow DATA_TO_MODEL {
 
     // Phase 2: Prepare the data: Download the submission and stage the groundtruth data on S3
     SYNAPSE_STAGE_GROUNDTRUTH(params.groundtruth_id, "groundtruth_${params.groundtruth_id}")
-    download_submission_outputs = DOWNLOAD_SUBMISSION(submission_ch, params.file_type, UPDATE_SUBMISSION_STATUS_BEFORE_EVALUATION.output)
+    download_submission_outputs = DOWNLOAD_SUBMISSION(submission_ch, params.file_type_lower, UPDATE_SUBMISSION_STATUS_BEFORE_EVALUATION.output)
     //// Explicit output handling
     download_submission_id = download_submission_outputs.map { submission_id, predictions -> submission_id }
     download_submission_predictions = download_submission_outputs.map { submission_id, predictions -> predictions }
