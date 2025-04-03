@@ -4,11 +4,16 @@ A general purpose Nextflow workflow for evaluating submissions to challenges hos
 
 ## Overview
 
-This repository is structured so that each challenge type has its own subworkflow which is wrapped by a uniquely named workflow in `main.nf`. This allows users to invoke the workflow appropriate for their challenge by using the `entry` parameter locally:
+This repository is structured so that each challenge type has its own subworkflow which is wrapped by a uniquely named workflow in `main.nf`. This allows users to invoke the workflow appropriate for their challenge by using the `params.entry` parameter or a pre-configured profile from `nextflow.config` locally:
 ```
-nextflow run main.nf -entry {subworkflow_name} -profile local
+nextflow run main.nf --entry {workflow_name} -profile local
 ```
-or on Nextflow Tower by using the `Workflow entry name` field under `Advanced options`.
+OR
+```
+nextflow run main.nf -profile {profile_name}
+```
+
+or on Seqera Platform by setting the `entry` parameter in the `Pipeline parameters` section or by choosing a pre-configured profile from the `Config profiles` dropdown menu.
 
 ## Setup
 
@@ -97,7 +102,8 @@ If you are new to containerization and/or the GHCR, [see here](https://docs.gith
 Before the model-to-data workflow can run, it must be configured for a given Challenge. Challenge organizers are required to update the `nextflow.config` file with a config profile for their custom parameters to be picked up in the workflow run. [See here](https://www.nextflow.io/docs/latest/config.html#config-profiles) for more information on Nextflow config profiles and their uses. The requested profile should use the following format:
 
 ```
-my_challenge {
+my_model_to_data_challenge {
+    params.entry = 'model_to_data'
     params.view_id = "syn123"
     params.data_folder_id = "syn456"
     params.project_name = "My Project (Write it as it appears on Synapse!)"
@@ -124,6 +130,7 @@ Where the parameters are denoted by `params.[parameter_name]`. Below is the list
 > ```
 > Ensure that your scripts can be called in this way without issue.
 
+1. `entry` (required): The name of the workflow to run. Must be set to `model_to_data`.
 1. `submissions` (required if `manifest` is not provided): A comma separated list of submission IDs to evaluate.
 1. `manifest` (required if `submissions` is not provided): A path to a submission manifest containing submissions IDs to evaluate.
 1. `project_name` (required & case-sensitive): The name of your Project the Challenge is running in.
@@ -145,12 +152,12 @@ Where the parameters are denoted by `params.[parameter_name]`. Below is the list
 
 Run the workflow locally with default inputs and a `submissions` string input:
 ```
-nextflow run main.nf -entry MODEL_TO_DATA_CHALLENGE -profile local --submissions 9741046,9741047
+nextflow run main.nf --entry model_to_data -profile local --submissions 9741046,9741047
 ```
 
 With a `manifest` input:
 ```
-nextflow run main.nf -entry DATA_TO_MODEL_CHALLENGE -profile local --manifest assets/model_to_data_submission_manifest.csv
+nextflow run main.nf --entry data_to_model -profile local --manifest assets/model_to_data_submission_manifest.csv
 ```
 
 
@@ -184,7 +191,8 @@ In order to use this workflow, you must already have completed the following ste
 Before the data-to-model workflow can run, it must be configured for a given Challenge. Challenge organizers are required to update the `nextflow.config` file with a config profile for their custom parameters to be picked up in the workflow run. [See here](https://www.nextflow.io/docs/latest/config.html#config-profiles) for more information on Nextflow config profiles and their uses. The requested profile should use the following format:
 
 ```
-my_challenge {
+my_data_to_model_challenge {
+    params.entry = 'data_to_model'
     params.view_id = "syn123"
     params.testing_data = "syn456"
   }
@@ -209,6 +217,7 @@ Where the parameters are denoted by `params.[parameter_name]`. Below is the list
 > ```
 > Ensure that your scripts can be called in this way without issue.
 
+1. `entry` (required): The name of the workflow to run. Must be set to `data_to_model`.
 1. `submissions` (required if `manifest` is not provided): A comma separated lis tof submission IDs to evaluate.
 1. `manifest` (required if `submissions` is not provided): A path to a submission manifest containing submissions IDs to evaluate.
 1. `view_id` (required): The Synapse ID for your submission view.
@@ -225,12 +234,12 @@ Where the parameters are denoted by `params.[parameter_name]`. Below is the list
 
 Run the workflow locally with default inputs and a `submissions` string input:
 ```
-nextflow run main.nf -entry DATA_TO_MODEL_CHALLENGE -profile local --submissions 9741046,9741047
+nextflow run main.nf --entry data_to_model -profile local --submissions 9741046,9741047
 ```
 
 With a `manifest` input:
 ```
-nextflow run main.nf -entry DATA_TO_MODEL_CHALLENGE -profile local --manifest assets/data_to_model_submission_manifest.csv
+nextflow run main.nf --entry data_to_model -profile local --manifest assets/data_to_model_submission_manifest.csv
 ```
 
 ### Workflow DAG
@@ -258,7 +267,7 @@ nextflow run main.nf -entry DATA_TO_MODEL_CHALLENGE -profile local --manifest as
 
 If you would like to add support for a new challenge type, you can do so by creating a new subworkflow in the `subworkflows` directory. Name your subworkflow clearly with the name of the new challenge type. You should try to use the existing library of modules to build your subworkflow. It is important to not change the logic of existing modules to avoid breaking other subworkflows. Rather, you should add new process definitions to the `modules` folder and give them clear names that indicate their purpose. Once you have created your subworkflow, you can add it to the `main.nf` file and test it using:
 ```
-nextflow run main.nf -entry {your_new_subworkflow_name}
+nextflow run main.nf --entry {your_new_subworkflow_name}
 ```
 
 ### Adding New Scoring and Validation Scripts
