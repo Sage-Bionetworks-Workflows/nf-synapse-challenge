@@ -86,7 +86,7 @@ In order to use this workflow, you must already have completed the following ste
 1. One or more Docker images have already been submitted to your evaluation queue.
 1. Created a submission view that includes the `id` and `status` columns.
 1. Added the input data for evaluating submissions to a folder within your Synapse project.
-1. Added the goldstandard file to your Synapse project.
+1. Added the groundtruth file to your Synapse project.
 1. Created a repository, based off [this template repository](https://github.com/Sage-Bionetworks-Challenges/orca-evaluation-templates), that houses the validation and scoring scripts to be used for evaluation.
 1. Published said repository to the GitHub Container Registry (GHCR) and ensured it is visible to the public.
 
@@ -101,7 +101,7 @@ my_challenge {
     params.view_id = "syn123"
     params.data_folder_id = "syn456"
     params.project_name = "My Project (Write it as it appears on Synapse!)"
-    params.goldstandard_id = "syn789"
+    params.groundtruth_id = "syn789"
   }
 ```
 
@@ -178,6 +178,11 @@ In order to use this workflow, you must already have completed the following ste
 1. Created an evaluation queue within the Synapse project.
 1. One or more data files have already been submitted to your evaluation queue.
 1. Created a submission view that includes the `id` and `status` columns.
+1. Added the groundtruth file to your Synapse project.
+1. Created a repository, based off [this template repository](https://github.com/Sage-Bionetworks-Challenges/orca-evaluation-templates), that houses the validation and scoring scripts to be used for evaluation.
+1. Published said repository to the GitHub Container Registry (GHCR) and ensured it is visible to the public.
+
+If you are new to containerization and/or the GHCR, [see here](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry) for how to create and publish your own container on the GHCR.
 
 ### Configuring the Data to Model workflow
 
