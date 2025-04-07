@@ -110,17 +110,17 @@ Where the parameters are denoted by `params.[parameter_name]`. Below is the list
 > [!warning]
 > Before modifying the input parameters, there are some things to consider...
 > * You must provide one of `submissions` or `manifest`. If you provide both, `submissions` will take precedence. Generally, `submissions` should be used for testing and `manifest` for automation.
-> * Your input scoring and validation scripts should each take in 3 arguments: the predictions file, the gold standard file, and the output file name. The scripts will be called upon in the following format:
+> * Your input scoring and validation scripts should each take in 3 arguments: the predictions file, the groundtruth file, and the output file name. The scripts will be called upon in the following format:
 > ```
-> [interpreter] [script_name] -p [predictions_file] -g [gold_standard_folder] -o [output_file]
+> [interpreter] [script_name] -p [predictions_file] -g [groundtruth_folder] -o [output_file]
 > ```
 > Python Example:
 > ```
-> python3 validate.py -p "predictions.csv" -g "gold_standard_folder/" -o "results.json"
+> python3 validate.py -p "predictions.csv" -g "groundtruth_folder/" -o "results.json"
 > ```
 > R Example:
 > ```
-> Rscript validate.R -p "predictions.csv" -g "gold_standard_folder/" -o "results.json"
+> Rscript validate.R -p "predictions.csv" -g "groundtruth_folder/" -o "results.json"
 > ```
 > Ensure that your scripts can be called in this way without issue.
 
@@ -200,17 +200,17 @@ Where the parameters are denoted by `params.[parameter_name]`. Below is the list
 > [!warning]
 > Before modifying the input parameters, there are some things to consider... <br>
 > * You must provide one of `submissions` or `manifest`. If you provide both, `submissions` will take precedence. Generally, `submissions` should be used for testing and `manifest` for automation.
-> * Your input scoring and validation scripts should each take in 3 arguments: the predictions file, the gold standard file, and the output file name. The scripts will be called upon in the following format:
+> * Your input scoring and validation scripts should each take in 3 arguments: the predictions file, the groundtruth folder, and the output file name. The scripts will be called upon in the following format:
 > ```
-> [interpreter] [script_name] -p [predictions_file] -g [gold_standard_folder] -o [output_file]
+> [interpreter] [script_name] -p [predictions_file] -g [groundtruth_folder] -o [output_file]
 > ```
 > Python Example:
 > ```
-> python3 validate.py -p "predictions.csv" -g "gold_standard_folder/" -o "results.json"
+> python3 validate.py -p "predictions.csv" -g "groundtruth_folder/" -o "results.json"
 > ```
 > R Example:
 > ```
-> Rscript validate.R -p "predictions.csv" -g "gold_standard_folder/" -o "results.json"
+> Rscript validate.R -p "predictions.csv" -g "groundtruth_folder/" -o "results.json"
 > ```
 > Ensure that your scripts can be called in this way without issue.
 
