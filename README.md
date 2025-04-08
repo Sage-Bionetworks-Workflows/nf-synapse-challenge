@@ -6,7 +6,7 @@ A general purpose Nextflow workflow for evaluating submissions to challenges hos
 
 This repository is structured so that each challenge type has its own subworkflow which is wrapped by a uniquely named workflow in `main.nf`. This allows users to invoke the workflow appropriate for their challenge by using the `params.entry` parameter or a pre-configured profile from `nextflow.config` locally:
 ```
-nextflow run main.nf --entry {workflow_name} -profile local
+nextflow run main.nf --entry {workflow_name} [... other required params]
 ```
 OR
 ```
@@ -130,7 +130,7 @@ Where the parameters are denoted by `params.[parameter_name]`. Below is the list
 > ```
 > Ensure that your scripts can be called in this way without issue.
 
-1. `entry` (required): The name of the workflow to run. Must be set to `model_to_data`.
+1. `entry` (required & case-sensitive): The name of the workflow to run. Must be set to `model_to_data`.
 1. `submissions` (required if `manifest` is not provided): A comma separated list of submission IDs to evaluate.
 1. `manifest` (required if `submissions` is not provided): A path to a submission manifest containing submissions IDs to evaluate.
 1. `project_name` (required & case-sensitive): The name of your Project the Challenge is running in.
@@ -217,7 +217,7 @@ Where the parameters are denoted by `params.[parameter_name]`. Below is the list
 > ```
 > Ensure that your scripts can be called in this way without issue.
 
-1. `entry` (required): The name of the workflow to run. Must be set to `data_to_model`.
+1. `entry` (required & case-sensitive): The name of the workflow to run. Must be set to `data_to_model`.
 1. `submissions` (required if `manifest` is not provided): A comma separated lis tof submission IDs to evaluate.
 1. `manifest` (required if `submissions` is not provided): A path to a submission manifest containing submissions IDs to evaluate.
 1. `view_id` (required): The Synapse ID for your submission view.
