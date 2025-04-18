@@ -10,12 +10,13 @@ process VALIDATE {
     path groundtruth
     val ready
     val execute_validation
+    val challenge_task
 
     output:
     tuple val(submission_id), path(predictions), env(status), path("results.json")
 
     script:
     """
-    status=\$(${execute_validation} -p '${predictions}' -g '${groundtruth}' -o 'results.json')
+    status=\$(${execute_validation} -p '${predictions}' -g '${groundtruth}' -o 'results.json' -t '${challenge_task}')
     """
 }

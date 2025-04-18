@@ -15,6 +15,8 @@ params.memory = "16.GB"
 params.container_timeout = "180"
 // Time (in minutes) between status checks during container monitoring
 params.poll_interval = "1"
+// The challenge task for which the submissions are made
+params.task = "task1"
 // The command used to execute the Challenge scoring script in the base directory of the challenge_container: e.g. `python3 path/to/score.py`
 params.execute_scoring = "python3 /usr/local/bin/score.py"
 // The command used to execute the Challenge validation script in the base directory of the challenge_container: e.g. `python3 path/to/validate.py`
@@ -68,7 +70,7 @@ workflow MODEL_TO_DATA {
     ANNOTATE_SUBMISSION_AFTER_UPDATE_FOLDERS(UPDATE_FOLDERS.output)
 
     // Phase 3: Validation of Docker submission results
-    validate_outputs = VALIDATE(run_docker_outputs, SYNAPSE_STAGE_GROUNDTRUTH.output, UPDATE_SUBMISSION_STATUS_AFTER_RUN.output, params.execute_validation)
+    validate_outputs = VALIDATE(run_docker_outputs, SYNAPSE_STAGE_GROUNDTRUTH.output, UPDATE_SUBMISSION_STATUS_AFTER_RUN.output, params.execute_validation, params.task)
     //// Explicit output handling
     validate_submission = validate_outputs.map { submission_id, predictions, status, results -> submission_id }
     validate_status = validate_outputs.map { submission_id, predictions, status, results -> status }
@@ -77,7 +79,7 @@ workflow MODEL_TO_DATA {
     ANNOTATE_SUBMISSION_AFTER_VALIDATE(validate_outputs)
 
     // Phase 4: Scoring the submission + send email
-    score_outputs = SCORE(validate_outputs, SYNAPSE_STAGE_GROUNDTRUTH.output, UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE.output, ANNOTATE_SUBMISSION_AFTER_VALIDATE.output, params.execute_scoring)
+    score_outputs = SCORE(validate_outputs, SYNAPSE_STAGE_GROUNDTRUTH.output, UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE.output, ANNOTATE_SUBMISSION_AFTER_VALIDATE.output, params.execute_scoring, params.task)
     //// Explicit output handling
     score_submission = score_outputs.map { submission_id, predictions, status, results -> submission_id }
     score_status = score_outputs.map { submission_id, predictions, status, results -> status }

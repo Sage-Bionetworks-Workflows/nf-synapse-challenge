@@ -19,8 +19,6 @@ or on Seqera Platform by setting the `entry` parameter in the `Pipeline paramete
 
 This workflow expects a secret called `SYNAPSE_AUTH_TOKEN` (a Synapse Authentication Token). This secret should be configured in your local installation of Nextflow for local runs, or as a workspace secret in your Nextflow Tower workspace. Ensure that the token you use has access to any Synapse views and folders that you intend to use as inputs to the workflow.
 
-**Note:** All default parameter values for Synapse project or objects (e.g. `view_id`, `data_folder_id`) currently point to a Synapse project that only DPE team members have access to. Unless you have access to the `DPE-Testing` Synapse project, you will not be able to test this workflow with the default values using your `SYNAPSE_AUTH_TOKEN`.
-
 ## Supported Challenge Types
 
 - [Model-to-Data](#model-to-data-challenges)
@@ -51,10 +49,10 @@ Example:
 The `MODEL_TO_DATA.nf` workflow works with all model-to-data medical Challenges hosted at Sage, but its parameters need to be customized in order to work with your particular Challenge. Please use the following steps to get started:
 
 1. Complete the pre-requesites listed under [Prerequisites for Model to Data](#Prerequisites-for-Model-to-Data).
-2. Create a pull request with your Challenge profile added to `nextflow.config` (see [Configuring the Model to Data Workflow](#Configuring-the-Model-to-Data-workflow) for further instructions).
-3. The maintainers of this repository will work with you to ensure your container is integrated with the model-to-data workflow and the parameters provided in step 2 are valid.
-4. Test the profile by making a submission to the evaluation queue represented by the given `params.view_id`. The reviewer will manually run the model-to-data workflow to ensure this new submission is picked up and processed appropriately.
-5. If the workflow is successful, the pull request can be merged and automation will be configured in the backend.
+1. From your forked repository, create a pull request with your Challenge profile added to `nextflow.config` (see [Configuring the Model to Data Workflow](#Configuring-the-Model-to-Data-workflow) for further instructions).
+1. The maintainers of this repository will work with you to ensure your container is integrated with the model-to-data workflow and the parameters provided in step 2 are valid.
+1. Test the profile by making a submission to the evaluation queue for your challenge task. This submission will then show up in the submission view for your evaluation queue, which is represented by the given `params.view_id`. The reviewer will manually run the model-to-data workflow to ensure this new submission is picked up and processed appropriately.
+1. If the workflow is successful, the pull request can be merged and automation will be configured in the backend.
 
 ### Introduction
 
@@ -87,6 +85,7 @@ flowchart LR;
 In order to use this workflow, you must already have completed the following steps:
 
 1. Created a Synapse project shared with challenge participants.
+1. Grant the DPE team `Administrator` privileges to said project.
 1. Created an evaluation queue within the Synapse project.
 1. One or more Docker images have already been submitted to your evaluation queue.
 1. Created a submission view that includes the `id` and `status` columns.
@@ -94,6 +93,7 @@ In order to use this workflow, you must already have completed the following ste
 1. Added the groundtruth file to your Synapse project.
 1. Created a repository, based off [this template repository](https://github.com/Sage-Bionetworks-Challenges/orca-evaluation-templates), that houses the validation and scoring scripts to be used for evaluation.
 1. Published said repository to the GitHub Container Registry (GHCR) and ensured it is visible to the public.
+1. Fork this repository, as you will need to make a pull request contributing a config profile into the `nextflow.config` file later.
 
 If you are new to containerization and/or the GHCR, [see here](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry) for how to create and publish your own container on the GHCR.
 
@@ -141,6 +141,7 @@ Where the parameters are denoted by `params.[parameter_name]`. Below is the list
 1. `email_with_score` (optional & case-sensitive): Choose whether or not the e-mail sent out to participants will include the evaluation score or not. Can either be "yes" or "no". Defaults to "yes".
 1. `cpus` (optional): Number of CPU cores to dedicate to the workflow processes (except `RUN_DOCKER` which is fixed at 8 CPU cores when using the `tower` config profile). Defaults to `4` cores.
 1. `memory` (optional): Amount of memory (RAM) to dedicate to the workflow processes (except `RUN_DOCKER` which is fixed at 32 GB when using the `tower` config profile). Defaults to `16.` GB of RAM.
+1. `challenge_task` (optional): The challenge task for which the submissions are made. Defaults to `'task1'`.
 1. `execute_scoring` (optional): This string should be `[interpreter] [path to script]` e.g. `python3 path/to/score.py`. This is the command that will be used to execute the scoring script for the `SCORE` step of the workflow run (without the arguments, which are appended later). Keep in mind this will execute in the location that you specified as `WORKDIR` for your container. Defaults to `python3 /home/user/score.py`.
 1. `execute_validation` (optional): This string should be `[interpreter] [path to script]` e.g. `python3 path/to/validate.py`. This is the command that will be used to execute the validation script for the `VALIDATE` step of the workflow run (without the arguments, which are appended later). Keep in mind this will execute in the location that you specified as `WORKDIR` for your container. Defaults to `python3 /home/user/validate.py`.
 1. `send_email` (optional): If `true`, sends an e-mail to the submitter on the status of their submission. Default is `true`.
@@ -168,10 +169,10 @@ nextflow run main.nf --entry data_to_model -profile local --manifest assets/mode
 The `DATA_TO_MODEL.nf` workflow works with all data-to-model medical Challenges hosted at Sage, but its parameters need to be customized in order to work with your particular Challenge. Please use the following steps to get started:
 
 1. Complete the pre-requesites listed under [Prerequisites for Data to Model](#Prerequisites-for-Data-to-Model).
-2. Create a pull request with your Challenge profile added to `nextflow.config` (see [Configuring the Data to Model Workflow](#Configuring-the-Data-to-Model-workflow) for further instructions).
-3. The maintainers of this repository will work with you to ensure your container is integrated with the model-to-data workflow and the parameters provided in step 2 are valid.
-4. Test the profile by making a submission to the evaluation queue represented by the given `params.view_id`. The reviewer will manually run the model-to-data workflow to ensure this new submission is picked up and processed appropriately.
-5. If the workflow is successful, the pull request can be merged and automation will be configured in the backend.
+1. From your forked repository, create a pull request with your Challenge profile added to `nextflow.config` (see [Configuring the Data to Model Workflow](#Configuring-the-Data-to-Model-workflow) for further instructions).
+1. The maintainers of this repository will work with you to ensure your container is integrated with the model-to-data workflow and the parameters provided in step 2 are valid.
+1. Test the profile by making a submission to the evaluation queue for your challenge task. This submission will then show up in the submission view for your evaluation queue, which is represented by the given `params.view_id`. The reviewer will manually run the model-to-data workflow to ensure this new submission is picked up and processed appropriately.
+1. If the workflow is successful, the pull request can be merged and automation will be configured in the backend.
 
 ### Introduction
 
@@ -182,12 +183,14 @@ The `DATA_TO_MODEL.nf` workflow is designed to handle data-to-model Challenge fo
 In order to use this workflow, you must already have completed the following steps:
 
 1. Created a Synapse project shared with challenge participants.
+1. Grant the DPE team `Administrator` privileges to said project.
 1. Created an evaluation queue within the Synapse project.
 1. One or more data files have already been submitted to your evaluation queue.
 1. Created a submission view that includes the `id` and `status` columns.
 1. Added the groundtruth file to your Synapse project.
 1. Created a repository, based off [this template repository](https://github.com/Sage-Bionetworks-Challenges/orca-evaluation-templates), that houses the validation and scoring scripts to be used for evaluation.
 1. Published said repository to the GitHub Container Registry (GHCR) and ensured it is visible to the public.
+1. Fork this repository, as you will need to make a pull request contributing a config profile into the `nextflow.config` file later.
 
 If you are new to containerization and/or the GHCR, [see here](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry) for how to create and publish your own container on the GHCR.
 
@@ -229,6 +232,7 @@ Where the parameters are denoted by `params.[parameter_name]`. Below is the list
 1. `groundtruth_id` (required): The Synapse ID for the folder holding the ground truth file for submissions.
 1. `challenge_container` (required): The name of the container that the scoring and validation scripts are housed in, and will be executed in, during the validation and scoring steps of the workflow.
 1. `file_type` (optional): The expected file type of the submissions. Defaults to `csv`.
+1. `challenge_task` (optional): The challenge task for which the submissions are made. Defaults to `'task1'`.
 1. `execute_scoring` (optional): This string should be `[interpreter] [path to script]` e.g. `python3 path/to/score.py`. This is the command that will be used to execute the scoring script for the `SCORE` step of the workflow run (without the arguments, which are appended later). Keep in mind this will execute in the location that you specified as `WORKDIR` for your container. Defaults to `python3 /home/user/score.py`.
 1. `execute_validation` (optional): This string should be `[interpreter] [path to script]` e.g. `python3 path/to/validate.py`. This is the command that will be used to execute the validation script for the `VALIDATE` step of the workflow run (without the arguments, which are appended later). Keep in mind this will execute in the location that you specified as `WORKDIR` for your container. Defaults to `python3 /home/user/validate.py`.
 1. `email_with_score` (optional & case-sensitive): Choose whether or not the e-mail sent out to participants will include the evaluation score or not. Can either be "yes" or "no". Defaults to "yes".
