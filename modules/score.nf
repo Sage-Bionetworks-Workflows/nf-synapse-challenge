@@ -11,13 +11,13 @@ process SCORE {
     val status_ready
     val annotate_ready
     val execute_scoring
-    val task
+    val challenge_task
 
     output:
     tuple val(submission_id), path(predictions), env(status), path("results.json")
 
     script:
     """
-    status=\$(${execute_scoring} -p '${predictions}' -g '${groundtruth}' -o '${results}' -t '${task}')
+    status=\$(${execute_scoring} -p '${predictions}' -g '${groundtruth}' -o '${results}' -t '${challenge_task}')
     """
 }
