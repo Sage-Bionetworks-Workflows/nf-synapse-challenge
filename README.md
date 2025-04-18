@@ -85,6 +85,7 @@ flowchart LR;
 In order to use this workflow, you must already have completed the following steps:
 
 1. Created a Synapse project shared with challenge participants.
+1. Grant the DPE team `Administrator` privileges to said project.
 1. Created an evaluation queue within the Synapse project.
 1. One or more Docker images have already been submitted to your evaluation queue.
 1. Created a submission view that includes the `id` and `status` columns.
@@ -182,6 +183,7 @@ The `DATA_TO_MODEL.nf` workflow is designed to handle data-to-model Challenge fo
 In order to use this workflow, you must already have completed the following steps:
 
 1. Created a Synapse project shared with challenge participants.
+1. Grant the DPE team `Administrator` privileges to said project.
 1. Created an evaluation queue within the Synapse project.
 1. One or more data files have already been submitted to your evaluation queue.
 1. Created a submission view that includes the `id` and `status` columns.
