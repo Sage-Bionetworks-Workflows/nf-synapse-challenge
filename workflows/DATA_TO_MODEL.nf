@@ -6,7 +6,7 @@ params.submissions = ""
 // The expected file type for the submissions
 params.file_type = "csv"
 // The challenge task for which the submissions are made
-params.task = "task1"
+params.challenge_task = "task1"
 // The command used to execute the Challenge scoring script in the base directory of the challenge_container: e.g. `python3 path/to/score.py`
 params.execute_scoring = "python3 /home/user/score.py"
 // The command used to execute the Challenge validation script in the base directory of the challenge_container: e.g. `python3 path/to/validate.py`
@@ -55,7 +55,7 @@ workflow DATA_TO_MODEL {
     download_submission_predictions = download_submission_outputs.map { submission_id, predictions -> predictions }
 
     // Phase 3: Validating the submission
-    validate_outputs = VALIDATE(DOWNLOAD_SUBMISSION.output, SYNAPSE_STAGE_GROUNDTRUTH.output, "ready", params.execute_validation, params.task)
+    validate_outputs = VALIDATE(DOWNLOAD_SUBMISSION.output, SYNAPSE_STAGE_GROUNDTRUTH.output, "ready", params.execute_validation, params.challenge_task)
     //// Explicit output handling
     validate_submission = validate_outputs.map { submission_id, predictions, status, results -> submission_id }
     validate_status = validate_outputs.map { submission_id, predictions, status, results -> status }
@@ -64,7 +64,7 @@ workflow DATA_TO_MODEL {
     ANNOTATE_SUBMISSION_AFTER_VALIDATE(validate_outputs)
 
     // Phase 4: Scoring the submission + send email
-    score_outputs = SCORE(VALIDATE.output, SYNAPSE_STAGE_GROUNDTRUTH.output, UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE.output, ANNOTATE_SUBMISSION_AFTER_VALIDATE.output, params.execute_scoring, params.task)
+    score_outputs = SCORE(VALIDATE.output, SYNAPSE_STAGE_GROUNDTRUTH.output, UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE.output, ANNOTATE_SUBMISSION_AFTER_VALIDATE.output, params.execute_scoring, params.challenge_task)
     //// Explicit output handling
     score_submission = score_outputs.map { submission_id, predictions, status, results -> submission_id }
     score_status = score_outputs.map { submission_id, predictions, status, results -> status }
