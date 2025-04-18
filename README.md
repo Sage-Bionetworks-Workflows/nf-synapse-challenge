@@ -51,10 +51,10 @@ Example:
 The `MODEL_TO_DATA.nf` workflow works with all model-to-data medical Challenges hosted at Sage, but its parameters need to be customized in order to work with your particular Challenge. Please use the following steps to get started:
 
 1. Complete the pre-requesites listed under [Prerequisites for Model to Data](#Prerequisites-for-Model-to-Data).
-2. Fork this repository and create a pull request with your Challenge profile added to `nextflow.config` (see [Configuring the Model to Data Workflow](#Configuring-the-Model-to-Data-workflow) for further instructions).
-3. The maintainers of this repository will work with you to ensure your container is integrated with the model-to-data workflow and the parameters provided in step 2 are valid.
-4. Test the profile by making a submission to the evaluation queue represented by the given `params.view_id`. The reviewer will manually run the model-to-data workflow to ensure this new submission is picked up and processed appropriately.
-5. If the workflow is successful, the pull request can be merged and automation will be configured in the backend.
+1. From your forked repository, create a pull request with your Challenge profile added to `nextflow.config` (see [Configuring the Model to Data Workflow](#Configuring-the-Model-to-Data-workflow) for further instructions).
+1. The maintainers of this repository will work with you to ensure your container is integrated with the model-to-data workflow and the parameters provided in step 2 are valid.
+1. Test the profile by making a submission to the evaluation queue represented by the given `params.view_id`. The reviewer will manually run the model-to-data workflow to ensure this new submission is picked up and processed appropriately.
+1. If the workflow is successful, the pull request can be merged and automation will be configured in the backend.
 
 ### Introduction
 
@@ -94,6 +94,7 @@ In order to use this workflow, you must already have completed the following ste
 1. Added the groundtruth file to your Synapse project.
 1. Created a repository, based off [this template repository](https://github.com/Sage-Bionetworks-Challenges/orca-evaluation-templates), that houses the validation and scoring scripts to be used for evaluation.
 1. Published said repository to the GitHub Container Registry (GHCR) and ensured it is visible to the public.
+1. Fork this repository, as you will need to make a pull request contributing a config profile into the `nextflow.config` file later.
 
 If you are new to containerization and/or the GHCR, [see here](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry) for how to create and publish your own container on the GHCR.
 
@@ -169,10 +170,10 @@ nextflow run main.nf --entry data_to_model -profile local --manifest assets/mode
 The `DATA_TO_MODEL.nf` workflow works with all data-to-model medical Challenges hosted at Sage, but its parameters need to be customized in order to work with your particular Challenge. Please use the following steps to get started:
 
 1. Complete the pre-requesites listed under [Prerequisites for Data to Model](#Prerequisites-for-Data-to-Model).
-3. Fork this repository and create a pull request with your Challenge profile added to `nextflow.config` (see [Configuring the Data to Model Workflow](#Configuring-the-Data-to-Model-workflow) for further instructions).
-4. The maintainers of this repository will work with you to ensure your container is integrated with the model-to-data workflow and the parameters provided in step 2 are valid.
-5. Test the profile by making a submission to the evaluation queue represented by the given `params.view_id`. The reviewer will manually run the model-to-data workflow to ensure this new submission is picked up and processed appropriately.
-6. If the workflow is successful, the pull request can be merged and automation will be configured in the backend.
+1. From your forked repository, create a pull request with your Challenge profile added to `nextflow.config` (see [Configuring the Data to Model Workflow](#Configuring-the-Data-to-Model-workflow) for further instructions).
+1. The maintainers of this repository will work with you to ensure your container is integrated with the model-to-data workflow and the parameters provided in step 2 are valid.
+1. Test the profile by making a submission to the evaluation queue represented by the given `params.view_id`. The reviewer will manually run the model-to-data workflow to ensure this new submission is picked up and processed appropriately.
+1. If the workflow is successful, the pull request can be merged and automation will be configured in the backend.
 
 ### Introduction
 
@@ -189,6 +190,7 @@ In order to use this workflow, you must already have completed the following ste
 1. Added the groundtruth file to your Synapse project.
 1. Created a repository, based off [this template repository](https://github.com/Sage-Bionetworks-Challenges/orca-evaluation-templates), that houses the validation and scoring scripts to be used for evaluation.
 1. Published said repository to the GitHub Container Registry (GHCR) and ensured it is visible to the public.
+1. Fork this repository, as you will need to make a pull request contributing a config profile into the `nextflow.config` file later.
 
 If you are new to containerization and/or the GHCR, [see here](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry) for how to create and publish your own container on the GHCR.
 
