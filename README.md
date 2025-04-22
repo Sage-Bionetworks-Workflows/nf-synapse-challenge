@@ -85,12 +85,14 @@ flowchart LR;
 In order to use this workflow, you must already have completed the following steps:
 
 1. Created a Synapse project shared with challenge participants.
-1. Grant the DPE team `Administrator` privileges to said project.
+1. Granted the DPE team `Administrator` privileges to said project.
 1. Created an evaluation queue within the Synapse project.
+1. Granted the DPE team `Administrator` privileges to said evaluation queue.
 1. One or more Docker images have already been submitted to your evaluation queue.
 1. Created a submission view that includes the `id` and `status` columns.
 1. Added the input data for evaluating submissions to a folder within your Synapse project.
 1. Added the groundtruth file to your Synapse project.
+1. Granted DPE team at least `Download` privileges to the input and groundtruth data.
 1. Created a repository, based off [this template repository](https://github.com/Sage-Bionetworks-Challenges/orca-evaluation-templates), that houses the validation and scoring scripts to be used for evaluation.
 1. Published said repository to the GitHub Container Registry (GHCR) and ensured it is visible to the public.
 1. Fork this repository, as you will need to make a pull request contributing a config profile into the `nextflow.config` file later.
@@ -141,7 +143,7 @@ Where the parameters are denoted by `params.[parameter_name]`. Below is the list
 1. `email_with_score` (optional & case-sensitive): Choose whether or not the e-mail sent out to participants will include the evaluation score or not. Can either be "yes" or "no". Defaults to "yes".
 1. `cpus` (optional): Number of CPU cores to dedicate to the workflow processes (except `RUN_DOCKER` which is fixed at 8 CPU cores when using the `tower` config profile). Defaults to `4` cores.
 1. `memory` (optional): Amount of memory (RAM) to dedicate to the workflow processes (except `RUN_DOCKER` which is fixed at 32 GB when using the `tower` config profile). Defaults to `16.` GB of RAM.
-1. `task_number` (optional): The challenge task for which the submissions are made. Defaults to `'1'`.
+1. `task_number` (optional): The challenge task (integer) for which the submissions are made. Defaults to `1`.
 1. `execute_scoring` (optional): This string should be `[interpreter] [path to script]` e.g. `python3 path/to/score.py`. This is the command that will be used to execute the scoring script for the `SCORE` step of the workflow run (without the arguments, which are appended later). Keep in mind this will execute in the location that you specified as `WORKDIR` for your container. Defaults to `python3 /home/user/score.py`.
 1. `execute_validation` (optional): This string should be `[interpreter] [path to script]` e.g. `python3 path/to/validate.py`. This is the command that will be used to execute the validation script for the `VALIDATE` step of the workflow run (without the arguments, which are appended later). Keep in mind this will execute in the location that you specified as `WORKDIR` for your container. Defaults to `python3 /home/user/validate.py`.
 1. `send_email` (optional): If `true`, sends an e-mail to the submitter on the status of their submission. Default is `true`.
@@ -183,11 +185,13 @@ The `DATA_TO_MODEL.nf` workflow is designed to handle data-to-model Challenge fo
 In order to use this workflow, you must already have completed the following steps:
 
 1. Created a Synapse project shared with challenge participants.
-1. Grant the DPE team `Administrator` privileges to said project.
+1. Granted the DPE team `Administrator` privileges to said project.
 1. Created an evaluation queue within the Synapse project.
+1. Granted the DPE team `Administrator` privileges to said evaluation queue.
 1. One or more data files have already been submitted to your evaluation queue.
 1. Created a submission view that includes the `id` and `status` columns.
 1. Added the groundtruth file to your Synapse project.
+1. Granted DPE team at least `Download` privileges to the groundtruth data.
 1. Created a repository, based off [this template repository](https://github.com/Sage-Bionetworks-Challenges/orca-evaluation-templates), that houses the validation and scoring scripts to be used for evaluation.
 1. Published said repository to the GitHub Container Registry (GHCR) and ensured it is visible to the public.
 1. Fork this repository, as you will need to make a pull request contributing a config profile into the `nextflow.config` file later.
@@ -232,7 +236,7 @@ Where the parameters are denoted by `params.[parameter_name]`. Below is the list
 1. `groundtruth_id` (required): The Synapse ID for the folder holding the ground truth file for submissions.
 1. `challenge_container` (required): The name of the container that the scoring and validation scripts are housed in, and will be executed in, during the validation and scoring steps of the workflow.
 1. `file_type` (optional): The expected file type of the submissions. Defaults to `csv`.
-1. `task_number` (optional): The challenge task for which the submissions are made. Defaults to `'1'`.
+1. `task_number` (optional): The challenge task (integer) for which the submissions are made. Defaults to `1`.
 1. `execute_scoring` (optional): This string should be `[interpreter] [path to script]` e.g. `python3 path/to/score.py`. This is the command that will be used to execute the scoring script for the `SCORE` step of the workflow run (without the arguments, which are appended later). Keep in mind this will execute in the location that you specified as `WORKDIR` for your container. Defaults to `python3 /home/user/score.py`.
 1. `execute_validation` (optional): This string should be `[interpreter] [path to script]` e.g. `python3 path/to/validate.py`. This is the command that will be used to execute the validation script for the `VALIDATE` step of the workflow run (without the arguments, which are appended later). Keep in mind this will execute in the location that you specified as `WORKDIR` for your container. Defaults to `python3 /home/user/validate.py`.
 1. `email_with_score` (optional & case-sensitive): Choose whether or not the e-mail sent out to participants will include the evaluation score or not. Can either be "yes" or "no". Defaults to "yes".

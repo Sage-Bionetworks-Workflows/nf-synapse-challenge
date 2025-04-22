@@ -16,7 +16,7 @@ params.container_timeout = "180"
 // Time (in minutes) between status checks during container monitoring
 params.poll_interval = "1"
 // The challenge task for which the submissions are made
-params.task_number = "1"
+params.task_number = 1
 // The command used to execute the Challenge scoring script in the base directory of the challenge_container: e.g. `python3 path/to/score.py`
 params.execute_scoring = "python3 /usr/local/bin/score.py"
 // The command used to execute the Challenge validation script in the base directory of the challenge_container: e.g. `python3 path/to/validate.py`
