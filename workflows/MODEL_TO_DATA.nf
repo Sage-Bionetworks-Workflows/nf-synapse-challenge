@@ -46,7 +46,8 @@ include { SCORE } from '../modules/score.nf'
 include { ANNOTATE_SUBMISSION as ANNOTATE_SUBMISSION_AFTER_VALIDATE } from '../modules/annotate_submission.nf'
 include { ANNOTATE_SUBMISSION as ANNOTATE_SUBMISSION_AFTER_SCORE } from '../modules/annotate_submission.nf'
 include { ANNOTATE_SUBMISSION as ANNOTATE_SUBMISSION_AFTER_UPDATE_FOLDERS } from '../modules/annotate_submission.nf'
-include { SEND_EMAIL } from '../modules/send_email.nf'
+include { SEND_EMAIL as SEND_EMAIL_BEFORE } from '../modules/send_email.nf'
+include { SEND_EMAIL as SEND_EMAIL_AFTER } from '../modules/send_email.nf'
 
 workflow MODEL_TO_DATA {
 
@@ -54,6 +55,10 @@ workflow MODEL_TO_DATA {
     submission_ch = CREATE_SUBMISSION_CHANNEL()
 
     // Phase 1: Prepare the data for scoring and create output folders on Synapse
+    //          + Notify users that evaluation of their submission has begun
+    if (params.send_email) {
+        SEND_EMAIL_BEFORE(params.email_script, params.view_id, submission_ch, "BEFORE", params.email_with_score, "ready")
+    }
     SYNAPSE_STAGE_DATA(params.data_folder_id, "input")
     SYNAPSE_STAGE_GROUNDTRUTH(params.groundtruth_id, "groundtruth_${params.groundtruth_id}")
     CREATE_FOLDERS(submission_ch, params.project_name, params.private_folders)
