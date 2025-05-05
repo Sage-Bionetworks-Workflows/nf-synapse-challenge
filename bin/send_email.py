@@ -50,17 +50,17 @@ def email_template(
         (
             "VALIDATED",
             "yes",
-        ): f"Submission {submission_id} has been evaluated with the following scores:\n"
+        ): f"Submission <b>{submission_id}</b> for the <b>{project_name}</b> project has been evaluated with the following scores:\n"
         + "\n".join(get_score_dict(score))
         + f"\nView all your scores here: https://www.synapse.org/#!Synapse:{view_id}/tables/",
         (
             "VALIDATED",
             "no",
-        ): f"Submission {submission_id} has been evaluated. Your score will be available after Challenge submissions are closed. Thank you for participating!",
+        ): f"Submission <b>{submission_id}</b> for the <b>{project_name}</b> project has been evaluated. Your score will be available after Challenge submissions are closed. Thank you for participating!",
         (
             "INVALID",
             "yes",
-        ): f"Evaluation failed for Submission {submission_id}."
+        ): f"Evaluation failed for Submission <b>{submission_id}</b> for the <b>{project_name}</b> project."
         + "\n"
         + f"Reason: '{reason}'."
         + "\n\n"
@@ -68,7 +68,7 @@ def email_template(
         (
             "INVALID",
             "no",
-        ): f"Evaluation failed for Submission {submission_id}."
+        ): f"Evaluation failed for Submission <b>{submission_id}</b> for the <b>{project_name}</b> project."
         + "\n"
         + f"Reason: '{reason}'."
         + "\n"
@@ -155,7 +155,7 @@ def send_email(view_id: str, submission_id: str, email_with_score: str, notifica
         subject = f"Evaluation Started: {submission_id}"
         body = (
             f"Dear {participant_name},\n\n"
-            f"Your submission <b>{submission_id}</b> for the {project_name} project is now being evaluated. "
+            f"Your submission <b>{submission_id}</b> for the <b>{project_name}</b> project is now being evaluated. "
             "We will notify you again once the evaluation completes.\n\n"
             "Thank you for your participation!\n\n"
             "The Challenge Organizers"
