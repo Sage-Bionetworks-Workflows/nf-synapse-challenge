@@ -124,7 +124,7 @@ def get_annotations(syn: synapseclient.Synapse, submission_id: str) -> NamedTupl
     )
 
 
-def send_email(view_id: str, submission_id: str, email_with_score: str, notification_type: str):
+def send_email(view_id: str, submission_id: str, email_with_score: str, notification_type: str, project_name: str):
     """
     Sends an e-mail on the status of the individual submission
     to the submitting team or individual.
@@ -145,14 +145,17 @@ def send_email(view_id: str, submission_id: str, email_with_score: str, notifica
     # Get the Synapse users to send an e-mail to
     ids_to_notify = helpers.get_participant_id(syn, submission_id)
 
+    # Get the name of the participant(s)
+    participant_name = helpers.get_participant_name(syn, submission_id)
+
     # Create the subject and body of the e-mail message, depending on
     # the notification type and submission status:
     if notification_type.upper() == "BEFORE":
         # Before-evaluation notification
         subject = f"Evaluation Started: {submission_id}"
         body = (
-            f"Dear participant,\n\n"
-            f"Your submission <b>{submission_id}</b> is now being evaluated. "
+            f"Dear {participant_name},\n\n"
+            f"Your submission <b>{submission_id}</b> for the {project_name} project is now being evaluated. "
             "We will notify you again once the evaluation completes.\n\n"
             "Thank you for your participation!\n\n"
             "The Challenge Organizers"
@@ -181,5 +184,6 @@ if __name__ == "__main__":
     submission_id = sys.argv[2]
     email_with_score = sys.argv[3]
     notification_type = sys.argv[4]
+    project_name = sys.argv[5]
 
-    send_email(view_id, submission_id, email_with_score, notification_type)
+    send_email(view_id, submission_id, email_with_score, notification_type, project_name)
