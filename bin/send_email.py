@@ -152,7 +152,7 @@ def send_email(view_id: str, submission_id: str, email_with_score: str, notifica
         subject = f"Evaluation Started: {submission_id}"
         body = (
             f"Dear participant,\n\n"
-            f"Your submission **{submission_id}** is now being evaluated. "
+            f"Your submission <b>{submission_id}</b> is now being evaluated. "
             "We will notify you again once the evaluation completes.\n\n"
             "Thank you for your participation!\n\n"
             "The Challenge Organizers"
