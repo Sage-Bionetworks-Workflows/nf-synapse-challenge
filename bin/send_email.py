@@ -143,6 +143,8 @@ def send_email(view_id: str, submission_id: str, email_with_score: str, notifica
     # Get the Synapse users to send an e-mail to
     ids_to_notify = helpers.get_participant_id(syn, submission_id)
 
+    # Create the subject and body of the e-mail message, depending on
+    # the notification type and submission status:
     if notification_type.upper() == "BEFORE":
         # Before-evaluation notification
         subject = f"Evaluation Started: {submission_id}"
