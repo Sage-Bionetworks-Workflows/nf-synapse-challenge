@@ -132,6 +132,8 @@ def send_email(view_id: str, submission_id: str, email_with_score: str, notifica
     Arguments:
       view_id: The view Id of the Submission View on Synapse
       submission_id: The ID for an individual submission within an evaluation queue
+      email_with_score: Whether to include the score in the e-mail
+      notification_type: The type of notification to send (determines the subject and body of e-mail)
 
     """
     # Initiate connection to Synapse
