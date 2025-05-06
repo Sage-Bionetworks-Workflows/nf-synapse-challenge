@@ -143,10 +143,10 @@ def send_email(view_id: str, submission_id: str, email_with_score: str, notifica
     submission_annotations = get_annotations(syn, submission_id)
 
     # Get the Synapse users to send an e-mail to
-    ids_to_notify = helpers.get_participant_id(syn, submission_id)
+    participant_id = helpers.get_participant_id(syn, submission_id)
 
     # Get the name of the participant(s)
-    participant_name = helpers.get_participant_name(syn, submission_id)
+    participant_name = helpers.get_participant_name(syn, participant_id)
 
     # Create the subject and body of the e-mail message, depending on
     # the notification type and submission status:
@@ -176,7 +176,7 @@ def send_email(view_id: str, submission_id: str, email_with_score: str, notifica
             submission_annotations.reason,
         )
 
-    syn.sendMessage(userIds=ids_to_notify, messageSubject=subject, messageBody=body)
+    syn.sendMessage(userIds=participant_id, messageSubject=subject, messageBody=body)
 
 
 if __name__ == "__main__":
