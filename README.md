@@ -61,23 +61,41 @@ The `MODEL_TO_DATA.nf` workflow is designed to handle model-to-data Challenge fo
 ### Workflow DAG
 
 ```mermaid
-flowchart LR;
-    A[SYNAPSE STAGE]-->E[RUN DOCKER];
-    B[UPDATE STATUS]-->E;
-    C[CREATE FOLDERS]-->E;
-    E-->G[UPDATE STATUS];
-    E-->H[UPDATE FOLDERS];
-    H-->K[ANNOTATE];
-    G-->I[VALIDATE];
-    K-->I;
-    I-->J[UPDATE STATUS];
-    I-->L[SCORE];
-    J-->L;
-    L-->M[UPDATE STATUS];
-    L-->N[ANNOTATE];
-    M-->O;
-    N-->O[SEND EMAIL];
-    O-->P[END];
+flowchart LR
+    %% Phase 0 & 1: Setup + pre-email
+    A[CREATE_SUBMISSION_CHANNEL] --> B[SEND_EMAIL_BEFORE]
+    B --> C[SYNAPSE_STAGE_DATA]
+    C --> D[SYNAPSE_STAGE_GROUNDTRUTH]
+    D --> E[CREATE_FOLDERS]
+    E --> F[UPDATE_SUBMISSION_STATUS_BEFORE_RUN]
+
+    %% Phase 2: Run Docker (depends on staging and status)
+    C --> G[RUN_DOCKER]
+    D --> G
+    E --> G
+    F --> G
+
+    %% Phase 2b: Post-run updates
+    G --> H[UPDATE_SUBMISSION_STATUS_AFTER_RUN]
+    G --> I[UPDATE_FOLDERS]
+    I --> J[ANNOTATE_SUBMISSION_AFTER_UPDATE_FOLDERS]
+
+    %% Phase 3: Validation
+    H --> K[VALIDATE]
+    J --> K
+    K --> L[UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE]
+    K --> M[ANNOTATE_SUBMISSION_AFTER_VALIDATE]
+
+    %% Phase 4: Scoring
+    L --> N[SCORE]
+    M --> N
+    N --> O[UPDATE_SUBMISSION_STATUS_AFTER_SCORE]
+    N --> P[ANNOTATE_SUBMISSION_AFTER_SCORE]
+
+    %% Post-score email & end
+    P --> Q[SEND_EMAIL_AFTER]
+    Q --> R[END]
+
 ```
 
 ### Prerequisites for Model to Data
