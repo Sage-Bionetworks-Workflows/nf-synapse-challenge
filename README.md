@@ -198,6 +198,37 @@ The `DATA_TO_MODEL.nf` workflow works with all data-to-model medical Challenges 
 
 The `DATA_TO_MODEL.nf` workflow is designed to handle data-to-model Challenge formats by asynchronously running submissions, evaluating the results using the provided scoring and validation scripts, updating the Synapse project with output files, and sharing the evaluation results with users via e-mail and submissions annotations. This repository can work in conjunction with [orca-recipes](https://github.com/Sage-Bionetworks-Workflows/orca-recipes) to enable scheduled workflow execution according to your desired cadence. Please see below for a DAG outlining the processes executed in the `DATA_TO_MODEL.nf` workflow, pre-requisites for running the workflow, and how you can tailor this workflow to your specific data-to-model Challenge requirements by adding your own config profile(s) in `nextflow.config`.
 
+### Workflow DAG
+
+```mermaid
+  flowchart LR
+    %% Phase 0 & 1: Setup & pre-email
+    A[CREATE_SUBMISSION_CHANNEL] --> B[UPDATE_SUBMISSION_STATUS_BEFORE_EVALUATION]
+    B --> C[SEND_EMAIL_BEFORE]
+
+    %% Phase 2: Data prep
+    C --> D[SYNAPSE_STAGE_GROUNDTRUTH]
+    C --> E[DOWNLOAD_SUBMISSION]
+
+    %% Phase 3: Validation
+    D --> F[VALIDATE]
+    E --> F
+    F --> G[UPDATE_SUBMISSION_STATUS_AFTER_VALIDATE]
+    F --> H[ANNOTATE_SUBMISSION_AFTER_VALIDATE]
+
+    %% Phase 4: Scoring
+    G --> I[SCORE]
+    H --> I
+    I --> J[UPDATE_SUBMISSION_STATUS_AFTER_SCORE]
+    I --> K[ANNOTATE_SUBMISSION_AFTER_SCORE]
+
+    %% Post-score email & end
+    J --> L[SEND_EMAIL_AFTER]
+    K --> L
+    L --> M[END]
+
+```
+
 ### Prerequisites for Data to Model
 
 In order to use this workflow, you must already have completed the following steps:
@@ -272,25 +303,6 @@ nextflow run main.nf --entry data_to_model -profile local --submissions 9741046,
 With a `manifest` input:
 ```
 nextflow run main.nf --entry data_to_model -profile local --manifest assets/data_to_model_submission_manifest.csv
-```
-
-### Workflow DAG
-
-```mermaid
-  flowchart LR;
-    L[SEND EMAIL BEFORE];
-    A[SYNAPSE STAGE]-->G[SCORE];
-    B[UPDATE STATUS]-->C[DOWNLOAD SUBMISSION];
-    C-->D[VALIDATE];
-    D-->E[ANNOTATE];
-    D-->F[UPDATE STATUS];
-    E-->G;
-    F-->G;
-    G-->H[ANNOTATE];
-    G-->I[UPDATE STATUS];
-    H-->J[SEND EMAIL AFTER];
-    I-->J;
-    J-->K[END];
 ```
 
 ## Adding Support for New Challenge Types
