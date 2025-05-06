@@ -18,9 +18,9 @@ params.poll_interval = "1"
 // The challenge task for which the submissions are made
 params.task_number = 1
 // The command used to execute the Challenge scoring script in the base directory of the challenge_container: e.g. `python3 path/to/score.py`
-params.execute_scoring = "python3 /usr/local/bin/score.py"
+params.execute_scoring = "python3 /home/user/score.py"
 // The command used to execute the Challenge validation script in the base directory of the challenge_container: e.g. `python3 path/to/validate.py`
-params.execute_validation = "python3 /usr/local/bin/validate.py"
+params.execute_validation = "python3 /home/user/validate.py"
 // Toggle email notification
 params.send_email = true
 // Set email script
