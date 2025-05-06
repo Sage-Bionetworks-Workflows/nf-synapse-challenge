@@ -142,10 +142,10 @@ def send_email(view_id: str, submission_id: str, email_with_score: str, notifica
     # Get MODEL_TO_DATA annotations for the given submission
     submission_annotations = get_annotations(syn, submission_id)
 
-    # Get the Synapse users to send an e-mail to
+    # Get the Synapse user/team to send an e-mail to
     participant_id = helpers.get_participant_id(syn, submission_id)
 
-    # Get the name of the participant(s)
+    # Get the name of the participant user/team
     participant_name = helpers.get_participant_name(syn, participant_id)
 
     # Create the subject and body of the e-mail message, depending on
