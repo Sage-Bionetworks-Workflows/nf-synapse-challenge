@@ -57,7 +57,7 @@ workflow MODEL_TO_DATA {
     // Phase 1: Prepare the data for scoring and create output folders on Synapse
     //          + Notify users that evaluation of their submission has begun
     if (params.send_email) {
-        SEND_EMAIL_BEFORE(params.email_script, params.view_id, submission_ch, "BEFORE", params.email_with_score, "ready")
+        SEND_EMAIL_BEFORE(params.email_script, params.view_id, params.project_name, submission_ch, "BEFORE", params.email_with_score, "ready")
     }
     SYNAPSE_STAGE_DATA(params.data_folder_id, "input")
     SYNAPSE_STAGE_GROUNDTRUTH(params.groundtruth_id, "groundtruth_${params.groundtruth_id}")
@@ -93,6 +93,6 @@ workflow MODEL_TO_DATA {
     ANNOTATE_SUBMISSION_AFTER_SCORE(score_outputs)
     //// Send email
     if (params.send_email) {
-        SEND_EMAIL_AFTER(params.email_script, params.view_id, score_submission, "AFTER", params.email_with_score, ANNOTATE_SUBMISSION_AFTER_SCORE.output)
+        SEND_EMAIL_AFTER(params.email_script, params.view_id, params.project_name, score_submission, "AFTER", params.email_with_score, ANNOTATE_SUBMISSION_AFTER_SCORE.output)
     }
 }

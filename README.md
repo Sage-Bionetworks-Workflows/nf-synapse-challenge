@@ -233,6 +233,7 @@ Where the parameters are denoted by `params.[parameter_name]`. Below is the list
 1. `submissions` (required if `manifest` is not provided): A comma separated lis tof submission IDs to evaluate.
 1. `manifest` (required if `submissions` is not provided): A path to a submission manifest containing submissions IDs to evaluate.
 1. `view_id` (required): The Synapse ID for your submission view.
+1. `project_name` (required & case-sensitive): The name of your Project the Challenge is running in.
 1. `groundtruth_id` (required): The Synapse ID for the folder holding the ground truth file for submissions.
 1. `challenge_container` (required): The name of the container that the scoring and validation scripts are housed in, and will be executed in, during the validation and scoring steps of the workflow.
 1. `file_type` (optional): The expected file type of the submissions. Defaults to `csv`.

@@ -8,6 +8,7 @@ process SEND_EMAIL {
     input:
     val email_script
     val view_id
+    val project_name
     val submission_id
     val notification_type
     val email_with_score
@@ -15,6 +16,6 @@ process SEND_EMAIL {
 
     script:
     """
-    ${email_script} '${view_id}' '${submission_id}' '${email_with_score}' '${notification_type}'
+    ${email_script} '${view_id}' '${submission_id}' '${email_with_score}' '${notification_type}' '${project_name}'
     """
 }
