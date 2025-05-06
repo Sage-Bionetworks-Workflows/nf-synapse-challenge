@@ -18,6 +18,7 @@ process RUN_DOCKER {
     val log_max_size
     val ready
     val ready
+    val ready
 
     output:
     tuple val(submission_id), path('output/*_predictions.{csv,zip}'), path('output/*.log')

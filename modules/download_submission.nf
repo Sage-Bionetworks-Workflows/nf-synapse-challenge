@@ -10,6 +10,7 @@ process DOWNLOAD_SUBMISSION {
     val submission_id
     val file_type_lower
     val ready
+    val ready
 
     output:
     tuple val(submission_id), path("*.${file_type_lower}")

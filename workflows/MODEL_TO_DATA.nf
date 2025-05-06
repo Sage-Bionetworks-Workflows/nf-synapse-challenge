@@ -65,7 +65,7 @@ workflow MODEL_TO_DATA {
     UPDATE_SUBMISSION_STATUS_BEFORE_RUN(submission_ch, "EVALUATION_IN_PROGRESS")
 
     // Phase 2: Running the Docker submission (runs after Phase 1 data staging)
-    run_docker_outputs = RUN_DOCKER(submission_ch, params.container_timeout, params.poll_interval, SYNAPSE_STAGE_DATA.output, params.cpus, params.memory, params.log_max_size, CREATE_FOLDERS.output, UPDATE_SUBMISSION_STATUS_BEFORE_RUN.output)
+    run_docker_outputs = RUN_DOCKER(submission_ch, params.container_timeout, params.poll_interval, SYNAPSE_STAGE_DATA.output, params.cpus, params.memory, params.log_max_size, CREATE_FOLDERS.output, UPDATE_SUBMISSION_STATUS_BEFORE_RUN.output, SEND_EMAIL_BEFORE.output)
     //// Explicit output handling
     run_docker_submission = run_docker_outputs.map { submission_id, predictions, logs -> submission_id }
     run_docker_files = run_docker_outputs.map { submission_id, predictions, logs -> tuple(predictions, logs) }

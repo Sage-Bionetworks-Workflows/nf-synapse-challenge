@@ -14,6 +14,9 @@ process SEND_EMAIL {
     val email_with_score
     val ready
 
+    output:
+    val "ready"
+
     script:
     """
     ${email_script} '${view_id}' '${submission_id}' '${email_with_score}' '${notification_type}' '${project_name}'
