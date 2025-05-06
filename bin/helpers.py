@@ -4,6 +4,7 @@ import os
 from typing import List
 
 import synapseclient
+from synapseclient.core.exceptions import SynapseHTTPError
 from synapseclient.models.team import Team
 from synapseclient.models.user import UserProfile
 
@@ -48,7 +49,7 @@ def get_participant_name(syn: synapseclient.Synapse, participant_id: List[int]) 
     """
     try:
         name = UserProfile.from_id(participant_id[0], synapse_client=syn).username
-    except Exception as e:
+    except SynapseHTTPError:
         name = Team.from_id(participant_id[0], synapse_client=syn).name
 
     return name
