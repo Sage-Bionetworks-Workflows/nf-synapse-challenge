@@ -44,7 +44,7 @@ workflow DATA_TO_MODEL {
     // Phase 1: Notify users that evaluation of their submission has begun
     UPDATE_SUBMISSION_STATUS_BEFORE_EVALUATION(submission_ch, "EVALUATION_IN_PROGRESS")
     if (params.send_email) {
-        SEND_EMAIL_BEFORE(params.email_script, params.view_id, submission_ch, "BEFORE", params.email_with_score, "ready")
+        SEND_EMAIL_BEFORE(params.email_script, params.view_id, params.project_name, submission_ch, "BEFORE", params.email_with_score, "ready")
     }
 
     // Phase 2: Prepare the data: Download the submission and stage the groundtruth data on S3
