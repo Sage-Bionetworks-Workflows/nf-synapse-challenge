@@ -47,9 +47,9 @@ def get_participant_name(syn: synapseclient.Synapse, participant_id: list) -> st
 
     """
     try:
-        name = UserProfile.from_id(participant_id[0]).username
+        name = UserProfile.from_id(participant_id[0], synapse_client=syn).username
     except Exception as e:
-        name = Team.from_id(participant_id[0]).name
+        name = Team.from_id(participant_id[0], synapse_client=syn).name
 
     return name
 
