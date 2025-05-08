@@ -156,7 +156,7 @@ Where the parameters are denoted by `params.[parameter_name]`. Below is the list
 1. `project_name` (required & case-sensitive): The name of your Project the Challenge is running in.
 1. `view_id` (required): The Synapse ID for your submission view.
 1. `data_folder_id` (required): The Synapse ID for the folder holding the testing or validation data for submissions.
-1. `groundtruth_id` (required): The Synapse ID for the folder holding the ground truth file for submissions.
+1. `groundtruth_id` (required): The Synapse ID for the groundtruth File entity on Synapse. This must be a File entity and NOT a Folder entity.
 1. `challenge_container` (required): The name of the container that the scoring and validation scripts are housed in, and will be executed in, during the validation and scoring steps of the workflow.
 1. `email_with_score` (optional & case-sensitive): Choose whether or not the e-mail sent out to participants will include the evaluation score or not. Can either be "yes" or "no". Defaults to "yes".
 1. `cpus` (optional): Number of CPU cores to dedicate to the workflow processes (except `RUN_DOCKER` which is fixed at 8 CPU cores when using the `tower` config profile). Defaults to `4` cores.
@@ -283,7 +283,7 @@ Where the parameters are denoted by `params.[parameter_name]`. Below is the list
 1. `manifest` (required if `submissions` is not provided): A path to a submission manifest containing submissions IDs to evaluate.
 1. `view_id` (required): The Synapse ID for your submission view.
 1. `project_name` (required & case-sensitive): The name of your Project the Challenge is running in.
-1. `groundtruth_id` (required): The Synapse ID for the folder holding the ground truth file for submissions.
+1. `groundtruth_id` (required): The Synapse ID for the groundtruth File entity on Synapse. This must be a File entity and NOT a Folder entity.
 1. `challenge_container` (required): The name of the container that the scoring and validation scripts are housed in, and will be executed in, during the validation and scoring steps of the workflow.
 1. `file_type` (optional): The expected file type of the submissions. Defaults to `csv`.
 1. `task_number` (optional): The challenge task (integer) for which the submissions are made. Defaults to `1`.
