@@ -139,9 +139,6 @@ def send_email(view_id: str, submission_id: str, email_with_score: str, notifica
     # Initiate connection to Synapse
     syn = synapseclient.login()
 
-    # Get MODEL_TO_DATA annotations for the given submission
-    submission_annotations = get_annotations(syn, submission_id)
-
     # Get the Synapse user/team to send an e-mail to
     participant_id = helpers.get_participant_id(syn, submission_id)
 
@@ -151,7 +148,8 @@ def send_email(view_id: str, submission_id: str, email_with_score: str, notifica
     # Create the subject and body of the e-mail message, depending on
     # the notification type and submission status:
     if notification_type.upper() == "BEFORE":
-        # Before-evaluation notification
+        # Before-evaluation notification...
+
         subject = f"Evaluation Started: {submission_id}"
         body = (
             f"Dear {participant_name},\n\n"
@@ -161,7 +159,11 @@ def send_email(view_id: str, submission_id: str, email_with_score: str, notifica
             "The Challenge Organizers"
         )
     else:
-        # After-evaluation notification
+        # After-evaluation notification...
+
+        # Get annotations for the given submission
+        submission_annotations = get_annotations(syn, submission_id)
+
         subject = (
             f"Evaluation Success: {submission_id}"
             if submission_annotations.status == "VALIDATED"
