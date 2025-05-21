@@ -112,7 +112,8 @@ def get_annotations(syn: synapseclient.Synapse, submission_id: str) -> NamedTupl
         "validation_errors",
         "validation_status",
         "predictions_id",
-        "docker_logs_id"
+        "docker_logs_id",
+        "current_rank"
     ]
     submission_scores = {
         key: submission_annotations.get(key)
