@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-
+import os
 import argparse
-import synapseclient
 
+import synapseclient
 from synapseclient.core.constants import concrete_types
 
 def get_args():
@@ -24,7 +24,11 @@ if __name__ == "__main__":
     submission = syn.getSubmission(submission_id, downloadLocation=".")
     entity_type = submission["entity"].concreteType
     file_path = submission["filePath"]
-    
+
+    file_path_no_spaces = file_path.replace(" ", "_")
+    if file_path != file_path_no_spaces:
+        os.rename(file_path, file_path_no_spaces)
+
     # TODO: Eventually we want to abstract this logic into the `make_invalid_file` function
     # in model-to-data's `run_docker.py`, and move that out somewhere else.
     invalid_file = f"INVALID_predictions.{file_type}"
@@ -34,7 +38,7 @@ if __name__ == "__main__":
         error_msg = (
             f"Only Files should be submitted. Submission {submission_id} type is: {entity_type}"
         )
-    elif not submission["filePath"].lower().endswith(file_type):
+    elif not file_path_no_spaces.lower().endswith(file_type):
         error_msg = f"Incorrect file type. File type should be {file_type.upper()}"
 
     if error_msg:
