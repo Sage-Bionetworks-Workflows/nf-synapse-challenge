@@ -51,8 +51,6 @@ if __name__ == "__main__":
     entity_type = submission["entity"].concreteType
     file_path = submission["filePath"]
 
-    clean_file_name(file_path)
-
     # TODO: Eventually we want to abstract this logic into the `make_invalid_file` function
     # in model-to-data's `run_docker.py`, and move that out somewhere else.
     invalid_file = f"INVALID_predictions.{file_type}"
@@ -69,3 +67,5 @@ if __name__ == "__main__":
         with open(invalid_file, "w") as d:
             d.write(error_msg)
         print(error_msg)
+    else:
+        clean_file_name(file_path)
