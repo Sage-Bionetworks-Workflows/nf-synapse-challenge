@@ -42,9 +42,9 @@ All process outputs that chain into downstream steps must maintain this 4-elemen
 
 **Manifest CSV** — simple format with a single `submission_id` column (see `assets/`).
 
-**results.json** — written by validation/scoring scripts. Gets attached as Synapse annotations via `ANNOTATE_SUBMISSION`.
+**results.json** — JSON key-value pairs written by validation/scoring scripts. `ANNOTATE_SUBMISSION` runs `challengeutils annotate-submission -f` to read this file and attach its contents as Synapse submission annotations.
 
-**Synapse annotations** — key-value metadata attached to submissions. Non-score annotations (e.g., `current_rank`) must be excluded from the score email context in `send_email.py`.
+**Synapse annotations** — key-value metadata attached to submissions. The `email_with_score` param ("yes"/"no") controls whether scores are included in participant emails. Non-score annotations (e.g., `current_rank`) are always excluded from the email context in `send_email.py`.
 
 ## Conventions
 
